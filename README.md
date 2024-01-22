@@ -1,0 +1,2 @@
+# linkcmsTplAdmin
+Administrace pro LinkCMS
