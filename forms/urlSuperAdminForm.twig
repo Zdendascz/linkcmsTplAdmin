@@ -1,0 +1,72 @@
+<div class="row">
+    <div class="col">
+        <div class="section-description section-description-inline">
+        <h1>Zde vytvořte novou url</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+<form class="row g-1 align-items-center" method="post" action="{{ domainData.SITE_WEB }}/admin/doUrlAdd">
+    <div class="col-3">
+        <div class="input-group mb-3">
+        <select class="form-select" id="domainSelect" name="domain">
+            <option selected>Vyberte doménu...</option>
+            {% for row in pageData.allDomains %}
+                <option value="{{ row.domain }}">{{ row.name }} [{{ row.active }}]</option>
+            {% endfor %}
+            <option value="*">*</option>
+        </select>
+        </div>
+    </div>
+    <!-- Model ID -->
+    <div class="col-3 ">
+        <div class="input-group mb-3">
+        <span class="input-group-text input-group-text-solid-bordered" id="custom-addon1">/</span>
+        <input type="text" class="form-control" id="url" name="url" placeholder="URL" aria-describedby="basic-addon3">
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="input-group mb-3">
+        <select class="form-select" id="handlerSelect" name="handler">
+            <option selected>Vyberte handler...</option>
+            {% for row in pageData.allHandlers %}
+                <option value="{{ row }}">{{ row }}</option>
+            {% endfor %}
+            <option value="custom">Vlastní</option>
+        </select>
+        <input type="text" class="form-control mt-2" id="customHandler" name="handler" placeholder="Vlastní handler" style="display: none;">
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="input-group mb-3">
+        <select class="form-select" id="modelSelect" name="model">
+            <option selected>Vyberte model...</option>
+            {% for row in pageData.allModels %}
+                <option value="{{ row }}">{{ row }}</option>
+            {% endfor %}
+            <option value="custom">Vlastní</option>
+        </select>
+        <input type="text" class="form-control mt-2" id="customModel" name="model" placeholder="Vlastní model" style="display: none;">
+        </div>
+    </div>
+    <!-- Model ID -->
+    <div class="col-3">
+        <div class="input-group mb-3">
+        <input type="text" class="form-control" id="modelId" name="model_id" placeholder="Model ID">
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="input-group mb-3">
+        <button type="submit" class="btn btn-primary">Vytvořit URL</button>
+        </div>
+    </div>
+</form>
+</div>
+        </div>
+    </div>
+</div>

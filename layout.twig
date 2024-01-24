@@ -11,7 +11,7 @@
     <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     
     <!-- Title -->
-    <title>Neptune - Responsive Admin Dashboard Template</title>
+    <title>{% block titulek %}{% endblock %} Mini WEB Administrace</title>
 
     <!-- Styles -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -22,7 +22,6 @@
     <link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/perfectscroll/perfect-scrollbar.css" rel="stylesheet">
     <link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.css" rel="stylesheet">
     {% block headLinks %}{% endblock %}
-
     
     <!-- Theme Styles -->
     <link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/css/main.min.css" rel="stylesheet">
@@ -224,7 +223,7 @@
                             <div class="col">
                                 <div class="page-description">
                                     <h1>{% block nadpis %}{% endblock %}</h1>
-                                    <span>DataTables is a plug-in for the jQuery Javascript library. It is a highly flexible tool, built upon the foundations of progressive enhancement, that adds all of these advanced features to any HTML table.</span>
+                                    <span>{% block podNadpis %}{% endblock %}</span>
                                 </div>
                             </div>
                         </div>

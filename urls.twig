@@ -5,10 +5,14 @@
 {% endblock %}
 
 
+{% block titulek %}Přehled Všech URL{% endblock %}
 {% block nadpis %}Přehled Všech URL v systému{% endblock %}
+{% block podNadpis %}Pozor na ty URL!!! Automatická kontrola tam sice je, ale není všemocná.{% endblock %}
 
 
 {% block content %}
+{% include 'forms/urlSuperAdminForm.twig' %}
+
 <div class="row">
     <div class="col">
             <div class="section-description section-description-inline">
@@ -24,15 +28,15 @@
                             <th>URL</th>
                             <th>Handler</th>
                             <th>Model</th>
-                            <th>Modeel ID</th>
+                            <th>Model ID</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for row in pageData %}
+                        {% for row in pageData.allUrls %}
                             <tr>
-                                <td>{{ row.id }}</td>
-                                <td>{{ row.domain }}</td>
-                                <td>{{ row.url }}</td>
+                                <td><a href="#" class="row-id" data-id="{{ row.id }}" data-domain="{{ row.domain }}" data-url="{{ row.url }}" data-handler="{{ row.handler }}" data-model="{{ row.model }}" data-model-id="{{ row.model_id }}">{{ row.id }}</a></td>
+                                <td><a href="https://{{ row.domain }}" target="_blank">{{ row.domain }}</a></td>
+                                <td><a href="https://{{ row.domain }}{{ row.url }}" target="_blank">{{ row.url }}</a></td>
                                 <td>{{ row.handler }}</td>
                                 <td>{{ row.model }}</td>
                                 <td>{{ row.model_id }}</td>
@@ -71,4 +75,52 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/datatables.js"></script>
+
+<script>
+    document.getElementById('handlerSelect').addEventListener('change', function () {
+        document.getElementById('customHandler').style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.getElementById('modelSelect').addEventListener('change', function () {
+        document.getElementById('customModel').style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var idElements = document.querySelectorAll('.row-id');
+        
+        idElements.forEach(function(el) {
+            el.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                var domain = this.getAttribute('data-domain');
+                var url = this.getAttribute('data-url');
+                var handler = this.getAttribute('data-handler');
+                var model = this.getAttribute('data-model');
+                var modelId = this.getAttribute('data-model-id');
+
+                // Kontrola, zda skryté pole pro ID již existuje
+                var hiddenIdField = document.getElementById('hiddenId');
+                if (!hiddenIdField) {
+                    // Vytvoření skrytého pole pro ID, pokud ještě neexistuje
+                    hiddenIdField = document.createElement('input');
+                    hiddenIdField.setAttribute('type', 'hidden');
+                    hiddenIdField.setAttribute('id', 'hiddenId');
+                    hiddenIdField.setAttribute('name', 'id');
+                    document.querySelector('form').appendChild(hiddenIdField);
+                }
+
+                // Nastavení hodnoty skrytého pole
+                hiddenIdField.value = id;
+
+                // ... Naplňte další pole formuláře
+                document.getElementById('domainSelect').value = domain;
+                document.getElementById('url').value = url;
+                document.getElementById('handlerSelect').value = handler;
+                document.getElementById('modelSelect').value = model;
+                document.getElementById('modelId').value = modelId;
+                // Zabránění defaultní akci odkazu
+                return false;
+            });
+        });
+    });
+</script>
 {% endblock %}
