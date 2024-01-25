@@ -6,9 +6,10 @@
 </div>
 <div class="row">
     <div class="col">
-        <div class="card">
+        <div class="card" id="formAlertUrl">
             <div class="card-body">
-<form class="row g-1 align-items-center" method="post" action="{{ domainData.SITE_WEB }}/admin/doUrlAdd">
+            
+<form class="row g-1 align-items-center" id="addUrlForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doUrlAdd">
     <div class="col-3">
         <div class="input-group mb-3">
         <select class="form-select" id="domainSelect" name="domain">
@@ -62,7 +63,7 @@
 
     <div class="col-3">
         <div class="input-group mb-3">
-        <button type="submit" class="btn btn-primary">Vytvořit URL</button>
+        <button type="submit" class="btn btn-primary" id="submitId">Vytvořit URL</button>
         </div>
     </div>
 </form>

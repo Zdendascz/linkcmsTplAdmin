@@ -77,6 +77,8 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/datatables.js"></script>
 
 <script>
+    updateUrlParamsAndShowAlert('formAlertUrl');
+
     document.getElementById('handlerSelect').addEventListener('change', function () {
         document.getElementById('customHandler').style.display = this.value === 'custom' ? 'block' : 'none';
     });
@@ -105,18 +107,17 @@
                     hiddenIdField.setAttribute('type', 'hidden');
                     hiddenIdField.setAttribute('id', 'hiddenId');
                     hiddenIdField.setAttribute('name', 'id');
-                    document.querySelector('form').appendChild(hiddenIdField);
+                    document.querySelector('#addUrlForm').appendChild(hiddenIdField);
                 }
-
                 // Nastavení hodnoty skrytého pole
                 hiddenIdField.value = id;
-
                 // ... Naplňte další pole formuláře
                 document.getElementById('domainSelect').value = domain;
                 document.getElementById('url').value = url;
                 document.getElementById('handlerSelect').value = handler;
                 document.getElementById('modelSelect').value = model;
                 document.getElementById('modelId').value = modelId;
+                document.getElementById('submitId').textContent = "Upravit URL";
                 // Zabránění defaultní akci odkazu
                 return false;
             });
