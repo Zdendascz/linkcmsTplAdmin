@@ -1,0 +1,25 @@
+<form class="row g-1 align-items-center" id="permissionForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doPermissionAddOrEdit">
+    <!-- Název oprávnění -->
+    <div class="col-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="permissionName" name="name" placeholder="Název oprávnění" required>
+        </div>
+    </div>
+
+    <!-- Popis oprávnění -->
+    <div class="col-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="permissionDescription" name="description" placeholder="Popis oprávnění">
+        </div>
+    </div>
+
+    <!-- Skryté pole pro ID oprávnění (pro editaci) -->
+    <input type="hidden" id="permissionId" name="id">
+
+    <!-- Tlačítko pro odeslání formuláře -->
+    <div class="col-4">
+        <div class="input-group mb-3">
+            <button type="submit" class="btn btn-primary" id="submitPermission">Vytvořit/Editovat oprávnění</button>
+        </div>
+    </div>
+</form>

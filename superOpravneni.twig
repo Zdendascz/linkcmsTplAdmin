@@ -10,7 +10,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Správa rolí</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            {% include 'forms/roleForm.twig' %}
         </div>
         <div class="card-body">
             <h5 class="card-title">Seznam rolí</h5>
@@ -26,11 +26,56 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for row in pageData.allRolesWithPremissions %}
+                                <tr>
+                                <td scope="row">{{ row.id }}</td>
+                                <th>{{ row.name }}</th>
+                                <td>{{ row.description }}</td>
+                                <td>{{ row.premission }}
+                                {% for subRow in row.permissions %}
+                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ subRow.description }}">
+                                        {{ subRow.name }}
+                                    </button>
+                                {% endfor %}
+                                </td>
+                                </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Správa oprávnění</h5>
+            {% include 'forms/permissionForm.twig' %}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Seznam oprávnění</h5>
+            <div class="example-container">
+                <div class="example-content">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
+                                <th scope="col">#</th>
+                                <th scope="col">Název role</th>
+                                <th scope="col">Popis</th>
+                                <th scope="col">Seznam oprávnění</th>
                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in pageData.allPermissions %}
+                                <tr>
+                                <td scope="row">{{ row.id }}</td>
+                                <th>{{ row.name }}</th>
+                                <td>{{ row.description }}</td>
+                                </tr>
+                            {% endfor %}
+                            
                         </tbody>
                     </table>
                 </div>

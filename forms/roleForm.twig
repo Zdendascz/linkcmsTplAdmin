@@ -1,0 +1,35 @@
+<form class="row g-1 align-items-center" id="roleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doRoleAddOrEdit">
+    <!-- Název role -->
+    <div class="col-3">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="roleName" name="name" placeholder="Název role" required>
+        </div>
+    </div>
+
+    <!-- Popis role -->
+    <div class="col-3">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="roleDescription" name="description" placeholder="Popis role">
+        </div>
+    </div>
+
+    <!-- Oprávnění -->
+    <div class="col-6">
+        <div class="mb-3">
+            {% for permission in pageData.allPermissions %}
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="permission{{ permission.id }}" name="permissions[]" value="{{ permission.id }}">
+                    <label class="form-check-label" for="permission{{ permission.id }}">{{ permission.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Skryté pole pro ID role (pro editaci) -->
+    <input type="hidden" id="roleId" name="id">
+
+    <!-- Tlačítko pro odeslání formuláře -->
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary" id="submitRole">Vytvořit/Editovat roli</button>
+    </div>
+</form>
