@@ -80,11 +80,23 @@
     updateUrlParamsAndShowAlert('formAlertUrl');
 
     document.getElementById('handlerSelect').addEventListener('change', function () {
-        document.getElementById('customHandler').style.display = this.value === 'custom' ? 'block' : 'none';
+        var customHandlerElement = document.getElementById('customHandler');
+        var handlerSelectElement = document.getElementById('handlerSelect');
+
+        if (this.value === 'custom') {
+            customHandlerElement.style.display = 'block';
+            handlerSelectElement.className = 'input-group-text input-group-text-solid-bordered';
+        } else {
+            customHandlerElement.style.display = 'none';
+            handlerSelectElement.className = 'form-select';
+        }
+        document.getElementById('customHandler').value = document.getElementById('handlerSelect').value;
+
     });
 
     document.getElementById('modelSelect').addEventListener('change', function () {
         document.getElementById('customModel').style.display = this.value === 'custom' ? 'block' : 'none';
+        document.getElementById('customModel').value = document.getElementById('modelSelect').value;
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -116,9 +128,18 @@
                 document.getElementById('url').value = url;
                 document.getElementById('handlerSelect').value = handler;
                 document.getElementById('modelSelect').value = model;
+                document.getElementById('customHandler').value = handler;
+                document.getElementById('customModel').value = model;
                 document.getElementById('modelId').value = modelId;
                 document.getElementById('submitId').textContent = "Upravit URL";
                 // Zabránění defaultní akci odkazu
+
+                console.log("id:"+document.getElementById('domainSelect').value);
+                console.log("url:"+document.getElementById('url').value);
+                console.log("handlerSelect:"+document.getElementById('handlerSelect').value);
+                console.log("modelSelect:"+document.getElementById('modelSelect').value);
+                console.log("modelId:"+document.getElementById('modelId').value);
+
                 return false;
             });
         });
