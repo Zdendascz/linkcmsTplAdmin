@@ -28,19 +28,18 @@
                         <tbody>
                             {% for row in pageData.allRolesWithPremissions %}
                                 <tr>
-                                <td scope="row">{{ row.id }}</td>
-                                <th>{{ row.name }}</th>
-                                <td>{{ row.description }}</td>
-                                <td>{{ row.premission }}
-                                {% for subRow in row.permissions %}
-                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ subRow.description }}">
-                                        {{ subRow.name }}
-                                    </button>
-                                {% endfor %}
-                                </td>
+                                    <td scope="row" class="role-id">{{ row.id }}</td>
+                                    <th class="role-name">{{ row.name }}</th>
+                                    <td class="role-description">{{ row.description }}</td>
+                                    <td>
+                                        {% for subRow in row.permissions %}
+                                            <button type="button"  data-permission-id="{{ subRow.id }}" class="btn btn-outline-info role-permission" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ subRow.description }}">
+                                                {{ subRow.name }}
+                                            </button>
+                                        {% endfor %}
+                                    </td>
                                 </tr>
                             {% endfor %}
-                            
                         </tbody>
                     </table>
                 </div>
@@ -64,15 +63,14 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Název role</th>
                                 <th scope="col">Popis</th>
-                                <th scope="col">Seznam oprávnění</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for row in pageData.allPermissions %}
                                 <tr>
-                                <td scope="row">{{ row.id }}</td>
-                                <th>{{ row.name }}</th>
-                                <td>{{ row.description }}</td>
+                                <td scope="row" class="permission-id">{{ row.id }}</td>
+                                <td class="permission-name">{{ row.name }}</td>
+                                <td class="permission-description">{{ row.description }}</td>
                                 </tr>
                             {% endfor %}
                             
@@ -95,7 +93,67 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
 <script>
-updateUrlParamsAndShowAlert('roleForm');
-updateUrlParamsAndShowAlert('permissionForm');
+    updateUrlParamsAndShowAlert('roleForm');
+    updateUrlParamsAndShowAlert('permissionForm');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Přidání posluchače událostí pro každé ID role v tabulce
+        document.querySelectorAll('.table .role-id').forEach(function(element) {
+            element.addEventListener('click', function() {
+                var row = this.closest('tr');
+                var id = row.querySelector('.role-id').textContent.trim();
+                var name = row.querySelector('.role-name').textContent.trim();
+                var description = row.querySelector('.role-description').textContent.trim();
+                var permissionButtons = row.querySelectorAll('.role-permission');
+
+                console.log("Klik na roli: ", id, name, description); // Kontrola načtených dat o roli
+
+                // Vyplnění formuláře
+                document.getElementById('roleId').value = id;
+                document.getElementById('roleName').value = name;
+                document.getElementById('roleDescription').value = description;
+
+                // Reset všech zaškrtávacích políček pro oprávnění
+                document.querySelectorAll('#roleForm .form-check-input').forEach(function(checkbox) {
+                    checkbox.checked = false;
+                });
+
+                // Nastavení zaškrtávacích políček pro aktuální oprávnění role
+                permissionButtons.forEach(function(button) {
+                    var permissionId = button.getAttribute('data-permission-id');
+                    var checkbox = document.getElementById('permission' + permissionId);
+
+                    console.log("Oprávnění button: ", permissionId, "Checkbox: ", checkbox); // Kontrola existence checkboxu
+
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                // Změna textu tlačítka pro indikaci editace
+                document.getElementById('submitRole').textContent = 'Editovat roli';
+            });
+        });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Přidání event listeneru ke každému ID v tabulce
+        document.querySelectorAll('.table .permission-id').forEach(function(element) {
+            element.addEventListener('click', function() {
+                var id = this.textContent;
+                var name = this.closest('tr').querySelector('.permission-name').textContent;
+                var description = this.closest('tr').querySelector('.permission-description').textContent;
+
+                // Vyplnění formuláře údaji
+                document.getElementById('permissionId').value = id;
+                document.getElementById('permissionName').value = name;
+                document.getElementById('permissionDescription').value = description;
+
+                // Změna textu tlačítka pro indikaci editace
+                document.getElementById('submitPermission').textContent = 'Editovat oprávnění';
+            });
+        });
+    });
+
 </script>
 {% endblock %}
