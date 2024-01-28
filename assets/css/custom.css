@@ -27,3 +27,29 @@
 .roll-up-disappear-animation {
     animation: rollUpDisappear 0.5s forwards;
 }
+
+/* Zanoření kategorií v administraci */
+.category-indent-0 {
+    padding-left: 0;
+}
+.category-indent-1 {
+    padding-left: 5% !important;
+}
+.category-indent-2 {
+    padding-left: 10% !important;
+}
+.category-indent-3 {
+    padding-left: 15% !important;
+}
+
+.category-indent-4 {
+    padding-left: 20% !important;
+}
+
+.category-indent-5 {
+    padding-left: 22% !important;
+}
+
+.category-indent-6 {
+    padding-left: 29% !important;
+}
