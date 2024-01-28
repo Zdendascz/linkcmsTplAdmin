@@ -1,0 +1,135 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Přidat nebo Upravit Kategorii</h5>
+    </div>
+    <div class="card-body">
+        <form id="categoryForm" method="post" action="{{ domainData.SITE_WEB }}/admin/DoCatEdit">
+            <input type="hidden" name="id" value="{{ categoryInfo.id ?? '' }}">
+            <input type="hidden" name="site_id" value="{{ domainData.SITE_ID }}">
+            <input type="hidden" name="order_cat" value="{{ categoryInfo.order_cat ?? '' }}">
+
+            <!-- Název kategorie a Zobrazovaný název -->
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="title" class="form-label">Název kategorie</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ categoryInfo.title ?? '' }}">
+                </div>
+                <div class="col mb-3">
+                    <label for="displayName" class="form-label">Zobrazovaný název</label>
+                    <input type="text" class="form-control" id="displayName" name="display_name" value="{{ categoryInfo.display_name ?? '' }}">
+                </div>
+            </div>
+
+            <!-- Horní text a Dolní text -->
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="topText" class="form-label">Horní text</label>
+                    <textarea class="form-control" id="topText" name="top_text">{{ categoryInfo.top_text ?? '' }}</textarea>
+                </div>
+                <div class="col mb-3">
+                    <label for="bottomText" class="form-label">Dolní text</label>
+                    <textarea class="form-control" id="bottomText" name="bottom_text">{{ categoryInfo.bottom_text ?? '' }}</textarea>
+                </div>
+            </div>
+
+            <!-- URL a Aktivní/Neaktivní -->
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label for="urlSelect" class="form-label">Vybrat existující URL</label>
+                    <select class="form-select" id="urlSelect" name="urlSelect">
+                        <option value="">Vyberte URL...</option>
+                        {% for url in pageData.urlListToAdd %}
+                            <option value="{{ url.url }}">{{ url.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 mb-3">
+                    <label for="url" class="form-label">Vlastní URL</label>
+                    <input type="text" class="form-control" id="url" name="url" placeholder="Vlastní URL">
+                </div>
+            </div>
+
+            <!-- Nadřazená kategorie -->
+            <div class="mb-3">
+                <label for="parentCategory" class="form-label">Nadřazená kategorie</label>
+                <select class="form-select" id="parentCategory" name="parent_id">
+                    <option value="">Vytvořit novou hlavní kategorii</option>
+                    {% for cat in pageData.allCats %}
+                        {% set indentLevel = cat.pathInfo|length - 1 %}
+                        {% set indent = '' %}
+                        {% for i in 0..indentLevel %}
+                            {% set indent = indent ~ '— ' %}
+                        {% endfor %}
+                        <option value="{{ cat.categoryInfo.id }}" {% if categoryInfo.parent_id == cat.categoryInfo.id %} selected {% endif %}>{{ indent }}{{ cat.categoryInfo.title }}{{ indentLevel }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Meta Data -->
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="metaTitle" class="form-label">Meta Title</label>
+                    <input type="text" class="form-control" id="metaTitle" name="meta_title" value="{{ categoryInfo.meta.title ?? '' }}">
+
+                    <label for="metaDescription" class="form-label">Meta Description</label>
+                    <textarea class="form-control" id="metaDescription" name="meta_description">{{ categoryInfo.meta.description ?? '' }}</textarea>
+
+                    <label for="metaKeywords" class="form-label">Meta Keywords</label>
+                    <input type="text" class="form-control" id="metaKeywords" name="meta_keywords" value="{{ categoryInfo.meta.keywords ?? '' }}">
+                </div>
+            </div>
+
+            <!-- CSS Customizations -->
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="aClass" class="form-label">A Class</label>
+                    <input type="text" class="form-control" id="aClass" name="a_class" value="{{ categoryInfo.css_cat.a_class ?? '' }}">
+                    <label for="aId" class="form-label">A ID</label>
+                    <input type="text" class="form-control" id="aId" name="a_id" value="{{ categoryInfo.css_cat.a_id ?? '' }}">
+                    <label for="aStyle" class="form-label">A Style</label>
+                    <input type="text" class="form-control" id="aStyle" name="a_style" value="{{ categoryInfo.css_cat.a_style ?? '' }}">
+                </div>
+                <div class="col mb-3">
+                    <label for="liClass" class="form-label">LI Class</label>
+                    <input type="text" class="form-control" id="liClass" name="li_class" value="{{ categoryInfo.css_cat.li_class ?? '' }}">
+                    <label for="liId" class="form-label">LI ID</label>
+                    <input type="text" class="form-control" id="liId" name="li_id" value="{{ categoryInfo.css_cat.li_id ?? '' }}">
+                    <label for="liStyle" class="form-label">LI Style</label>
+                    <input type="text" class="form-control" id="liStyle" name="li_style" value="{{ categoryInfo.css_cat.li_style ?? '' }}">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Uložit změny</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlSelect = document.getElementById('urlSelect');
+    const customUrlInput = document.getElementById('url');
+    const hiddenUrlInput = document.createElement('input');
+    hiddenUrlInput.type = 'hidden';
+    hiddenUrlInput.name = 'url';
+    document.getElementById('categoryForm').appendChild(hiddenUrlInput);
+
+    urlSelect.addEventListener('change', function() {
+        if (this.value) {
+            customUrlInput.value = '';
+            customUrlInput.disabled = true;
+            hiddenUrlInput.value = this.value;
+        } else {
+            customUrlInput.disabled = false;
+            hiddenUrlInput.value = '';
+        }
+    });
+
+    customUrlInput.addEventListener('input', function() {
+        if (this.value) {
+            urlSelect.value = '';
+            hiddenUrlInput.value = this.value;
+        }
+    });
+});
+
+</script>
