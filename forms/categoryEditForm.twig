@@ -1,0 +1,80 @@
+<form id="editCategoryForm{{ category.categoryInfo.id }}" method="post" action="{{ domainData.SITE_WEB }}/admin/DoCatEdit">
+    <input type="hidden" name="id" value="{{ category.categoryInfo.id }}">
+    <input type="hidden" name="site_id" value="{{ category.categoryInfo.site_id }}">
+    <input type="hidden" name="order_cat" value="{{ category.categoryInfo.order_cat }}">
+
+    <!-- Název kategorie a Zobrazovaný název -->
+    <div class="row">
+        <div class="col mb-3">
+            <label for="title{{ category.categoryInfo.id }}" class="form-label">Název kategorie</label>
+            <input type="text" class="form-control" id="title{{ category.categoryInfo.id }}" name="title" value="{{ category.categoryInfo.title }}">
+        </div>
+        <div class="col mb-3">
+            <label for="displayName{{ category.categoryInfo.id }}" class="form-label">Zobrazovaný název</label>
+            <input type="text" class="form-control" id="displayName{{ category.categoryInfo.id }}" name="display_name" value="{{ category.categoryInfo.display_name }}">
+        </div>
+    </div>
+
+    <!-- Horní text a Dolní text -->
+    <div class="row">
+        <div class="col mb-3">
+            <label for="topText{{ category.categoryInfo.id }}" class="form-label">Horní text</label>
+            <textarea class="form-control" id="topText{{ category.categoryInfo.id }}" name="top_text">{{ category.categoryInfo.top_text }}</textarea>
+        </div>
+        <div class="col mb-3">
+            <label for="bottomText{{ category.categoryInfo.id }}" class="form-label">Dolní text</label>
+            <textarea class="form-control" id="bottomText{{ category.categoryInfo.id }}" name="bottom_text">{{ category.categoryInfo.bottom_text }}</textarea>
+        </div>
+    </div>
+
+    <!-- URL a Aktivní/Neaktivní -->
+    <div class="row">
+        <div class="col-9 mb-3">
+            <label for="url{{ category.categoryInfo.id }}" class="form-label">URL</label>
+            <input type="text" class="form-control" id="url{{ category.categoryInfo.id }}" name="url" value="{{ category.categoryInfo.url }}">
+        </div>
+        <div class="col-3 mb-3">
+            <label for="isActive{{ category.categoryInfo.id }}" class="form-label">Aktivní</label>
+            <select class="form-select" id="isActive{{ category.categoryInfo.id }}" name="is_active">
+                <option value="1" {% if category.categoryInfo.is_active == 1 %} selected {% endif %}>Ano</option>
+                <option value="0" {% if category.categoryInfo.is_active == 0 %} selected {% endif %}>Ne</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Meta Data -->
+    <div class="row">
+        <div class="col mb-3">
+            <label for="metaTitle{{ category.categoryInfo.id }}" class="form-label">Meta Title</label>
+            <input type="text" class="form-control" id="metaTitle{{ category.categoryInfo.id }}" name="meta_title" value="{{ category.categoryInfo.meta.title }}">
+
+            <label for="metaDescription{{ category.categoryInfo.id }}" class="form-label">Meta Description</label>
+            <textarea class="form-control" id="metaDescription{{ category.categoryInfo.id }}" name="meta_description">{{ category.categoryInfo.meta.description }}</textarea>
+
+            <label for="metaKeywords{{ category.categoryInfo.id }}" class="form-label">Meta Keywords</label>
+            <input type="text" class="form-control" id="metaKeywords{{ category.categoryInfo.id }}" name="meta_keywords" value="{{ category.categoryInfo.meta.keywords }}">
+        </div>
+    </div>
+
+    <!-- CSS Customizations -->
+    <div class="row">
+        <div class="col mb-3">
+            <label for="aClass{{ category.categoryInfo.id }}" class="form-label">A Class</label>
+            <input type="text" class="form-control" id="aClass{{ category.categoryInfo.id }}" name="a_class" value="{{ category.categoryInfo.css_cat.a_class }}">
+            <label for="aId{{ category.categoryInfo.id }}" class="form-label">A ID</label>
+            <input type="text" class="form-control" id="aId{{ category.categoryInfo.id }}" name="a_id" value="{{ category.categoryInfo.css_cat.a_id }}">
+            <label for="aStyle{{ category.categoryInfo.id }}" class="form-label">A Style</label>
+            <input type="text" class="form-control" id="aStyle{{ category.categoryInfo.id }}" name="a_style" value="{{ category.categoryInfo.css_cat.a_style }}">
+        </div>
+        <div class="col mb-3">
+            <label for="liClass{{ category.categoryInfo.id }}" class="form-label">LI Class</label>
+            <input type="text" class="form-control" id="liClass{{ category.categoryInfo.id }}" name="li_class" value="{{ category.categoryInfo.css_cat.li_class }}">
+            <label for="liId{{ category.categoryInfo.id }}" class="form-label">LI ID</label>
+            <input type="text" class="form-control" id="liId{{ category.categoryInfo.id }}" name="li_id" value="{{ category.categoryInfo.css_cat.li_id }}">
+            <label for="liStyle{{ category.categoryInfo.id }}" class="form-label">LI Style</label>
+            <input type="text" class="form-control" id="liStyle{{ category.categoryInfo.id }}" name="li_style" value="{{ category.categoryInfo.css_cat.li_style }}">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Uložit změny</button>
+</form>

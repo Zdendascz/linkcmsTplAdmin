@@ -29,10 +29,76 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/apexcharts/apexcharts.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
+    
 
     <script>
     updateUrlParamsAndShowAlert("accordionExample");
+
+    document.addEventListener('DOMContentLoaded', function() {
+    var containers = document.querySelectorAll('.drag-container');
+    containers.forEach(function(container) {
+        new Sortable(container, {
+            group: 'categories',
+            animation: 150,
+            onEnd: function(evt) {
+                var item = evt.item; // přesunutý element
+                var newParentContainer = item.closest('.drag-container').parentNode.closest('.drag-container');
+                var newParentId = newParentContainer ? newParentContainer.dataset.id : null; // ID rodiče nebo null pro hlavní kategorii
+                var newOrder = Array.from(item.parentNode.children).indexOf(item); // nové pořadí v rámci rodiče
+
+                // AJAX požadavek pro aktualizaci na serveru
+                updateCategoryOnServer(item.dataset.id, newParentId, newOrder);
+            }
+        });
+    });
+
+    function updateCategoryOnServer(categoryId, newParentId, newOrder) {
+        // AJAX požadavek na aktualizaci kategorie
+        console.log(`Aktualizace kategorie ${categoryId}, nový rodič: ${newParentId}, nové pořadí: ${newOrder}`);
+        // Zde doplnit kód pro AJAX požadavek
+    }
+});
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var accordion = document.getElementById('accordionExample');
+        new Sortable(accordion, {
+            group: 'shared', // Nastavte stejnou skupinu pro všechny kontejnery, mezi kterými chcete povolit D&D.
+            animation: 150, // ms, rychlost animace D&D
+            onEnd: function(evt) {
+                var item = evt.item; // přesunutý element
+                var newOrder = Array.from(accordion.children).map(function(child) { return child.dataset.id; });
+                var categoryId = evt.item.getAttribute('data-id');
+                var newLevel = calculateNewLevel(evt.item);
+                updateIndentation(categoryId, newLevel);
+
+                // Zde můžete odeslat AJAX požadavek na server s novým pořadím
+                console.log('Nové pořadí je:', newOrder);                
+            }
+        });
+    });
+
+    function calculateNewLevel(categoryElement) {
+        // Výpočet úrovně zanoření na základě dat z šablony
+        let level = categoryElement.dataset.indentLevel; // předpokládáme, že 'data-indent-level' je atribut nastavený pro každý prvek kategorie
+        return parseInt(level, 10); // Převod řetězce na číslo
+    }
+
+    function updateIndentation(categoryId, newLevel) {
+        // Najděte tlačítko akordeonu pro aktualizaci třídy odsazení
+        let button = document.querySelector('#heading' + categoryId + ' .accordion-button');
+        if (button) {
+            // Odstranění všech stávajících tříd odsazení
+            button.classList.forEach(function(className) {
+                if (className.startsWith('category-indent-')) {
+                    button.classList.remove(className);
+                }
+            });
+            // Přidání nové třídy odsazení
+            button.classList.add('category-indent-' + newLevel);
+        }
+    }
     </script>
 {% endblock %}
