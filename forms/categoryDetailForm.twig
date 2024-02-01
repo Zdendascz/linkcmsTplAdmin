@@ -1,49 +1,44 @@
-{# <div class="accordion" id="accordionExample">
-    {% for category in pageData.allCats %}
-        {% set indentLevel = category.pathInfo|length - 1 %}
-        <div class="drag-container">
-            <div class="accordion-item" data-id="{{ category.categoryInfo.id }}">
-                <h2 class="accordion-header" id="heading{{ category.categoryInfo.id }}">
-                <button class="accordion-button collapsed category-indent-{{ indentLevel }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.categoryInfo.id }}" aria-expanded="false" aria-controls="collapse{{ category.categoryInfo.id }}">
-                    {{ category.categoryInfo.title }}
-                </button>
-            </h2>
-            <div id="collapse{{ category.categoryInfo.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ category.categoryInfo.id }}" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                   {% include 'forms/categoryEditForm.twig' %} 
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div> #}
+<style>
+ul {
+    list-style: none;
+}
+ul.drag-container.top-level {
+    padding-left: 0;
+}
 
-<div class="accordion" id="accordionExample">
-    {% for category in pageData.allCats %}
-        <div class="drag-container" data-id="{{ category.categoryInfo.id }}" data-indent-level="{{ category.pathInfo|length - 1 }}">
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading{{ category.categoryInfo.id }}">
-                    <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }}"
-                            type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse{{ category.categoryInfo.id }}" aria-expanded="false"
-                            aria-controls="collapse{{ category.categoryInfo.id }}">
-                        {{ category.categoryInfo.title }}
+li{
+        border-left: 0px !important;
+        border-right: 0px !important;
+}
+
+div.accordion-body, .accordion-button{
+    border-left: 1px #E1E7ED solid !important;
+    border-right: 1px #E1E7ED solid !important;
+    border-radius: 10px;
+}
+</style>
+
+{% macro renderCategories(categories, domainData, isTopLevel = false) %}
+    <ul class="drag-container {{ isTopLevel ? 'top-level' : '' }}">
+        {% for category in categories %}
+            <li class="accordion-item" data-id="{{ category.id }}" data-indent-level="{{ category.pathInfo|length - 1 }}">
+                <div class="accordion-header" id="heading{{ category.id }}">
+                    <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
+                        {{ category.title }}
                     </button>
-                </h2>
-                <div id="collapse{{ category.categoryInfo.id }}" class="accordion-collapse collapse"
-                     aria-labelledby="heading{{ category.categoryInfo.id }}" data-bs-parent="#accordionExample">
+                </div>
+                <div id="collapse{{ category.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ category.id }}">
                     <div class="accordion-body">
-                        {% include 'forms/categoryEditForm.twig' %}
+                        {% include 'forms/categoryEditForm.twig' %} 
                     </div>
                 </div>
-            </div>
-            {% if category.children %}
-                <div class="drag-container">
-                    {% for child in category.children %}
-                        <!-- Toto je místo pro rekurzivní vložení dětských kategorií -->
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-    {% endfor %}
-</div>
+                {% if category.children|length > 0 %}
+                    {{ _self.renderCategories(category.children) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% import _self as macros %}
+{{ macros.renderCategories(pageData.allCats, domainData, true) }}

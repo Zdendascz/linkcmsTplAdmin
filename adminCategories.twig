@@ -45,9 +45,16 @@
             animation: 150,
             onEnd: function(evt) {
                 var item = evt.item; // přesunutý element
-                var newParentContainer = item.closest('.drag-container').parentNode.closest('.drag-container');
+                var newParentContainer = item.parentNode.closest('.accordion-item');
                 var newParentId = newParentContainer ? newParentContainer.dataset.id : null; // ID rodiče nebo null pro hlavní kategorii
                 var newOrder = Array.from(item.parentNode.children).indexOf(item); // nové pořadí v rámci rodiče
+
+                // Získání původních hodnot
+                var originalParentId = item.dataset.parentId;
+                var originalOrder = item.dataset.orderCat;
+                
+                console.log('Původní hodnoty: parent_id=' + originalParentId + ', order_cat=' + originalOrder); // Logování původních hodnot
+                console.log('Před aktualizací: parent_id=' + newParentId + ', order_cat=' + newOrder); // Logování před odesláním
 
                 // AJAX požadavek pro aktualizaci na serveru
                 updateCategoryOnServer(item.dataset.id, newParentId, newOrder);
@@ -56,49 +63,34 @@
     });
 
     function updateCategoryOnServer(categoryId, newParentId, newOrder) {
-        // AJAX požadavek na aktualizaci kategorie
-        console.log(`Aktualizace kategorie ${categoryId}, nový rodič: ${newParentId}, nové pořadí: ${newOrder}`);
-        // Zde doplnit kód pro AJAX požadavek
+        var data = {
+            id: categoryId,
+            parent_id: newParentId,
+            order_cat: newOrder
+        };
+        console.log(data);
+        fetch('{{ domainData.SITE_WEB }}/admin/DoCatHierarchy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Po úspěšné aktualizaci:', data); // Logování po odpovědi
+        })
+        .catch((error) => {
+            console.error('Chyba při aktualizaci:', error);
+        });
     }
 });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var accordion = document.getElementById('accordionExample');
-        new Sortable(accordion, {
-            group: 'shared', // Nastavte stejnou skupinu pro všechny kontejnery, mezi kterými chcete povolit D&D.
-            animation: 150, // ms, rychlost animace D&D
-            onEnd: function(evt) {
-                var item = evt.item; // přesunutý element
-                var newOrder = Array.from(accordion.children).map(function(child) { return child.dataset.id; });
-                var categoryId = evt.item.getAttribute('data-id');
-                var newLevel = calculateNewLevel(evt.item);
-                updateIndentation(categoryId, newLevel);
-
-                // Zde můžete odeslat AJAX požadavek na server s novým pořadím
-                console.log('Nové pořadí je:', newOrder);                
-            }
-        });
-    });
-
-    function calculateNewLevel(categoryElement) {
-        // Výpočet úrovně zanoření na základě dat z šablony
-        let level = categoryElement.dataset.indentLevel; // předpokládáme, že 'data-indent-level' je atribut nastavený pro každý prvek kategorie
-        return parseInt(level, 10); // Převod řetězce na číslo
-    }
-
-    function updateIndentation(categoryId, newLevel) {
-        // Najděte tlačítko akordeonu pro aktualizaci třídy odsazení
-        let button = document.querySelector('#heading' + categoryId + ' .accordion-button');
-        if (button) {
-            // Odstranění všech stávajících tříd odsazení
-            button.classList.forEach(function(className) {
-                if (className.startsWith('category-indent-')) {
-                    button.classList.remove(className);
-                }
-            });
-            // Přidání nové třídy odsazení
-            button.classList.add('category-indent-' + newLevel);
-        }
-    }
+  
     </script>
 {% endblock %}
