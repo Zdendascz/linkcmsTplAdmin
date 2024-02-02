@@ -1,6 +1,21 @@
+{% macro renderCategoryOptions(categories, indent = 0) %}
+    {% for category in categories %}
+        {% set padding = '' %}
+        {% for i in range(0, indent) %}
+            {% set padding = padding ~ '— ' %}
+        {% endfor %}
+        <option value="{{ category.id }}" {% if categoryInfo.parent_id == category.id %}selected{% endif %}>
+            {{ padding }}{{ category.title }}
+        </option>
+        {% if category.children|length > 0 %}
+            {{ _self.renderCategoryOptions(category.children, indent + 1) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">Přidat nebo Upravit Kategorii</h5>
+        <h5 class="card-title">Přidat kategorii</h5>
     </div>
     <div class="card-body">
         <form id="categoryForm" method="post" action="{{ domainData.SITE_WEB }}/admin/DoCatEdit">
@@ -49,19 +64,14 @@
                 </div>
             </div>
 
+            {% import _self as macros %}
+
             <!-- Nadřazená kategorie -->
             <div class="mb-3">
                 <label for="parentCategory" class="form-label">Nadřazená kategorie</label>
                 <select class="form-select" id="parentCategory" name="parent_id">
                     <option value="">Vytvořit novou hlavní kategorii</option>
-                    {% for cat in pageData.allCats %}
-                        {% set indentLevel = cat.pathInfo|length - 1 %}
-                        {% set indent = '' %}
-                        {% for i in 0..indentLevel %}
-                            {% set indent = indent ~ '— ' %}
-                        {% endfor %}
-                        <option value="{{ cat.categoryInfo.id }}" {% if categoryInfo.parent_id == cat.categoryInfo.id %} selected {% endif %}>{{ indent }}{{ cat.categoryInfo.title }}{{ indentLevel }}</option>
-                    {% endfor %}
+                    {{ macros.renderCategoryOptions(pageData.allCats) }}
                 </select>
             </div>
 
