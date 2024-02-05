@@ -1,0 +1,62 @@
+{% extends 'layout.twig' %}
+
+{% block titulek %}Vytvoření postu{% endblock %}
+{% block nadpis %}Vytvoření postu{% endblock %}
+{% block podNadpis %}Může se jednat o samostatný příspěvek nebo celou jednu obsahovou stránku.{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    {% include 'forms/addArticleForm.twig' %}
+</div>
+{% endblock %}
+{% block jsLinks %}
+    <!-- Javascripts -->
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/jquery/jquery-3.5.1.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/apexcharts/apexcharts.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('categorySelect');
+    const selectedCategoriesDiv = document.getElementById('selectedCategories');
+
+    categorySelect.addEventListener('change', function() {
+        const categoryId = this.value;
+        const categoryText = this.options[this.selectedIndex].text;
+
+        // Kontrola, zda již kategorie byla vybrána
+        if (categoryId && !document.getElementById('categoryTag' + categoryId)) {
+            const categoryTag = document.createElement('span');
+            categoryTag.id = 'categoryTag' + categoryId;
+            categoryTag.classList.add('category-tag');
+            categoryTag.innerHTML = categoryText + ' <button type="button" onclick="removeCategory(' + categoryId + ')">&times;</button>';
+
+            // Přidání skrytého inputu pro každou vybranou kategorii
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'categories[]';
+            input.value = categoryId;
+            categoryTag.appendChild(input);
+
+            selectedCategoriesDiv.appendChild(categoryTag);
+
+            // Resetování výběru select elementu
+            this.value = '';
+        }
+    });
+});
+
+function removeCategory(categoryId) {
+    const categoryTag = document.getElementById('categoryTag' + categoryId);
+    if (categoryTag) {
+        categoryTag.remove();
+    }
+}
+
+</script>
+{% endblock %}

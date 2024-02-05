@@ -1,0 +1,117 @@
+{% macro renderCategoryOptions(categories, path) %}
+    {% import _self as self %}
+    {% for category in categories %}
+        <option value="{{ category.id }}">
+            {{ path }}{{ category.title }}
+        </option>
+        {% if category.children|length > 0 %}
+            {% set newPath = path ~ category.title ~ ' / ' %}
+            {{ self.renderCategoryOptions(category.children, newPath) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+<style>
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+    background-color: #e9ecef;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.category-tag button {
+    margin-left: 5px;
+    border: none;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 0;
+    padding: 0 5px;
+}
+</style>
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Přidat příspěvek</h5>
+    </div>
+    <div class="card-body">
+        <form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
+            <!-- Název článku -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Název článku</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+
+            <!-- Tělo článku -->
+            <div class="mb-3">
+                <label for="body" class="form-label">Tělo článku</label>
+                <textarea class="form-control" id="body" name="body" required></textarea>
+            </div>
+
+            <!-- Výběr kategorií -->
+            <div class="mb-3">
+                <label for="categorySelect" class="form-label">Vyberte kategorie:</label>
+                {% import _self as macros %}
+                <select class="form-select" id="categorySelect" name="categories[]" multiple>
+                    <option value="">Vyberte kategorii...</option>
+                    {{ macros.renderCategoryOptions(pageData.allCats, '') }}
+                </select>
+                <div id="selectedCategories" class="mt-3"></div>
+            </div>
+
+            <!-- Podnázev -->
+            <div class="mb-3">
+                <label for="subtitle" class="form-label">Podnázev</label>
+                <input type="text" class="form-control" id="subtitle" name="subtitle">
+            </div>
+
+            <!-- Snippet -->
+            <div class="mb-3">
+                <label for="snippet" class="form-label">Snippet</label>
+                <textarea class="form-control" id="snippet" name="snippet"></textarea>
+            </div>
+
+            <!-- Krátký text -->
+            <div class="mb-3">
+                <label for="short_text" class="form-label">Krátký text</label>
+                <input type="text" class="form-control" id="short_text" name="short_text">
+            </div>
+
+            <!-- Skryté ID uživatele -->
+            <input type="hidden" name="author_id" id="author_id" value="{{ userId }}">
+
+            <!-- Stav článku -->
+            <div class="mb-3">
+                <label for="status" class="form-label">Stav</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="development">Ve vývoji</option>
+                    <option value="active">Aktivní</option>
+                    <option value="suspend">Pozastaveno</option>
+                </select>
+            </div>
+
+            <!-- Meta Title -->
+            <div class="mb-3">
+                <label for="metaTitle" class="form-label">Meta Title</label>
+                <input type="text" class="form-control" id="metaTitle" name="meta[title]">
+            </div>
+
+            <!-- Meta Description -->
+            <div class="mb-3">
+                <label for="metaDescription" class="form-label">Meta Description</label>
+                <textarea class="form-control" id="metaDescription" name="meta[description]"></textarea>
+            </div>
+
+            <!-- Meta Keywords -->
+            <div class="mb-3">
+                <label for="metaKeywords" class="form-label">Meta Keywords</label>
+                <input type="text" class="form-control" id="metaKeywords" name="meta[keywords]">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Uložit příspěvek</button>
+        </form>
+    </div>
+</div>
