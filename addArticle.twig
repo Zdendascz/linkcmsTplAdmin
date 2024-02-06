@@ -25,38 +25,77 @@ document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('categorySelect');
     const selectedCategoriesDiv = document.getElementById('selectedCategories');
 
+    // Funkce pro odstranění kategorie
+    window.removeCategory = function(categoryId) {
+        const categoryTag = document.getElementById('categoryTag' + categoryId);
+        if (categoryTag) {
+            categoryTag.remove();
+        }
+    };
+
+    // Inicializace již vybraných kategorií
+    const selectedOptions = categorySelect.selectedOptions;
+    for (let option of selectedOptions) {
+        createCategoryTag(option.value, option.text);
+    }
+
+    // Přidání nově vybraných kategorií
     categorySelect.addEventListener('change', function() {
         const categoryId = this.value;
         const categoryText = this.options[this.selectedIndex].text;
+        createCategoryTag(categoryId, categoryText);
+        this.value = ''; // Resetování výběru
+    });
 
-        // Kontrola, zda již kategorie byla vybrána
-        if (categoryId && !document.getElementById('categoryTag' + categoryId)) {
+    // Funkce pro vytvoření tagu kategorie
+    function createCategoryTag(categoryId, categoryText) {
+        if (!document.getElementById('categoryTag' + categoryId)) {
             const categoryTag = document.createElement('span');
             categoryTag.id = 'categoryTag' + categoryId;
             categoryTag.classList.add('category-tag');
             categoryTag.innerHTML = categoryText + ' <button type="button" onclick="removeCategory(' + categoryId + ')">&times;</button>';
 
-            // Přidání skrytého inputu pro každou vybranou kategorii
+            selectedCategoriesDiv.appendChild(categoryTag);
+
+            // Přidání skrytého inputu
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'categories[]';
             input.value = categoryId;
             categoryTag.appendChild(input);
-
-            selectedCategoriesDiv.appendChild(categoryTag);
-
-            // Resetování výběru select elementu
-            this.value = '';
         }
-    });
+    }
 });
 
-function removeCategory(categoryId) {
-    const categoryTag = document.getElementById('categoryTag' + categoryId);
-    if (categoryTag) {
-        categoryTag.remove();
-    }
-}
+document.addEventListener('DOMContentLoaded', function() {
+    // Předpokládáme, že máme pole vybraných kategorií v JavaScriptu,
+    // například získané z PHP proměnné 'pageData.article.categories'
+    // Toto pole bude muset být převedeno do JavaScriptu, například pomocí inline scriptu nebo jiné metody.
+    const selectedCategories = {{ pageData.article.categories|json_encode|raw }};
+    // Funkce pro přidání tagu kategorie
+    const addCategoryTag = (categoryId, categoryText) => {
+        if (!document.getElementById('categoryTag' + categoryId)) {
+            const categoryTag = document.createElement('span');
+            categoryTag.id = 'categoryTag' + categoryId;
+            categoryTag.classList.add('category-tag');
+            categoryTag.innerHTML = categoryText + ' <button type="button" onclick="removeCategory(' + categoryId + ')">&times;</button>';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'categories[]';
+            input.value = categoryId;
+            categoryTag.appendChild(input);
+            document.getElementById('selectedCategories').appendChild(categoryTag);
+        }
+    };
+
+    // Projdeme pole vybraných kategorií a pro každou vytvoříme tag
+    selectedCategories.forEach(category => {
+        addCategoryTag(category.id, category.name);
+    });
+
+    // Zde může pokračovat zbytek vašeho stávajícího kódu pro zpracování výběru nových kategorií...
+});
 
 </script>
 {% endblock %}
