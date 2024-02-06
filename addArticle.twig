@@ -1,8 +1,14 @@
 {% extends 'layout.twig' %}
+{% block headLinks %}
+<!-- Přidání Quill CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-{% block titulek %}Vytvoření postu{% endblock %}
-{% block nadpis %}Vytvoření postu{% endblock %}
-{% block podNadpis %}Může se jednat o samostatný příspěvek nebo celou jednu obsahovou stránku.{% endblock %}
+<!-- Přidání Quill JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+{% endblock %}
+
+{% block titulek %}Editor stránky{% endblock %}
+{% block nadpis %}Editor stránky{% endblock %}
 
 
 {% block content %}
@@ -95,6 +101,74 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Zde může pokračovat zbytek vašeho stávajícího kódu pro zpracování výběru nových kategorií...
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        ['blockquote','image'],
+
+        
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        [{ 'direction': 'rtl' }],                         // text direction
+        
+        [{ 'header': [2, 3, 4, 5, 6, false] }],
+
+        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+
+        ['clean'],                                        // remove formatting button
+        ['code-block']                                    // Příklad přidání tlačítka pro blok kódu
+    ];
+    
+    var quill = new Quill('#editor', {
+        debug: 'info',
+        theme: 'snow', // nebo 'bubble'
+        modules: {
+            toolbar: toolbarOptions
+        },
+        history: {
+            delay: 2000,
+            maxStack: 500,
+            userOnly: false
+        },
+        imageUploader: {
+            upload: file => {
+                // Zde musíte implementovat logiku nahrávání obrázků
+                // Následující kód je pouze ilustrativní
+                return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                fetch('/path-to-your-image-upload-endpoint', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(result => {
+                    resolve(result.path); // URL nahraného obrázku
+                })
+                .catch(error => {
+                    reject("Upload failed");
+                });
+                });
+            }
+        }
+    });
+
+    quill.on('text-change', function() {
+        // Aktualizace skrytého textarea s hodnotou z Quill editoru
+        document.querySelector('#body').value = quill.root.innerHTML;
+    });
+
+    // Nastavení obsahu Quill editoru na základě skrytého textarea (pokud je editace článku)
+    var bodyContent = document.querySelector('#body').value;
+    if(bodyContent) {
+        quill.root.innerHTML = bodyContent;
+    }
 });
 
 </script>

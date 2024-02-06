@@ -32,30 +32,59 @@
     line-height: 0;
     padding: 0 5px;
 }
+
+.ql-editor {
+    min-height: 700px; /* Minimální výška */
+    max-height: 1500px; /* Maximální výška */
+    overflow-y: auto; /* Povolí posouvání, pokud je obsah delší */
+}
 </style>
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Přidat příspěvek</h5>
-    </div>
-    <div class="card-body">
-        <form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
+<form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Obsah stránky</h5>
+        </div>
+        <div class="card-body">
+        
             <!-- Skryté ID článku -->
-            <input type="text" class="form-control" id="id" name="id" value="{{ pageData.article.id|default('') }}" />
+            <input type="hidden" class="form-control" id="id" name="id" value="{{ pageData.article.id|default('') }}" />
 
             <!-- Skryté ID uživatele -->
-            <input type="text" class="form-control" id="user_id" name="user_id" value="{{ pageData.article.user_id|default(userData.uid) }}" />
+            <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ pageData.article.user_id|default(userData.uid) }}" />
 
             <!-- Název článku -->
             <div class="mb-3">
                 <label for="title" class="form-label">Název článku</label>
                 <input type="text" class="form-control" id="title" name="title" value="{{ pageData.article.title|default('') }}" required>
             </div>
-
             <!-- Tělo článku -->
             <div class="mb-3">
                 <label for="body" class="form-label">Tělo článku</label>
-                <textarea class="form-control" id="body" name="body" required>{{ pageData.article.body|default('') }}</textarea>
+                <!-- Toto bude nahrazeno Quill editorem -->
+                <div id="editor">
+                    {{ pageData.article.body|default('')|raw }}
+                </div>
+                <!-- Skryté textarea pro uchování hodnoty z Quill editoru -->
+                <textarea class="form-control" id="body" name="body" required style="display:none;"></textarea>
+                
+
             </div>
+            <!-- Stav článku -->
+            <div class="mb-3">
+                <label for="status" class="form-label">Stav</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>Ve vývoji</option>
+                    <option value="active" {% if pageData.article.status == 'active' %}selected{% endif %}>Aktivní</option>
+                    <option value="suspend" {% if pageData.article.status == 'suspend' %}selected{% endif %}>Pozastaveno</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Podrobnosti</h5>
+        </div>
+        <div class="card-body">
 
             <!-- Výběr kategorií -->
             <div class="mb-3">
@@ -87,15 +116,6 @@
                 <input type="text" class="form-control" id="short_text" name="short_text" value="{{ pageData.article.short_text|default('') }}">
             </div>
 
-            <!-- Stav článku -->
-            <div class="mb-3">
-                <label for="status" class="form-label">Stav</label>
-                <select class="form-select" id="status" name="status" required>
-                    <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>Ve vývoji</option>
-                    <option value="active" {% if pageData.article.status == 'active' %}selected{% endif %}>Aktivní</option>
-                    <option value="suspend" {% if pageData.article.status == 'suspend' %}selected{% endif %}>Pozastaveno</option>
-                </select>
-            </div>
 
             <!-- Meta Title -->
             <div class="mb-3">
@@ -116,6 +136,6 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Uložit příspěvek</button>
-        </form>
+        </div>
     </div>
-</div>
+</form>
