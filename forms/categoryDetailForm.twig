@@ -18,7 +18,7 @@ div.accordion-body, .accordion-button{
 }
 </style>
 
-{% macro renderCategories(categories, domainData, isTopLevel = false) %}
+{% macro renderCategories(categories, domainData, pageData, isTopLevel = false) %}
     <ul class="drag-container {{ isTopLevel ? 'top-level' : '' }}">
         {% for category in categories %}
             <li class="accordion-item" data-id="{{ category.id }}" data-indent-level="{{ category.pathInfo|length - 1 }}">
@@ -41,4 +41,4 @@ div.accordion-body, .accordion-button{
 {% endmacro %}
 
 {% import _self as macros %}
-{{ macros.renderCategories(pageData.allCats, domainData, true) }}
+{{ macros.renderCategories(pageData.allCats, domainData, pageData, true) }}

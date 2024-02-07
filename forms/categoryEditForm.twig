@@ -29,19 +29,35 @@
     </div>
 
     <!-- URL a Aktivní/Neaktivní -->
-    <div class="row">
-        <div class="col-9 mb-3">
-            <label for="url{{ category.id }}" class="form-label">URL</label>
-            <input type="text" class="form-control" id="url{{ category.id }}" name="url" value="{{ category.url|default('') }}">
-        </div>
-        <div class="col-3 mb-3">
-            <label for="isActive{{ category.id }}" class="form-label">Aktivní</label>
-            <select class="form-select" id="isActive{{ category.id }}" name="is_active">
-                <option value="1" {% if category.is_active == 1 %} selected {% endif %}>Ano</option>
-                <option value="0" {% if category.is_active == 0 %} selected {% endif %}>Ne</option>
-            </select>
-        </div>
+<div class="row">
+    <div class="col-6 mb-3">
+        <label for="urlSelect{{ category.id }}" class="form-label">Vybrat existující URL</label>
+        <select class="form-select" id="urlSelect{{ category.id }}" name="url">
+            <option value="">Vyberte URL...</option>
+            {% for url in pageData.urlListToAdd %}
+                <option value="{{ url.url }}" {% if url.url == category.url %} selected {% endif %}>{{ url.title }}</option>
+            {% endfor %}
+        </select>
     </div>
+    <div class="col-6 mb-3">
+        <label for="url{{ category.id }}" class="form-label">Vlastní URL</label>
+        <input type="text" class="form-control" id="url{{ category.id }}" name="url_manual" placeholder="Vlastní URL" value="{{ category.url }}" {% if category.url != '' %} readonly {% endif %}>
+    </div>
+</div>
+
+
+    <!-- URL a Aktivní/Neaktivní -->
+<div class="row">
+    <div class="col-3 mb-3">
+        <label for="isActive{{ category.id }}" class="form-label">Aktivní</label>
+        <select class="form-select" id="isActive{{ category.id }}" name="is_active">
+            <option value="1" {% if category.is_active == 1 %} selected {% endif %}>Ano</option>
+            <option value="0" {% if category.is_active == 0 %} selected {% endif %}>Ne</option>
+        </select>
+    </div>
+</div>
+
+
 
     <!-- Meta Data -->
     <div class="row">
@@ -79,3 +95,16 @@
 
     <button type="submit" class="btn btn-primary">Uložit změny</button>
 </form>
+
+<script>
+    document.getElementById('urlSelect{{ category.id }}').addEventListener('change', function() {
+        var input = document.getElementById('url{{ category.id }}');
+        var selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value === '') {
+            input.removeAttribute('readonly');
+        } else {
+            input.value = selectedOption.value;
+            input.setAttribute('readonly', true);
+        }
+    });
+</script>
