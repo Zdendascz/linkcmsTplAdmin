@@ -73,9 +73,9 @@
             <div class="mb-3">
                 <label for="status" class="form-label">Stav</label>
                 <select class="form-select" id="status" name="status" required>
-                    <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>Ve vývoji</option>
+                    <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>V přípravě</option>
                     <option value="active" {% if pageData.article.status == 'active' %}selected{% endif %}>Aktivní</option>
-                    <option value="suspend" {% if pageData.article.status == 'suspend' %}selected{% endif %}>Pozastaveno</option>
+                    <option value="suspend" {% if pageData.article.status == 'suspend' %}selected{% endif %}>Zrušen</option>
                 </select>
             </div>
         </div>
