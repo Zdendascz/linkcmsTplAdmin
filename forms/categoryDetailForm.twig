@@ -16,6 +16,15 @@ div.accordion-body, .accordion-button{
     border-right: 1px #E1E7ED solid !important;
     border-radius: 10px;
 }
+
+.suspend{
+    text-decoration: line-through;
+    color: #999;
+}
+.active{
+    color: green;
+    font-weight: bold;
+}
 </style>
 
 {% macro renderCategories(categories, domainData, pageData, isTopLevel = false) %}
@@ -23,7 +32,7 @@ div.accordion-body, .accordion-button{
         {% for category in categories %}
             <li class="accordion-item" data-id="{{ category.id }}" data-indent-level="{{ category.pathInfo|length - 1 }}">
                 <div class="accordion-header" id="heading{{ category.id }}">
-                    <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
+                    <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }} {{ category.is_active }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
                         {{ category.title }}
                     </button>
                 </div>
