@@ -39,7 +39,7 @@
                                 <td><a href="https://{{ row.domain }}{{ row.url }}" target="_blank">{{ row.url }}</a></td>
                                 <td>{{ row.handler }}</td>
                                 <td>{{ row.model }}</td>
-                                <td>{{ row.model_id }}</td>
+                                <td>{{ row.content_title ? row.content_title : row.model_id }}</td>
                             </tr>
                         {% else %}
                             <tr>
