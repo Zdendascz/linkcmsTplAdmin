@@ -52,31 +52,38 @@
             <!-- Skryté ID uživatele -->
             <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ pageData.article.user_id|default(userData.uid) }}" />
 
-            <!-- Název článku -->
-            <div class="mb-3">
-                <label for="title" class="form-label">Název článku</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ pageData.article.title|default('') }}" required>
+            <!-- Název článku a výběr druhu obsahu -->
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <label for="title" class="form-label">Název článku</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ pageData.article.title|default('') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Stav</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>V přípravě</option>
+                        <option value="active" {% if pageData.article.status == 'active' %}selected{% endif %}>Aktivní</option>
+                        <option value="suspend" {% if pageData.article.status == 'suspend' %}selected{% endif %}>Zrušen</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="content_type" class="form-label">Druh obsahu</label>
+                    <select class="form-select" id="content_type" name="meta[content_typ]" required>
+                        <option value="article" {% if pageData.article.meta.content_typ == 'article' %}selected{% endif %}>Článek</option>
+                        <option value="source" {% if pageData.article.meta.content_typ == 'source' %}selected{% endif %}>Zdrojový kód</option>
+                    </select>
+                </div>
             </div>
+
             <!-- Tělo článku -->
             <div class="mb-3">
                 <label for="body" class="form-label">Tělo článku</label>
-                <!-- Toto bude nahrazeno Quill editorem -->
-                <div id="editor">
-                    {{ pageData.article.body|default('')|raw }}
-                </div>
-                <!-- Skryté textarea pro uchování hodnoty z Quill editoru -->
-                <textarea class="form-control" id="body" name="body" style="display:none;">{{ pageData.article.body|default('')|raw }}</textarea>
-                
-
-            </div>
-            <!-- Stav článku -->
-            <div class="mb-3">
-                <label for="status" class="form-label">Stav</label>
-                <select class="form-select" id="status" name="status" required>
-                    <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>V přípravě</option>
-                    <option value="active" {% if pageData.article.status == 'active' %}selected{% endif %}>Aktivní</option>
-                    <option value="suspend" {% if pageData.article.status == 'suspend' %}selected{% endif %}>Zrušen</option>
-                </select>
+                <!-- Kontejner pro Quill Editor -->
+                <div id="editor" style="display: none;"></div>
+                <!-- Kontejner pro Ace Editor -->
+                <div id="codeEditor" style="height: 500px; width: 100%; display: none;"></div>
+                <!-- Skryté textarea pro uchování hodnoty z editorů -->
+                <textarea class="form-control" id="body" name="body" style="display:;">{{ pageData.article.body }}</textarea>
             </div>
         </div>
     </div>

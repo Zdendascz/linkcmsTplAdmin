@@ -2,9 +2,10 @@
 {% block headLinks %}
 <!-- Přidání Quill CSS -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
 <!-- Přidání Quill JS -->
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<!-- Ace Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 {% endblock %}
 
 {% block titulek %}Editor stránky{% endblock %}
@@ -104,72 +105,64 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    var toolbarOptions = [
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        ['blockquote','image'],
-
-        
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-        [{ 'direction': 'rtl' }],                         // text direction
-        
-        [{ 'header': [2, 3, 4, 5, 6, false] }],
-
-        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-        [{ 'font': [] }],
-        [{ 'align': [] }],
-
-        ['clean'],                                        // remove formatting button
-        ['code-block']                                    // Příklad přidání tlačítka pro blok kódu
-    ];
-    
     var quill = new Quill('#editor', {
-        debug: 'info',
-        theme: 'snow', // nebo 'bubble'
-        modules: {
-            toolbar: toolbarOptions
-        },
-        history: {
-            delay: 2000,
-            maxStack: 500,
-            userOnly: false
-        },
-        imageUploader: {
-            upload: file => {
-                // Zde musíte implementovat logiku nahrávání obrázků
-                // Následující kód je pouze ilustrativní
-                return new Promise((resolve, reject) => {
-                const formData = new FormData();
-                formData.append('image', file);
+        theme: 'snow'
+    });
 
-                fetch('/path-to-your-image-upload-endpoint', {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(result => {
-                    resolve(result.path); // URL nahraného obrázku
-                })
-                .catch(error => {
-                    reject("Upload failed");
-                });
-                });
-            }
+    var aceEditor = ace.edit("codeEditor");
+    aceEditor.setTheme("ace/theme/monokai");
+    aceEditor.session.setMode("ace/mode/javascript");
+
+    const contentTypeSelect = document.getElementById('content_type');
+    const quillEditorContainer = document.getElementById('editor');
+    const codeEditorContainer = document.getElementById('codeEditor');
+    const bodyTextArea = document.getElementById('body');
+
+    // Aktualizace obsahu textarea podle aktuálního editoru
+    function updateTextarea() {
+        if (contentTypeSelect.value === 'article') {
+            bodyTextArea.value = quill.root.innerHTML;
+        } else {
+            bodyTextArea.value = aceEditor.getValue();
+        }
+    }
+
+    // Listener pro změny v Quill editoru
+    quill.on('text-change', function() {
+        if (contentTypeSelect.value === 'article') {
+            updateTextarea();
         }
     });
 
-    quill.on('text-change', function() {
-        // Aktualizace skrytého textarea s hodnotou z Quill editoru
-        document.querySelector('#body').value = quill.root.innerHTML;
+    // Listener pro změny v Ace editoru
+    aceEditor.getSession().on('change', function() {
+        if (contentTypeSelect.value === 'source') {
+            updateTextarea();
+        }
     });
 
-    // Nastavení obsahu Quill editoru na základě skrytého textarea (pokud je editace článku)
-    var bodyContent = document.querySelector('#body').value;
-    if(bodyContent) {
-        quill.root.innerHTML = bodyContent;
+    // Funkce pro přepínání editorů a aktualizaci obsahu
+    function updateEditor() {
+        if (contentTypeSelect.value === 'article') {
+            quillEditorContainer.style.display = 'block';
+            codeEditorContainer.style.display = 'none';
+            quill.root.innerHTML = bodyTextArea.value;
+        } else {
+            quillEditorContainer.style.display = 'none';
+            codeEditorContainer.style.display = 'block';
+            aceEditor.setValue(bodyTextArea.value);
+        }
+        updateTextarea(); // Aktualizace obsahu textarea při změně
     }
+
+    // Listener pro výběr typu obsahu
+    contentTypeSelect.addEventListener('change', updateEditor);
+
+    // Inicializace editorů při načtení stránky
+    updateEditor();
 });
+
+
 
 </script>
 {% endblock %}
