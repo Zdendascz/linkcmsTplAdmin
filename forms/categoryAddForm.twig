@@ -51,7 +51,7 @@
             <div class="row">
                 <div class="col-6 mb-3">
                     <label for="urlSelect" class="form-label">Vybrat existující URL</label>
-                    <select class="form-select" id="urlSelect" name="urlSelect">
+                    <select class="form-select" id="urlSelect" name="url">
                         <option value="">Vyberte URL...</option>
                         {% for url in pageData.urlListToAdd %}
                             <option value="{{ url.url }}">{{ url.title }}</option>
@@ -59,8 +59,8 @@
                     </select>
                 </div>
                 <div class="col-6 mb-3">
-                    <label for="url" class="form-label">Vlastní URL</label>
-                    <input type="text" class="form-control" id="url" name="url" placeholder="Vlastní URL">
+                    <label for="url_manual" class="form-label">Vlastní URL</label>
+                    <input type="text" class="form-control" id="url_manual" name="url_manual" placeholder="Vlastní URL">
                 </div>
             </div>
 
@@ -115,31 +115,25 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const urlSelect = document.getElementById('urlSelect');
-    const customUrlInput = document.getElementById('url');
-    const hiddenUrlInput = document.createElement('input');
-    hiddenUrlInput.type = 'hidden';
-    hiddenUrlInput.name = 'url';
-    document.getElementById('categoryForm').appendChild(hiddenUrlInput);
+document.addEventListener("DOMContentLoaded", function() {
+    var urlSelect = document.getElementById('urlSelect');
+    var urlManualInput = document.getElementById('url_manual');
 
-    urlSelect.addEventListener('change', function() {
-        if (this.value) {
-            customUrlInput.value = '';
-            customUrlInput.disabled = true;
-            hiddenUrlInput.value = this.value;
+    // Funkce pro aktualizaci stavu inputu
+    function updateUrlManualInput() {
+        if (urlSelect.value === "") {
+            urlManualInput.readOnly = false;
+            urlManualInput.value = ''; // Případně můžete ponechat hodnotu, kterou uživatel zadal
         } else {
-            customUrlInput.disabled = false;
-            hiddenUrlInput.value = '';
+            urlManualInput.readOnly = true;
+            urlManualInput.value = urlSelect.value;
         }
-    });
+    }
 
-    customUrlInput.addEventListener('input', function() {
-        if (this.value) {
-            urlSelect.value = '';
-            hiddenUrlInput.value = this.value;
-        }
-    });
+    // Při načtení stránky zkontrolujte a nastavte stav inputu
+    updateUrlManualInput();
+
+    // Při změně hodnoty selectu aktualizujte input
+    urlSelect.addEventListener('change', updateUrlManualInput);
 });
-
 </script>
