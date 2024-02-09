@@ -1,4 +1,3 @@
-// Here goes your custom javascript
 function updateUrlParamsAndShowAlert(elementId) {
     var currentUrl = new URL(window.location.href);
     var status = currentUrl.searchParams.get('status');
@@ -21,25 +20,29 @@ function updateUrlParamsAndShowAlert(elementId) {
     } else if (status === 'error' || status === 'false') {
         alertClass = 'alert alert-custom alert-indicator-left indicator-danger';
         alertTitle = 'Chybička se vloudila!';
-        delay = 3000; // zmizí po 3 sekundách
+        delay = 4000; // zmizí po 3 sekundách
     } else {
         return; // Neznámý status
     }
 
-    // Získání elementu a nastavení třídy a obsahu
+    // Získání elementu
     var element = document.getElementById(elementId);
     if (element) {
-        element.className += ' ' + alertClass;
-        var alertContent = '<div class="alert-content">' +
+        var alertContent = '<div class="' + alertClass + '">' +
+                            '<div class="alert-content">' +
                             '<span class="alert-title">' + alertTitle + '</span>' +
                             '<span class="alert-text">' + decodeURIComponent(message) + '</span>' +
-                            '</div>';
-        element.innerHTML = alertContent + element.innerHTML;
+                            '</div></div>';
 
-        // Odstranění třídy a obsahu po určitém čase
+        // Vložení alertu jako prvního potomka elementu
+        element.insertAdjacentHTML('afterbegin', alertContent);
+
+        // Odstranění alertu po určitém čase
         setTimeout(function() {
-            element.className = element.className.replace(alertClass, '');
-            element.innerHTML = element.innerHTML.replace(alertContent, '');
+            var alertElement = element.querySelector('.' + alertClass.replace(/ /g, '.'));
+            if (alertElement) {
+                alertElement.remove();
+            }
         }, delay);
     }
 }

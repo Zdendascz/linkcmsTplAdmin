@@ -28,6 +28,8 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
 <script>
+updateUrlParamsAndShowAlert('articleForm');
+
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('categorySelect');
     const selectedCategoriesDiv = document.getElementById('selectedCategories');

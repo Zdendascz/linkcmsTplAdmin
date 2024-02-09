@@ -35,7 +35,10 @@
     
 
     <script>
-    updateUrlParamsAndShowAlert("accordionExample");
+    updateUrlParamsAndShowAlert("categoryForm");
+    {% for category in categories %}
+    updateUrlParamsAndShowAlert("editCategoryForm{{ category.id }}");
+    {% endfor %}
 
     document.addEventListener('DOMContentLoaded', function() {
     var containers = document.querySelectorAll('.drag-container');
