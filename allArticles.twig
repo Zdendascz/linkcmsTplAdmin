@@ -35,9 +35,9 @@
                 <tr>
                     <td>{{ article.id }}</td>
                     {% if article.meta.content_typ == 'article' %}
-                    <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}"><strong>{{ article.title }}</strong>A</a></td>
+                    <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}"><strong>{{ article.title }}</strong></a></td>
                     {% else %}
-                    <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}"><strong>{{ article.title }}</strong>P</a></td>
+                    <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}"><strong>{{ article.title }}</strong></a></td>
                     {% endif %}
                     {% if article.meta.content_typ == 'article' %}
                     <td>Článek</td>
