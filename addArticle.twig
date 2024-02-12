@@ -1,11 +1,6 @@
 {% extends 'layout.twig' %}
 {% block headLinks %}
-<!-- Přidání Quill CSS -->
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-<!-- Přidání Quill JS -->
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-<!-- Ace Editor -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/27.0.0/classic/themes/lark.css">
 {% endblock %}
 
 {% block titulek %}Editor stránky{% endblock %}
@@ -27,6 +22,7 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/src/ckeditor/build/ckeditor.js"></script>
 <script>
 updateUrlParamsAndShowAlert('articleForm');
 
@@ -76,95 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Předpokládáme, že máme pole vybraných kategorií v JavaScriptu,
-    // například získané z PHP proměnné 'pageData.article.categories'
-    // Toto pole bude muset být převedeno do JavaScriptu, například pomocí inline scriptu nebo jiné metody.
-    const selectedCategories = {{ pageData.article.categories|json_encode|raw }};
-    // Funkce pro přidání tagu kategorie
-    const addCategoryTag = (categoryId, categoryText) => {
-        if (!document.getElementById('categoryTag' + categoryId)) {
-            const categoryTag = document.createElement('span');
-            categoryTag.id = 'categoryTag' + categoryId;
-            categoryTag.classList.add('category-tag');
-            categoryTag.innerHTML = categoryText + ' <button type="button" onclick="removeCategory(' + categoryId + ')">&times;</button>';
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'categories[]';
-            input.value = categoryId;
-            categoryTag.appendChild(input);
-            document.getElementById('selectedCategories').appendChild(categoryTag);
-        }
-    };
-
-    // Projdeme pole vybraných kategorií a pro každou vytvoříme tag
-    selectedCategories.forEach(category => {
-        addCategoryTag(category.id, category.name);
-    });
-
-    // Zde může pokračovat zbytek vašeho stávajícího kódu pro zpracování výběru nových kategorií...
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    var quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-
-    var aceEditor = ace.edit("codeEditor");
-    aceEditor.setTheme("ace/theme/monokai");
-    aceEditor.session.setMode("ace/mode/javascript");
-
-    const contentTypeSelect = document.getElementById('content_type');
-    const quillEditorContainer = document.getElementById('editor');
-    const codeEditorContainer = document.getElementById('codeEditor');
-    const bodyTextArea = document.getElementById('body');
-
-    // Aktualizace obsahu textarea podle aktuálního editoru
-    function updateTextarea() {
-        if (contentTypeSelect.value === 'article') {
-            bodyTextArea.value = quill.root.innerHTML;
-        } else {
-            bodyTextArea.value = aceEditor.getValue();
-        }
-    }
-
-    // Listener pro změny v Quill editoru
-    quill.on('text-change', function() {
-        if (contentTypeSelect.value === 'article') {
-            updateTextarea();
-        }
-    });
-
-    // Listener pro změny v Ace editoru
-    aceEditor.getSession().on('change', function() {
-        if (contentTypeSelect.value === 'source') {
-            updateTextarea();
-        }
-    });
-
-    // Funkce pro přepínání editorů a aktualizaci obsahu
-    function updateEditor() {
-        if (contentTypeSelect.value === 'article') {
-            quillEditorContainer.style.display = 'block';
-            codeEditorContainer.style.display = 'none';
-            quill.root.innerHTML = bodyTextArea.value;
-        } else {
-            quillEditorContainer.style.display = 'none';
-            codeEditorContainer.style.display = 'block';
-            aceEditor.setValue(bodyTextArea.value);
-        }
-        updateTextarea(); // Aktualizace obsahu textarea při změně
-    }
-
-    // Listener pro výběr typu obsahu
-    contentTypeSelect.addEventListener('change', updateEditor);
-
-    // Inicializace editorů při načtení stránky
-    updateEditor();
-});
-
-
-
+    ClassicEditor
+        .create(document.querySelector('#editor'))
+        .then(editor => {
+            console.log('Editor was initialized', editor);
+        })
+        .catch(error => {
+            console.error('There was a problem initializing the editor:', error);
+        });
 </script>
 {% endblock %}
