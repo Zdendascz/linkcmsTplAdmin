@@ -1,15 +1,18 @@
 {% extends 'layout.twig' %}
 {% block headLinks %}
-<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/27.0.0/classic/themes/lark.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+
 {% endblock %}
 
-{% block titulek %}Editace {% endblock %}
-{% block nadpis %}Editor článku{% endblock %}
+{% block titulek %}Editor stránky{% endblock %}
+{% block nadpis %}Editor stránky{% endblock %}
 
 
 {% block content %}
 <div class="row">
-    {% include 'forms/addArticleForm.twig' %}
+    {% include 'forms/addPageForm.twig' %}
 </div>
 {% endblock %}
 {% block jsLinks %}
@@ -21,10 +24,17 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/apexcharts/apexcharts.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
-    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
-    <script src="{{ domainData.SITE_WEB }}/src/ckeditor/build/ckeditor.js"></script>
+
 <script>
 updateUrlParamsAndShowAlert('articleForm');
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializace CodeMirror na elementu textarea
+    var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        mode: "javascript", // nebo jiný mód podle potřeby
+        lineNumbers: true,
+        theme: "default"
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('categorySelect');
@@ -71,14 +81,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
-    ClassicEditor
-        .create(document.querySelector('#editor'))
-        .then(editor => {
-            console.log('Editor was initialized', editor);
-        })
-        .catch(error => {
-            console.error('There was a problem initializing the editor:', error);
-        });
 </script>
 {% endblock %}

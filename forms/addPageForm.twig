@@ -20,32 +20,6 @@
 {% endmacro %}
 
 <style>
-.category-tag {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 5px;
-    background-color: #e9ecef;
-    padding: 5px;
-    border-radius: 5px;
-    margin-top: 5px;
-}
-
-.category-tag button {
-    margin-left: 5px;
-    border: none;
-    background-color: #dc3545;
-    color: white;
-    border-radius: 50%;
-    cursor: pointer;
-    line-height: 0;
-    padding: 0 5px;
-}
-
-.ql-editor {
-    min-height: 700px; /* Minimální výška */
-    max-height: 1500px; /* Maximální výška */
-    overflow-y: auto; /* Povolí posouvání, pokud je obsah delší */
-}
 </style>
 <form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
     <div class="card">
@@ -59,15 +33,16 @@
 
             <!-- Skryté ID uživatele -->
             <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ pageData.article.user_id|default(userData.uid) }}" />
-            <input type="hidden" class="form-control" id="content_type" name="meta[content_typ]" value="{{ pageData.article.meta.content_typ }}" />
+            <input type="hidden" class="form-control" id="metaContentTyp" name="meta[content_typ]" value="source">
 
             <!-- Název článku a výběr druhu obsahu -->
+            <!-- Název článku -->
             <div class="row mb-3">
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <label for="title" class="form-label">Název článku</label>
                     <input type="text" class="form-control" id="title" name="title" value="{{ pageData.article.title|default('') }}" required>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="status" class="form-label">Stav</label>
                     <select class="form-select" id="status" name="status" required>
                         <option value="development" {% if pageData.article.status == 'development' %}selected{% endif %}>V přípravě</option>
@@ -79,8 +54,10 @@
 
             <!-- Tělo článku -->
             <div class="mb-3">
-                <textarea name="body" id="editor">{{ pageData.article.body|default('')|raw }}</textarea>
+                <label for="body" class="form-label">Tělo článku</label>
+                <textarea class="form-control" id="editor" name="body">{{ pageData.article.body|default('') }}</textarea>
             </div>
+
         </div>
     </div>
     <div class="card">

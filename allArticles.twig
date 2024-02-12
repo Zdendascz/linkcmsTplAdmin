@@ -22,6 +22,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Název</th>
+                    <th>Druh obsahu</th>
                     <th>Kategorie</th>
                     <th>Krátký text</th>
                     <th>ID uživatele</th>
@@ -33,14 +34,23 @@
                 {% for article in displayData %}
                 <tr>
                     <td>{{ article.id }}</td>
-                    <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}"><strong>{{ article.title }}</strong></a></td>
+                    {% if article.meta.content_typ == 'article' %}
+                    <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}"><strong>{{ article.title }}</strong>A</a></td>
+                    {% else %}
+                    <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}"><strong>{{ article.title }}</strong>P</a></td>
+                    {% endif %}
+                    {% if article.meta.content_typ == 'article' %}
+                    <td>Článek {{ article.meta.content_typ }}</td>
+                    {% else %}
+                    <td>Kód stránky {{ article.meta.content_typ }}</td>
+                    {% endif %}
                     <td>
                         {% for category in article.categories %}
                             {{ category.title }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </td>
                     <td>{{ article.short_text }}</td>
-                    <td>{{ article.author_id }}</td>
+                    <td>A{{ article.author_id }}</td>
                     <td>{{ article.updated_at|date('d. m. y H:i') }}</td>
                     <td>{% if article.status == 'development' %}
                             Ve vývoji
