@@ -12,8 +12,8 @@
 {% block content %}
 <div class="row">
 <div class="section-description section-description-inline">
-    <h1>Seznam článků</h1>
-    <span>Tabulka obsahuje seznam článků s informacemi o autorovi a kategoriích.</span>
+    <h1>Seznam článků a stránek</h1>
+    <span>Tabulka obsahuje seznam článků a stránek.</span>
 </div>
 <div class="card">
     <div class="card-body">
@@ -40,9 +40,9 @@
                     <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}"><strong>{{ article.title }}</strong>P</a></td>
                     {% endif %}
                     {% if article.meta.content_typ == 'article' %}
-                    <td>Článek {{ article.meta.content_typ }}</td>
+                    <td>Článek</td>
                     {% else %}
-                    <td>Kód stránky {{ article.meta.content_typ }}</td>
+                    <td>Kód stránky</td>
                     {% endif %}
                     <td>
                         {% for category in article.categories %}
