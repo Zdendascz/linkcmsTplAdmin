@@ -1,0 +1,41 @@
+<form id="configVariableForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doConfDef">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Konfigurační proměnná</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="name" class="form-label">Název proměnné</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Název proměnné" required>
+            </div>
+            <div class="mb-3">
+                <label for="key" class="form-label">Klíč</label>
+                <input type="text" class="form-control" id="key" name="key" placeholder="Unikátní klíč proměnné" required>
+            </div>
+            <div class="mb-3">
+                <label for="type" class="form-label">Typ</label>
+                <select class="form-select" id="type" name="type" required>
+                    <option value="">Vyberte typ</option>
+                    <option value="text">Text</option>
+                    <option value="number">Číslo</option>
+                    <option value="enum">Výčtový typ</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="default_value" class="form-label">Výchozí hodnota</label>
+                <input type="text" class="form-control" id="default_value" name="default_value" placeholder="Výchozí hodnota proměnné">
+            </div>
+            <div class="mb-3">
+                <label for="editable_by_role" class="form-label">Editovatelné podle role</label>
+                <input type="text" class="form-control" id="editable_by_role" name="editable_by_role" placeholder="Role, která může proměnnou editovat" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Popis</label>
+                <textarea class="form-control" id="description" name="description" placeholder="Popis konfigurační proměnné"></textarea>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Uložit konfigurační proměnnou</button>
+        </div>
+    </div>
+</form>
