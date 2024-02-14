@@ -1,0 +1,59 @@
+{% extends 'layout.twig' %}
+{% block headLinks %}
+<link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/highlight/styles/github-gist.css" rel="stylesheet">
+<link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/datatables/datatables.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block titulek %}Nastavení webu {{ domainData.SITE_DOMAIN }}{% endblock %}
+{% block nadpis %}Nastavení webu {{ domainData.SITE_DOMAIN }}{% endblock %}
+{% block podNadpis %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        
+                {% include 'forms/myWebForm.twig' %}
+    </div>
+</div>
+{% endblock %}
+{% block jsLinks %}
+<!-- Javascripts -->
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/jquery/jquery-3.5.1.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/bootstrap/js/popper.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/highlight/highlight.pack.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/datatables/datatables.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/datatables.js"></script>
+<script>
+updateUrlParamsAndShowAlert('siteForm');
+
+function addConfigurationRow(data=false) {
+    const table = document.getElementById('configurationsTable').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+        <td><input type="text" class="form-control" name="config_name[]"></td>
+        <td><input type="text" class="form-control" name="config_value[]"></td>
+        <td><input type="text" class="form-control" name="config_description[]"></td>
+        <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Odstranit</button></td>
+    `;
+}
+
+function addAnalyticsRow(data=false) {
+    const table = document.getElementById('analyticsTable').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+        <td><input type="text" class="form-control" name="analytics_name[]"></td>
+        <td><input type="text" class="form-control" name="analytics_value[]"></td>
+        <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Odstranit</button></td>
+    `;
+}
+
+function removeRow(button) {
+    button.closest('tr').remove();
+}
+</script>
+{% endblock %}
