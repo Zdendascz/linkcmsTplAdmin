@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         inputElement.addEventListener('blur', function() {
             var variableId = this.getAttribute('data-id');
             var variableValue = this.value;
+            var siteId = "{{ domainData.SITE_ID }}";
 
             // Zde doplňte cestu k vašemu API nebo skriptu, který zpracovává POST požadavky
             var url = "{{ domainData.SITE_WEB }}/admin/doConfig";
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var formData = new FormData();
             formData.append('id', variableId);
             formData.append('value', variableValue);
+            formData.append('site_id', siteId); // Přidání site_id do FormData
 
             // Odeslání požadavku pomocí Fetch API
             fetch(url, {
