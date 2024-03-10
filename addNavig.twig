@@ -1,0 +1,71 @@
+{% extends 'layout.twig' %}
+
+{% block titulek %}Správa navigací{% endblock %}
+{% block nadpis %}Správa navigací{% endblock %}
+{% block podNadpis %}Zde můžete spravovat navigace a jejich strukturu na vašem webu.{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Přidání/Editace navigace</h5>
+            {% include 'forms/addNavigForm.twig' %}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Seznam navigací</h5>
+            <div class="example-container">
+                <div class="example-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Název navigace</th>
+                                <th scope="col">Popis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for navigation in pageData.navigations %}
+                                <tr class="navigation-row" data-navigation-id="{{ navigation.id }}">
+                                    <td scope="row">{{ navigation.id }}</td>
+                                    <td>{{ navigation.name }}</td>
+                                    <td>{{ navigation.description }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block jsLinks %}
+        <!-- Javascripts -->
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/jquery/jquery-3.5.1.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/apexcharts/apexcharts.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.navigation-row').forEach(function(row) {
+                row.addEventListener('click', function() {
+                    const navigationId = this.getAttribute('data-navigation-id');
+                    const navigationName = this.cells[1].textContent.trim();
+                    const navigationDescription = this.cells[2].textContent.trim();
+
+                    // Naplnění formuláře údaji pro editaci
+                    document.getElementById('navigationName').value = navigationName;
+                    document.getElementById('navigationDescription').value = navigationDescription;
+                    document.getElementById('id').value = navigationId;
+
+                    // Změna textu tlačítka pro indikaci editace
+                    document.getElementById('submitNavigation').textContent = 'Editovat navigaci';
+                });
+            });
+        });
+    </script>
+{% endblock %}

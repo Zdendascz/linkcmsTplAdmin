@@ -1,0 +1,24 @@
+<form class="row g-1 align-items-center" id="navigationForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doNavigation">
+    <!-- Název navigace -->
+    <div class="col-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="navigationName" name="name" placeholder="Název navigace" required>
+        </div>
+    </div>
+
+    <!-- Popis navigace -->
+    <div class="col-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="navigationDescription" name="description" placeholder="Popis navigace">
+        </div>
+    </div>
+
+    <input type="hidden" id="id" name="id">
+
+    <!-- Tlačítko pro odeslání formuláře -->
+    <div class="col-4">
+        <div class="input-group mb-3">
+            <button type="submit" class="btn btn-primary" id="submitNavigation">Vytvořit/Editovat navigaci</button>
+        </div>
+    </div>
+</form>
