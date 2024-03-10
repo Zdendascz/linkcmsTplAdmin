@@ -1,0 +1,65 @@
+<div class="row">
+        {% for image in pageData.allImages %}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">{{ image.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">ALT: {{ image.alt }}<br />Title: {{ image.title }}</p>
+                    <div class="example-container">
+                        <div class="example-content bg-white">
+                            <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" class="img-thumbnail" width="200" height="200">
+                        </div>
+                        <div class="example-code">
+                            <pre><code class="html" onclick="copyToClipboard('{{ image.public_url }}')">{{ image.public_url }}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+<div class="row">
+    <div class="col">
+        <div class="section-description section-description-inline">
+            <h1>Seznam souborů</h1>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <table id="datatable4" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Název</th>
+                            <th>Titulek</th>
+                            <th>Typ</th>
+                            <th>Stuts</th>
+                            <th>URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in pageData.allFiles %}
+                            <tr>
+                                <td>{{ file.name }}</td>
+                                <td>{{ file.title }}</td>
+                                <td>{{ file.mime_type }}</td>
+                                <td>{{ file.status }}</td>
+                                <td>{{ file.public_url }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Název</th>
+                            <th>Titulek</th>
+                            <th>Typ</th>
+                            <th>Stuts</th>
+                            <th>URL</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

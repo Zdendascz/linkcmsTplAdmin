@@ -2,6 +2,7 @@
 {% block headLinks %}
 <link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/highlight/styles/github-gist.css" rel="stylesheet">
 <link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/dropzone/min/dropzone.min.css" rel="stylesheet">
+<link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/datatables/datatables.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block titulek %}Nahrávání souborů{% endblock %}
@@ -10,6 +11,7 @@
 
 {% block content %}
     {% include 'forms/fileUploadForm.twig' %}
+    {% include 'inc/images.twig' %}
 {% endblock %}
 {% block jsLinks %}
 <!-- Javascripts -->
@@ -53,6 +55,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.on("error", function(file, response) {
                     console.error("Chyba při nahrávání:", response);
                     alert("Nahrávání selhalo: " + response); // Upozornění uživatele na chybu
+                });
+
+                this.on("queuecomplete", function() {
+                    console.log("Nahrávání všech souborů dokončeno.");
+                    window.location.reload();
                 });
             }
         };
