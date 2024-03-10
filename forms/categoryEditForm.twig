@@ -3,6 +3,7 @@
     <input type="hidden" name="site_id" value="{{ category.site_id|default('') }}">
     <input type="hidden" name="order_cat" value="{{ category.order_cat|default('') }}">
     <input type="hidden" name="parent_id" value="{{ category.parent_id }}">
+    <input type="hidden" name="navigation_id" value="{{ category.navigation_id }}">
 
     <!-- Název kategorie a Zobrazovaný název -->
     <div class="row">
@@ -41,7 +42,7 @@
     </div>
     <div class="col-6 mb-3">
         <label for="url{{ category.id }}" class="form-label">Vlastní URL</label>
-        <input type="text" class="form-control" id="url{{ category.id }}" name="url_manual" placeholder="Vlastní URL" value="{{ category.url }}" {% if category.url != '' %} readonly {% endif %}>
+        <input type="text" class="form-control" id="url{{ category.id }}" name="url_manual" placeholder="Vlastní URL" value="{{ category.url }}" {% if category.url != '' %} readonly {% endif %} required>
     </div>
 </div>
 

@@ -22,6 +22,7 @@
             <input type="hidden" name="id" value="{{ categoryInfo.id ?? '' }}">
             <input type="hidden" name="site_id" value="{{ domainData.SITE_ID }}">
             <input type="hidden" name="order_cat" value="{{ categoryInfo.order_cat ?? '' }}">
+            <input type="hidden" name="navigation_id" value="{{ get.navigation_id }}">
 
             <!-- Název kategorie a Zobrazovaný název -->
             <div class="row">
@@ -60,7 +61,7 @@
                 </div>
                 <div class="col-6 mb-3">
                     <label for="url_manual" class="form-label">Vlastní URL</label>
-                    <input type="text" class="form-control" id="url_manual" name="url_manual" placeholder="Vlastní URL">
+                    <input type="text" class="form-control" id="url_manual" name="url_manual" placeholder="Vlastní URL" required>
                 </div>
             </div>
 

@@ -42,7 +42,7 @@ div.accordion-body, .accordion-button{
                     </div>
                 </div>
                 {% if category.children|length > 0 %}
-                    {{ _self.renderCategories(category.children) }}
+                    {{ _self.renderCategories(category.children, domainData, pageData) }}
                 {% endif %}
             </li>
         {% endfor %}

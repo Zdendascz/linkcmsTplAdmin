@@ -35,9 +35,11 @@
                     <li>
                         <a href="#"><i class="material-icons-two-tone">grid_on</i>Navigace<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
                         <ul class="sub-menu">
-                            <li>
-                                <a href="{{ domainData.SITE_WEB }}/admin/siteNav">Přehled navigace</a>
+                            {% for navigation in webNavigations %}
+                                <li>
+                                <a href="{{ domainData.SITE_WEB }}/admin/siteNav?navigation_id={{ navigation.id }}">{{ navigation.name }}</a>
                             </li>
+                            {% endfor %}
                             <li>
                                 <a href="{{ domainData.SITE_WEB }}/admin/getNavigation">Správa navigací webu</a>
                             </li>
