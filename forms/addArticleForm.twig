@@ -10,7 +10,7 @@
         {% endfor %}
         <li>
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
-            <label for="category_{{ category.id }}">{{ category.title }} {{ category.id }}</label>
+            <label for="category_{{ category.id }}">{{ category.title }}</label>
             {% if category.children|length > 0 %}
                 {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
             {% endif %}
@@ -45,6 +45,10 @@
     min-height: 700px; /* Minimální výška */
     max-height: 1500px; /* Maximální výška */
     overflow-y: auto; /* Povolí posouvání, pokud je obsah delší */
+}
+
+.selected-image {
+    border: 2px solid blue; // Příklad vizuálního označení
 }
 </style>
 <form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
@@ -136,15 +140,35 @@
 
             <!-- Pravý sloupec pro výběr kategorií (5 z 12) -->
             <div class="col-md-5">
+                <!-- Datum a čas začátku publikace -->
                 <div class="mb-3">
-                    <label for="categorySelect" class="form-label">Vyberte kategorie:</label>
+                    <label for="publish_at" class="form-label">Datum a čas začátku publikace (zobrazí se u článku)</label>
+                    <input type="datetime-local" class="form-control" id="publish_at" name="publish_at" value="{{ pageData.article.publish_at }}">
+                </div>
+
+                <!-- Datum a čas konce publikace -->
+                <div class="mb-3">
+                    <label for="publish_end_at" class="form-label">Datum a čas konce publikace</label>
+                    <input type="datetime-local" class="form-control" id="publish_end_at" name="publish_end_at" value="{{ pageData.article.publish_end_at }}">
+                </div>
+
+                <!-- Datum a čas poslední modifikace -->
+                <div class="mb-3">
+                    <label for="modified_at" class="form-label">Datum a čas poslední modifikace (zobrazí se u článku)</label>
+                    <input type="datetime-local" class="form-control" id="modified_at" name="modified_at" value="{{ pageData.article.modified_at }}">
+                </div>
+
+                <div class="mb-3">
+                    <h5>Vyberte kategorii</h5>
                     {% import _self as macros %}
                     {{ macros.renderCategoryCheckboxes(pageData.allCats, pageData.article.categories) }}
                 </div>
+                 {% include 'inc/imageModal1.twig' %} {# zde se přikládají tři modalní okna pro výběr obrázků #}
             </div>
         </div>
 
         <button type="submit" class="btn btn-primary">Uložit příspěvek</button>
     </div>
 </div>
+
 </form>

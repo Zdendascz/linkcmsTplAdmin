@@ -1,0 +1,106 @@
+<div class="mb-3">
+<h5>Obrázky k článku</h5>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+        Obrázek do záhlaví
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Výběr obrázku do záhlaví</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                        {% for image in pageData.allImages %}
+                        <label class="img-thumbnail" data-image-id="{{ image.id }}">
+                            <input type="radio" name="selectedImage1" value="{{ image.id }}" style="display:none;" onclick="updateSelectedImage('selectedImageId1', this.value)" />
+                            <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" width="200" height="200">
+                        </label>
+                        {% endfor %}
+                        <input type="text" id="selectedImageId1" name="selectedImageId1" value="{{ pageData.article.images.images.articleDetail.id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zavřít výběr</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mb-3">
+<img src="{{ pageData.article.images.images.articleDetail.varianta.galleryThumbnail.public_url }}" width="75px" />
+</div>
+<div class="mb-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+        Obrázek v přehledu kategorií
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">Výběr obrázku do přehledu kategorie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% for image in pageData.allImages %}
+                    <label class="img-thumbnail2" data-image2-id="{{ image.id }}">
+                        <input type="radio" name="selectedImage2" value="{{ image.id }}" style="display:none;" onclick="updateSelectedImage2(this.value)" />
+                        <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" width="200" height="200">
+                    </label>
+                    {% endfor %}
+                    <input type="text" id="selectedImageId2" name="selectedImageId2" value="{{ pageData.article.images.images.articles.id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zavřít výběr</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mb-3">
+<img src="{{ pageData.article.images.images.articles.varianta.galleryThumbnail.public_url }}" width="75px" />
+</div>
+<div class="mb-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+        Obrázky do galerie
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel3">Výběr obrázků do galerie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body">
+                        {% for image in pageData.allImages %}
+                        <label class="img-thumbnail" data-image-id="{{ image.id }}">
+                            <input type="checkbox" name="selectedImages3" value="{{ image.id }}" style="display:none;" onclick="updateSelectedImages3()" />
+                            <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" width="200" height="200">
+                        </label>
+                        {% endfor %}
+                        {% set ids = [] %}
+                        {% for key, image in pageData.article.images.gallery %}
+                        {% set ids = ids|merge([image.id]) %}
+                        {% endfor %}
+                        <input type="hidden" id="selectedImageIds3" name="selectedImageIds3" value="{{ ids|join(',') }}">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zavřít</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mb-3">
+{% for key, image in pageData.article.images.gallery %}
+    <a data-fslightbox="gallery" href="{{ image.varianta.galleryThumbnail.public_url }}"><img src="{{ image.varianta.galleryThumbnail.public_url }}" width="75px" /></a>
+{% endfor %}
+</div>

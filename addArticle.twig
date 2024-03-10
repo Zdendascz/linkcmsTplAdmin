@@ -23,8 +23,87 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
     <script src="{{ domainData.SITE_WEB }}/src/ckeditor/build/ckeditor.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/lightbox.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/lightbox/fslightbox.js"></script>
 <script>
 updateUrlParamsAndShowAlert('articleForm');
+
+window.updateSelectedImage = function(inputId, value) {
+    document.getElementById(inputId).value = value;
+    document.querySelectorAll('.img-thumbnail').forEach(function(el) {
+        el.classList.remove('selected-image'); // Odstranit označení ze všech obrázků
+    });
+    document.querySelector('[data-image-id="'+value+'"]').classList.add('selected-image'); // Označit vybraný obrázek
+};
+
+window.updateSelectedImage2 = function(value) {
+    document.getElementById('selectedImageId2').value = value;
+
+    // Odstranění třídy 'selected-image' ze všech obrázků
+    document.querySelectorAll('.img-thumbnail2').forEach(function(el) {
+        el.classList.remove('selected-image');
+    });
+
+    // Získání všech elementů s atributem data-image-id a aplikování třídy 'selected-image' pouze na ten, který odpovídá hodnotě
+    var selectedElement = document.querySelector('[data-image2-id="' + value + '"]');
+    console.log('[data-image2-id="' + value + '"]');
+    if (selectedElement) {
+        selectedElement.classList.add('selected-image');
+    } else {
+        // Logika pro případ, že žádný element nebyl nalezen
+        console.error('Nenalezen žádný obrázek s ID:', value);
+    }
+};
+
+window.updateSelectedImages3 = function() {
+    // Najděte všechny zaškrtnuté checkboxy v modalu a shromažďujte jejich hodnoty
+    let selectedIds = [];
+    document.querySelectorAll('[name="selectedImages3"]:checked').forEach(function(checkbox) {
+        selectedIds.push(checkbox.value);
+        // Přidání třídy pro vizuální označení
+        checkbox.closest('label').classList.add('selected-image');
+    });
+    
+    // Odstranění třídy pro obrázky, které nejsou vybrány
+    document.querySelectorAll('[name="selectedImages3"]:not(:checked)').forEach(function(checkbox) {
+        checkbox.closest('label').classList.remove('selected-image');
+    });
+
+    // Uložení seznamu ID do skrytého inputu, ID oddělené čárkou
+    document.getElementById('selectedImageIds3').value = selectedIds.join(',');
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Zpracování pro první modal
+    var selectedImageId1 = document.getElementById('selectedImageId1').value;
+    if (selectedImageId1) {
+        var selectedElement1 = document.querySelector('[data-image-id="' + selectedImageId1 + '"]');
+        if (selectedElement1) {
+            selectedElement1.classList.add('selected-image');
+        }
+    }
+
+    // Zpracování pro druhý modal
+    var selectedImageId2 = document.getElementById('selectedImageId2').value;
+    if (selectedImageId2) {
+        var selectedElement2 = document.querySelector('[data-image2-id="' + selectedImageId2 + '"]');
+        if (selectedElement2) {
+            selectedElement2.classList.add('selected-image');
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Zpracování pro třetí modal
+    var selectedImageIds3 = document.getElementById('selectedImageIds3').value.split(',');
+    selectedImageIds3.forEach(function(id) {
+        var selectedElements3 = document.querySelectorAll('[data-image-id="' + id + '"]');
+        selectedElements3.forEach(function(el) {
+            el.classList.add('selected-image');
+        });
+    });
+});
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('categorySelect');
@@ -70,15 +149,32 @@ document.addEventListener('DOMContentLoaded', function() {
             categoryTag.appendChild(input);
         }
     }
+
+    // Označit obrázek při načtení, pokud je nějaký vybrán
+    var selectedImageId = document.getElementById('selectedImageId1').value;
+    if(selectedImageId) {
+        var selectedElement = document.querySelector('[data-image-id="'+selectedImageId+'"]');
+        if(selectedElement) {
+            selectedElement.classList.add('selected-image');
+        }
+    }
 });
 
     ClassicEditor
-        .create(document.querySelector('#editor'))
-        .then(editor => {
-            console.log('Editor was initialized', editor);
+        .create(document.querySelector('#editor'), {
+            simpleUpload: {
+                // URL endpointu pro nahrávání obrázků
+                uploadUrl: 'doCKupload',
+                
+                // Volitelně, nastavení pro hlavičky HTTP, například pro autentizaci
+                headers: {
+                    'X-CSRF-TOKEN': 'váš-csrf-token'
+                }
+            }
         })
         .catch(error => {
             console.error('There was a problem initializing the editor:', error);
         });
+
 </script>
 {% endblock %}
