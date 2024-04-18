@@ -1,0 +1,175 @@
+<div ="row">
+<form id="templateCreationForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doTemplate"> 
+    <input type="hidden" id="id" name="id">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Vytvoření nové šablony</h5>
+        </div>
+        <div class="card-body">
+            <!-- Název šablony -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Název šablony</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Název šablony" required>
+            </div>
+            <!-- Popis šablony -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Popis šablony</label>
+                <textarea class="form-control" id="description" name="description" placeholder="Popis šablony"></textarea>
+            </div>
+            <!-- Kategorie šablony -->
+            <div class="mb-3">
+                <label for="category" class="form-label">Kategorie</label>
+                <input type="text" class="form-control" id="category" name="category" placeholder="Kategorie šablony" required>
+            </div>
+            <!-- URL náhledového obrázku -->
+            <div class="mb-3">
+                <label for="thumbnail_url" class="form-label">URL náhledového obrázku</label>
+                <input type="text" class="form-control" id="thumbnail_url" name="thumbnail_url" placeholder="URL náhledového obrázku">
+            </div>
+            <!-- Adresář šablony -->
+            <div class="mb-3">
+                <label for="template_dir" class="form-label">Adresář šablony</label>
+                <input type="text" class="form-control" id="template_dir" name="template_dir" placeholder="Adresář šablony" required>
+            </div>
+            <!-- Seznam proměnných (JSON) -->
+            <div class="form-group">
+                <table class="table table-hover" id="variablesTable">
+                    <thead>
+                        <tr>
+                            <th>Název proměnné</th>
+                            <th>Klíč</th>
+                            <th>Popisek</th>
+                            <th>Výchozí hodnota</th>
+                            <th>Druh hodnoty</th>
+                            <th>Název role</th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Zde budou dynamicky přidávány řádky -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" onclick="addVariableRow()"><i class="material-icons">add</i> Přidat proměnnou</button>
+            </div>
+            <!-- Stav šablony -->
+            <div class="mb-3">
+                <label for="status" class="form-label">Stav šablony</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="">Vyberte stav</option>
+                    <option value="active">Aktivní</option>
+                    <option value="development">Ve vývoji</option>
+                    <option value="suspend">Pozastavená</option>
+                </select>
+            </div>
+            <!-- Verze šablony -->
+            <div class="mb-3">
+                <label for="version" class="form-label">Verze</label>
+                <input type="text" class="form-control" id="version" name="version" placeholder="Verze šablony" required>
+            </div>
+            <!-- Autor šablony -->
+            <div class="mb-3">
+                <label for="author_id" class="form-label">Autor šablony</label>
+                <input type="number" class="form-control" id="author_id" name="author_id" placeholder="ID autora šablony">
+            </div>
+            <!-- Typ licence -->
+            <div class="mb-3">
+                <label for="author_type" class="form-label">Typ licence</label>
+                <select class="form-select" id="license_type" name="license_type">
+                    <option value="public">Veřejná</option>
+                    <option value="private">Privátní</option>
+                    <option value="unique">Unikátní</option>
+                </select>
+            </div>
+            <!-- Cena šablony -->
+            <div class="mb-3">
+                <label for="price" class="form-label">Cena</label>
+                <input type="text" class="form-control" id="price" name="price" placeholder="Cena šablony">
+            </div>
+            <!-- Měna ceny šablony -->
+            <div class="mb-3">
+                <label for="currency" class="form-label">Měna</label>
+                <input type="text" class="form-control" id="currency" name="currency" placeholder="Měna ceny šablony">
+            </div>
+            <!-- Tagy šablony -->
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tagy šablony</label>
+                <input type="text" class="form-control" id="tags" name="tags" placeholder="Tagy šablony">
+            </div>
+            <!-- Typ rozložení -->
+            <div class="mb-3">
+                <label for="layout_type" class="form-label">Typ rozložení</label>
+                <input type="text" class="form-control" id="layout_type" name="layout_type" placeholder="Typ rozložení šablony">
+            </div>
+            <!-- Barevné schéma -->
+            <div class="mb-3">
+                <label for="color_scheme" the="form-label">Barevné schéma</label>
+                <input type="text" class="form-control" id="color_scheme" name="color_scheme" placeholder="Barevné schéma šablony">
+            </div>
+            <!-- Framework -->
+            <div class="mb-3">
+                <label for="framework" class="form-label">Framework</label>
+                <input type="text" class="form-control" id="framework" name="framework" placeholder="Framework šablony">
+            </div>
+            <!-- Jazyk šablony -->
+            <div the="mb-3">
+                <label for="language" class="form-label">Jazyk</label>
+                <input type="text" class="form-control" id="language" name="language" placeholder="Jazyk šablony">
+            </div>
+            <!-- Datum poslední aktualizace -->
+            <div class="mb-3">
+                <label for="last_update" class="form-label">Datum poslední aktualizace</label>
+                <input type="date" class="form-control" id="last_update" name="last_update" placeholder="Datum poslední aktualizace šablony">
+            </div>
+            <!-- Kompatibilita -->
+            <div class="mb-3">
+                <label for="compatibility" class="form-label">Kompatibilita</label>
+                <textarea class="form-control" id="compatibility" name="compatibility" placeholder="Kompatibilita šablony"></textarea>
+            </div>
+            <!-- URL adresa ukázky šablony -->
+            <div class="mb-3">
+                <label for="demo_url" class="form-label">URL adresa ukázky šablony</label>
+                <input type="text" class="form-control" id="demo_url" name="demo_url" placeholder="URL adresa ukázky šablony">
+            </div>
+            <!-- URL adresa dokumentace šablony -->
+            <div class="mb-3">
+                <label for="documentation_url" class="form-label">URL adresa dokumentace šablony</label>
+                <input type="text" class="form-control" id="documentation_url" name="documentation_url" placeholder="URL adresa dokumentace šablony">
+            </div>
+            <!-- Počet stažení -->
+            <div class="mb-3">
+                <label for="download_count" class="form-label">Počet stažení</label>
+                <input type="number" class="form-control" id="download_count" name="download_count" placeholder="Počet stažení šablony">
+            </div>
+            <!-- Hodnocení šablony -->
+            <div class="mb-3">
+                <label for="rating" class="form-label">Hodnocení</label>
+                <input type="text" class="form-control" id="rating" name="rating" placeholder="Hodnocení šablony">
+            </div>
+            <!-- Závislosti -->
+            <div class="mb-3">
+                <label for="dependencies" class="form-label">Závislosti</label>
+                <textarea class="form-control" id="dependencies" name="dependencies" placeholder="Závislosti šablony"></textarea>
+            </div>
+            <!-- Obrázky pro náhled -->
+            <div class="form-group">
+                <table class="table table-hover" id="previewImagesTable">
+                    <thead>
+                        <tr>
+                            <th>URL obrázku</th>
+                            <th>Popisek obrázku</th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Zde budou dynamicky přidávány řádky -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" onclick="addPreviewImageRow()"><i class="material-icons">add</i> Přidat náhledový obrázek</button>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Vytvořit šablonu</button>
+        </div>
+    </div>
+</form>
+</div>
