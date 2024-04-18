@@ -53,3 +53,14 @@
 .category-indent-6 {
     padding-left: 29% !important;
 }
+
+/* označení prvků s ohldem na potřebu vyplnění */
+.required-label {
+    font-weight: bold;
+}
+.valid-field {
+    border-bottom: 2px solid green;
+}
+.invalid-field {
+    border-bottom: 2px solid red;
+}

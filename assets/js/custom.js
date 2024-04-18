@@ -46,3 +46,23 @@ function updateUrlParamsAndShowAlert(elementId) {
         }, delay);
     }
 }
+
+/**** funkce označí formulářové prvky */
+function validateFormFields(form) {
+    Array.from(form.elements).forEach(function(element) {
+        if (element.hasAttribute('required')) {
+            const label = form.querySelector(`label[for="${element.id}"]`);
+            if (label) {
+                label.classList.add('required-label');
+            }
+
+            if (element.value.trim() !== '') {
+                element.classList.remove('invalid-field');
+                element.classList.add('valid-field');
+            } else {
+                element.classList.remove('valid-field');
+                element.classList.add('invalid-field');
+            }
+        }
+    });
+}
