@@ -12,8 +12,8 @@
 <form class="row g-1 align-items-center" id="addUrlForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doUrlAdd">
     <div class="col-3">
         <div class="input-group mb-3">
-        <select class="form-select" id="domainSelect" name="domain">
-            <option selected disabled>Vyberte doménu...</option>
+        <select class="form-select" id="domainSelect" name="domain" required>
+            <option selected disabled value="">Vyberte doménu...</option>
             {% for row in pageData.allDomains %}
                 <option value="{{ row.domain }}">{{ row.name }} [{{ row.active }}]</option>
             {% endfor %}
