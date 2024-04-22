@@ -29,7 +29,11 @@
             <!-- Adresář šablony -->
             <div class="mb-3">
                 <label for="template_dir" class="form-label">Adresář šablony</label>
-                <input type="text" class="form-control" id="template_dir" name="template_dir" placeholder="Adresář šablony" required>
+                <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon3">sablony/</span>
+                        <input type="text" class="form-control" id="template_dir" name="template_dir" placeholder="Adresář šablony" required>
+                    </div>
+                
             </div>
             <!-- Seznam proměnných (JSON) -->
             <div class="form-group">
@@ -37,11 +41,8 @@
                     <thead>
                         <tr>
                             <th>Název proměnné</th>
-                            <th>Klíč</th>
+                            <th>Hodnota</th>
                             <th>Popisek</th>
-                            <th>Výchozí hodnota</th>
-                            <th>Druh hodnoty</th>
-                            <th>Název role</th>
                             <th>Akce</th>
                         </tr>
                     </thead>

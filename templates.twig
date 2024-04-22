@@ -102,16 +102,8 @@
         const newRow = table.insertRow();
         newRow.innerHTML = `
             <td><input type="text" class="form-control" name="variable_name[]"></td>
-            <td><input type="text" class="form-control" name="variable_key[]"></td>
-            <td><input type="text" class="form-control" name="variable_label[]"></td>
-            <td><input type="text" class="form-control" name="variable_default[]"></td>
-            <td><select class="form-control" name="variable_type[]">
-                <option value="text">Text</option>
-                <option value="number">Číslo</option>
-                <option value="boolean">Boolean</option>
-                <!-- Další typy hodnot dle potřeby -->
-            </select></td>
-            <td><input type="text" class="form-control" name="variable_role[]"></td>
+            <td><input type="text" class="form-control" name="variable_value[]"></td>
+            <td><input type="text" class="form-control" name="variable_description[]"></td>
             <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
         `;
     }
@@ -256,11 +248,8 @@ function createVariableRow(tableBody, item) {
     const newRow = tableBody.insertRow();
     newRow.innerHTML = `
         <td><input type="text" class="form-control" name="variable_name[]" value="${item.name || ''}"></td>
-        <td><input type="text" class="form-control" name="variable_key[]" value="${item.key || ''}"></td>
-        <td><input type="text" class="form-control" name="variable_label[]" value="${item.label || ''}"></td>
-        <td><input type="text" class="form-control" name="variable_default[]" value="${item.default || ''}"></td>
-        <td><select class="form-control" name="variable_type[]">${selectOptionHTML(item.type)}</select></td>
-        <td><input type="text" class="form-control" name="variable_role[]" value="${item.role || ''}"></td>
+        <td><input type="text" class="form-control" name="variable_value[]" value="${item.value || ''}"></td>
+        <td><input type="text" class="form-control" name="variable_description[]" value="${item.description || ''}"></td>
         <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
     `;
 }
@@ -273,7 +262,7 @@ function createPreviewImageRow(tableBody, item) {
         <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
     `;
 }
-
+/*
 function selectOptionHTML(selectedValue) {
     const options = {
         'text': 'Text',
@@ -284,7 +273,7 @@ function selectOptionHTML(selectedValue) {
     return Object.keys(options).map(key => 
         `<option value="${key}" ${selectedValue === key ? 'selected' : ''}>${options[key]}</option>`
     ).join('');
-}
+}*/
 
 </script>
 {% endblock %}
