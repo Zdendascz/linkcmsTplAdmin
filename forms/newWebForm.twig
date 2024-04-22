@@ -4,83 +4,101 @@
             <h5 class="card-title">Nastavení webu<span class="badge badge-info badge-style-light">Základní hodnoty</span></h5>
         </div>
         <div class="card-body">
-            <input type="hidden" class="form-control" id="id" name="id" value="{{ domainData.SITE_ID }}" required>
+            <input type="hidden" class="form-control" id="id" name="id" required>
             <div class="row">
                 <div class="col">
                     <div class="form-group">
                         <label for="name">Název webu:</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ domainData.SITE_NAME }}" required>
+                        <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                 </div>
                 <div class="col">
                     <label for="domain">Doména:</label>
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon3">https://</span>
-                        <input type="text" class="form-control" id="domain" name="domain" value="{{ domainData.SITE_DOMAIN }}" required>
+                        <span class="input-group-text" id="basic-addon3">https://www.</span>
+                        <input type="text" class="form-control" id="domain" name="domain" required>
                     </div>
                 </div>
             </div>
-            <div class="form-group d-none">
-                <label for="user_id">ID vlastníka:</label>
-                <select class="form-control" id="user_id" name="user_id" >
-                    {% for user in users %}
-                    <option value="{{ user[0] }}" {% if user[0] == domainData.SITE_USER_ID %} selected {% endif %}>{{ user[1] }}</option>
-                    {% endfor %}
-                </select>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="user_id">Vlastník:</label>
+                        <select class="form-control" id="user_id" name="user_id" >
+                            {% for user in users %}
+                            <option value="{{ user[0] }}" {% if user[0] == domainData.SITE_USER_ID %} selected {% endif %}>{{ user[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="user_id">Šablona</label>
+                        <select class="form-control" id="template_id" name="template_id" required>
+                            <option value="" required>-- vyberte šablonu --</option>
+                            {% for row in pageData.allTemplates %}
+                            <option value="{{ row.id }}">{{ row.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col">
                     <div class="form-group">
                         <label for="active">Stav:</label>
                         <select class="form-select" id="active" name="active" required>
-                            <option value="development" {{ domainData.SITE_ACTIVE == 'development' ? 'selected' : '' }}>V přípravě</option>
-                            <option value="active" {{ domainData.SITE_ACTIVE == 'active' ? 'selected' : '' }}>Aktivní</option>
-                            <option value="suspend" {{ domainData.SITE_ACTIVE == 'suspend' ? 'selected' : '' }}>Zrušen</option>
+                            <option value="development">V přípravě</option>
+                            <option value="active">Aktivní</option>
+                            <option value="suspend">Zrušen</option>
                         </select>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="tarif_id">ID tarifu:</label>
-                        <input type="number" class="form-control" id="tarif_id" name="tarif_id" value="{{ domainData.SITE_TARIF_ID }}" required>
+                        <input type="number" class="form-control" id="tarif_id" name="tarif_id" required>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <label for="template_dir">Adresář šablon:</label>
-                        <input type="text" class="form-control" id="template_dir" name="template_dir" value="{{ domainData.SITE_TEMPLATE_DIR }}" required>
+                        <label for="template_dir">Adresář šablon:</label>                        
+                        <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon3">/templates/</span>
+                        <input type="text" class="form-control" id="template_dir" name="template_dir" required>
+                    </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="language">Jazyk stránky:</label>
                         <select class="form-control" id="language" name="language" required>
-                            <option value="cs" {{ domainData.SITE_LANGUAGE == 'cs' ? 'selected' : '' }}>Česky</option>
-                            <option value="en" {{ domainData.SITE_LANGUAGE == 'en' ? 'selected' : '' }}>Anglicky</option>
-                            <option value="sk" {{ domainData.SITE_LANGUAGE == 'sk' ? 'selected' : '' }}>Slovensky</option>
-                            <option value="de" {{ domainData.SITE_LANGUAGE == 'de' ? 'selected' : '' }}>Německy</option>
+                            <option value="cs">Česky</option>
+                            <option value="en">Anglicky</option>
+                            <option value="sk">Slovensky</option>
+                            <option value="de">Německy</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <label for="notes">Poznámky:</label>
-                <textarea class="form-control" id="notes" name="notes">{{ domainData.SITE_NOTES }}</textarea>
+                <textarea class="form-control" id="notes" name="notes"></textarea>
             </div>
             <!-- Zde pokračují další sekce, každá v jejím vlastním <div class="form-group"> -->
             <div class="form-group">
                 <label for="head_code">Kód v hlavičce:</label>
-                <textarea class="form-control" id="head_code" name="head_code">{{ domainData.SITE_HEAD_CODE }}</textarea>
+                <textarea class="form-control" id="head_code" name="head_code"></textarea>
             </div>
             <div class="form-group">
                 <label for="post_body_code">Kód za <code>&lt;body&gt;</code>:</label>
-                <textarea class="form-control" id="post_body_code" name="post_body_code">{{ domainData.SITE_POST_BODY_CODE }}</textarea>
+                <textarea class="form-control" id="post_body_code" name="post_body_code"></textarea>
             </div>
             <div class="form-group">
                 <label for="pre_end_body_code">Kód před <code>&lt;/body&gt;</code>:</label>
-                <textarea class="form-control" id="pre_end_body_code" name="pre_end_body_code">{{ domainData.SITE_PRE_END_BODY_CODE }}</textarea>
+                <textarea class="form-control" id="pre_end_body_code" name="pre_end_body_code"></textarea>
             </div>
         </div>
     </div>
@@ -101,14 +119,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for row in domainData.SITE_CONFIGURATIONS %}
-                        <tr>
-                            <td><input type="text" class="form-control" name="config_name[]" value="{{ row.name }}"></td>
-                            <td><input type="text" class="form-control" name="config_value[]" value="{{ row.value }}"></td>
-                            <td><input type="text" class="form-control" name="config_description[]" value="{{ row.description }}"></td>
-                            <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
-                        </tr>
-                    {% endfor %}
+
                         <!-- Dynamicky generované řádky pro konfigurace budou zde -->
                     </tbody>
                 </table>
@@ -132,13 +143,6 @@
                     </thead>
                     <tbody>
                         <!-- Řádky pro Google Analytics 4 ID a Google Tag Manager ID -->
-                        {% for row in domainData.SITE_ANALYTICS %}
-                            <tr>
-                                <td><input type="text" class="form-control form-control-rounded" name="analytics_name[]" value="{{ row.name }}"></td>
-                                <td><input type="text" class="form-control form-control-rounded" name="analytics_value[]" value="{{ row.value }}"></td>
-                                <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
-                            </tr>
-                        {% else %}
                             <tr>
                                 <td><input type="text" class="form-control" name="analytics_name[]" value="google_analytics_4_id"></td>
                                 <td><input type="text" class="form-control" name="analytics_value[]" value=""></td>
@@ -149,7 +153,6 @@
                                 <td><input type="text" class="form-control" name="analytics_value[]" value=""></td>
                                 <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
                             </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
                 <button type="button" class="btn btn-primary" onclick="addAnalyticsRow()"><i class="material-icons">add</i> Přidat analytický záznam</button>
