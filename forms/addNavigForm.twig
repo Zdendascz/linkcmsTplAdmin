@@ -1,24 +1,39 @@
 <form class="row g-1 align-items-center" id="navigationForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doNavigation">
     <!-- Název navigace -->
-    <div class="col-4">
-        <div class="input-group mb-3">
+    <div class="col-2">
+        <div class="input-group mb-1">
             <input type="text" class="form-control" id="navigationName" name="name" placeholder="Název navigace" required>
         </div>
     </div>
 
     <!-- Popis navigace -->
-    <div class="col-4">
-        <div class="input-group mb-3">
+    <div class="col-3">
+        <div class="input-group mb-1">
             <input type="text" class="form-control" id="navigationDescription" name="description" placeholder="Popis navigace">
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="input-group mb-1">
+            <input type="text" class="form-control" id="ul_class" name="ul_class" placeholder="UL class">
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="input-group mb-1">
+            <input type="text" class="form-control" id="ul_id" name="ul_id" placeholder="UL id">
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="input-group mb-2">
+            <input type="text" class="form-control" id="ul_style" name="ul_style" placeholder="UL style">
         </div>
     </div>
 
     <input type="hidden" id="id" name="id">
 
     <!-- Tlačítko pro odeslání formuláře -->
-    <div class="col-4">
+    <div class="col-2">
         <div class="input-group mb-3">
-            <button type="submit" class="btn btn-primary" id="submitNavigation">Vytvořit/Editovat navigaci</button>
+            <button type="submit" class="btn btn-primary" id="submitNavigation">Uložit</button>
         </div>
     </div>
 </form>
