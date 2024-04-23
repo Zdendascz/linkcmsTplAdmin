@@ -24,6 +24,10 @@
                                 <th scope="col">UL Class</th>
                                 <th scope="col">UL Id</th>
                                 <th scope="col">UL Style</th>
+                                <th scope="col">Zobrazení potomků v UL</th>
+                                <th scope="col">Sub UL Class</th>
+                                <th scope="col">Sub UL Id</th>
+                                <th scope="col">Sub UL Style</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,6 +39,10 @@
                                     <td>{{ navigation.ul_class }}</td>
                                     <td>{{ navigation.ul_id }}</td>
                                     <td>{{ navigation.ul_style }}</td>
+                                    <td>{{ navigation.sub_ul }}</td>
+                                    <td>{{ navigation.sub_ul_class }}</td>
+                                    <td>{{ navigation.sub_ul_id }}</td>
+                                    <td>{{ navigation.sub_ul_style }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -65,6 +73,10 @@
                     const navigationUlClass = this.cells[3].textContent.trim();
                     const navigationUlId = this.cells[4].textContent.trim();
                     const navigationUlStyle = this.cells[5].textContent.trim();
+                    const navigationSubUl = this.cells[6].textContent.trim();
+                    const navigationSubUlClass = this.cells[7].textContent.trim();
+                    const navigationSubUlId = this.cells[8].textContent.trim();
+                    const navigationSubUlStyle = this.cells[9].textContent.trim();
 
                     // Naplnění formuláře údaji pro editaci
                     document.getElementById('navigationName').value = navigationName;
@@ -73,6 +85,10 @@
                     document.getElementById('ul_class').value = navigationUlClass;
                     document.getElementById('ul_id').value = navigationUlId;
                     document.getElementById('ul_style').value = navigationUlStyle;
+                    document.getElementById('sub_ul').value = navigationSubUl;
+                    document.getElementById('sub_ul_class').value = navigationSubUlClass;
+                    document.getElementById('sub_ul_id').value = navigationSubUlId;
+                    document.getElementById('sub_ul_style').value = navigationSubUlStyle;
 
                     // Změna textu tlačítka pro indikaci editace
                     document.getElementById('submitNavigation').textContent = 'Editovat navigaci';
