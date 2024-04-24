@@ -73,7 +73,7 @@
                     <label for="url" class="form-label">Adresa stránky</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon3">https://www.{{ domainData.SITE_DOMAIN }}</span>
-                        <input type="text" class="form-control" id="url" name="url" value="{{ pageData.article.url|default('') }}">
+                        <input type="text" class="form-control" readonly id="url" name="url" value="{{ pageData.article.url|default('') }}">
                     </div>
                 </div>
 
