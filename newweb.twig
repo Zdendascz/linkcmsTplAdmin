@@ -84,9 +84,9 @@ function updateConfigurationTable(templateId) {
         return;
     }
 
-    // Převod JSON řetězce 'variables' na pole objektů
     let variables;
     try {
+        // Převod JSON řetězce 'variables' na pole objektů
         variables = JSON.parse(template.variables);
     } catch (error) {
         console.error('Error parsing variables JSON:', error);
@@ -96,14 +96,13 @@ function updateConfigurationTable(templateId) {
     const tableBody = document.getElementById('configurationsTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = ''; // Vyčistění aktuálního obsahu tabulky
 
-    // Kontrola, zda jsou 'variables' skutečně pole a použití forEach pro iteraci
     if (Array.isArray(variables)) {
         variables.forEach(variable => {
             const row = tableBody.insertRow();
             row.innerHTML = `
-                <td><input type="text" class="form-control" name="config_name[]" value="${variable.name}"></td>
-                <td><input type="text" class="form-control" name="config_value[]" value="${variable.value}"></td>
-                <td><input type="text" class="form-control" name="config_description[]" value="${variable.description || ''}"></td>
+                <td><input type="text" class="form-control" name="config_name[]" value="${escapeHtml(variable.name)}"></td>
+                <td><input type="text" class="form-control" name="config_value[]" value="${escapeHtml(variable.value)}"></td>
+                <td><input type="text" class="form-control" name="config_description[]" value="${escapeHtml(variable.description || '')}"></td>
                 <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Odstranit</button></td>
             `;
         });
@@ -112,5 +111,13 @@ function updateConfigurationTable(templateId) {
     }
 }
 
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 </script>
 {% endblock %}

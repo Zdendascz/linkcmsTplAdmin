@@ -101,13 +101,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for row in domainData.SITE_CONFIGURATIONS %}
+                    {% for key, config in domainData.SITE_CONFIGURATIONS %}
                         <tr>
-                            <td><input type="text" class="form-control" name="config_name[]" value="{{ row.name }}"></td>
-                            <td><input type="text" class="form-control" name="config_value[]" value="{{ row.value }}"></td>
-                            <td><input type="text" class="form-control" name="config_description[]" value="{{ row.description }}"></td>
-                            <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
-                        </tr>
+                        <td><input type="text" class="form-control" name="config_name[]" value="{{ key }}"></td>
+                        <td><input type="text" class="form-control" name="config_value[]" value="{{ config.value }}"></td>
+                        <td><input type="text" class="form-control" name="config_description[]" value="{{ config.description }}"></td>
+                        <td><button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="material-icons">delete_outline</i> Odstranit</button></td>
+                    </tr>
                     {% endfor %}
                         <!-- Dynamicky generované řádky pro konfigurace budou zde -->
                     </tbody>
