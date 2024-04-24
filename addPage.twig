@@ -81,5 +81,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+function slugify(text) {
+  return text.toString().toLowerCase()
+    .normalize('NFD')                       // rozdělit diakritické znaky a uspořádat je do základních znaků
+    .replace(/[\u0300-\u036f]/g, '')       // odstranit diakritiku
+    .replace(/\s+/g, '-')                  // nahradit mezery pomlčkou
+    .replace(/[^\w\-]+/g, '')              // odstranit všechny nealfanumerické znaky
+    .replace(/\-\-+/g, '-')                // nahradit více pomlček jednou pomlčkou
+    .replace(/^-+/, '')                    // odstranit přední pomlčky
+    .replace(/-+$/, '');                   // odstranit koncové pomlčky
+}
+
+// Přiřazení 'blur' event listener k poli title
+document.getElementById('title').addEventListener('blur', function(e) {
+  const slug = slugify(e.target.value);
+  const urlField = document.getElementById('url');
+  urlField.value = '/' + slug; // Přidání lomítka na začátek URL
+});
+
 </script>
 {% endblock %}
