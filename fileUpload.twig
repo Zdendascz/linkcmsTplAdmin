@@ -26,6 +26,8 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/datatables.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/lightbox/fslightbox.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/lightbox.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
         // Nastavení Dropzone
@@ -64,5 +66,56 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         };
     });
+
+
+    {# function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        console.log('Text successfully copied to clipboard');
+    }).catch(function(err) {
+        console.error('Unable to copy text to clipboard', err);
+    });
+} #}
+
+// Funkce pro kopírování textu
+function copyToClipboard(textToCopy) {
+  // Vytvoření dočasného textového pole
+  var tempInput = document.createElement("input");
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+  tempInput.select(); // Vybrání textu v poli
+  document.execCommand("copy"); // Spuštění příkazu kopírování
+  document.body.removeChild(tempInput); // Odstranění dočasného pole
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editImageForm');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Zabránit klasickému odeslání formuláře
+
+        // Vytvoření FormData objektu z formuláře
+        var formData = new FormData(form);
+
+        // Odeslání požadavku pomocí Fetch API
+        fetch("{{ domainData.SITE_WEB }}/admin/doEditFile", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                console.log('Data byla úspěšně uložena.', data.message);
+                alert("Úprava byla úspěšně uložena."); // Volitelně zobrazit zprávu uživateli
+            } else {
+                console.error('Došlo k chybě při ukládání dat: ', data.message);
+                alert("Chyba při ukládání úprav.");
+            }
+        })
+        .catch(error => {
+            console.error('Došlo k chybě: ', error);
+            alert("Chyba při komunikaci se serverem.");
+        });
+    });
+});
 </script>
 {% endblock %}

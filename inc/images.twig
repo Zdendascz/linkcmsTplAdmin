@@ -1,25 +1,116 @@
 <div class="row">
-        {% for image in pageData.allImages %}
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">{{ image.name }}</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">ALT: {{ image.alt }}<br />Title: {{ image.title }}</p>
-                    <div class="example-container">
-                        <div class="example-content bg-white">
-                            <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" class="img-thumbnail" width="200" height="200">
-                        </div>
-                        <div class="example-code">
-                            <pre><code class="html" onclick="copyToClipboard('{{ image.public_url }}')">{{ image.public_url }}</code></pre>
-                        </div>
+    {% for image in pageData.allImages %}
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <!-- Přidáme data-bs-toggle a data-bs-target, abychom otevřeli modální okno po kliknutí -->
+                <h5 class="card-title" data-bs-toggle="modal" data-bs-target="#imageModal{{ loop.index }}">{{ image.name|slice(0, 50)|join }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-description">ALT: {{ image.alt|slice(0, 20)|join }}<br />Title: {{ image.title|slice(0, 20)|join }}</p>
+                <div class="example-container">
+                    <div class="example-content bg-white">
+                        <a data-fslightbox="gallery" href="{{ image.variants.galleryThumbnail.public_url }}" title="popis a title">
+                            <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" title="popis img title" class="img-thumbnail" width="200" height="200">
+                        </a>
+                    </div>
+                    <div class="example-code">
+                        <pre><code class="html" onclick="copyToClipboard('{{ image.public_url }}')"><span class="material-icons">content_copy</span></code></pre>
                     </div>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
+
+    <!-- Modální okno pro zobrazení podrobností obrázku -->
+    <div class="modal fade " id="imageModal{{ loop.index }}" tabindex="-1" aria-labelledby="imageModal{{ loop.index }}Label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModal{{ loop.index }}Label">{{ image.name|slice(0, 50)|join }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulář pro editaci názvu, titulku a alt textu -->
+                <form id="editImageForm"> <!-- Změňte URL akce podle vaší aplikace -->
+                    <!-- Skrytý prvek pro ID obrázku -->
+                    <input type="hidden" name="id" value="{{ image.id }}">
+
+                    <div class="mb-3">
+                        <label for="name-{{ loop.index }}" class="form-label">Název obrázku (interní označení pro váš přehled)</label>
+                        <input type="text" class="form-control" id="name-{{ loop.index }}" name="name" value="{{ image.name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="title-{{ loop.index }}" class="form-label">Titulek (zobrazí se po najetí myší)</label>
+                        <input type="text" class="form-control" id="title-{{ loop.index }}" name="title" value="{{ image.title }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="alt-{{ loop.index }}" class="form-label">ALT text (zobrazí se, pokud se nepodaří obrázek načíst)</label>
+                        <input type="text" class="form-control" id="alt-{{ loop.index }}" name="alt" value="{{ image.alt }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="status-{{ loop.index }}" class="form-label">Status</label>
+                        <select class="form-control" id="status-{{ loop.index }}" name="status">
+                            <option value="active" {% if image.status == 'active' %}selected{% endif %}>Aktivní</option>
+                            <option value="development" {% if image.status == 'development' %}selected{% endif %}>Ve vývoji</option>
+                            <option value="hidden" {% if image.status == 'hidden' %}selected{% endif %}>Skryto</option>
+                            <option value="suspend" {% if image.status == 'suspend' %}selected{% endif %}>Pozastaveno</option>
+                            <option value="deleted" {% if image.status == 'deleted' %}selected{% endif %}>Smazáno</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Uložit změny</button>
+                </form>
+                <!-- Konec formuláře -->
+                    <p class="modal-description">Velikost: {{ (image.size / 1000000)|round(2) }} MB<br />
+                    Status 
+                    {% if image.status == 'development' %}
+                            Ve vývoji
+                        {% elseif image.status == 'active' %}
+                            Aktivní
+                        {% elseif image.status == 'suspend' %}
+                            Pozastaveno
+                        {% else %}
+                            Neznámý
+                        {% endif %}<br />
+                    <strong>Vytvořeno:</strong> {{ image.created_at|date('d. m. y H:i') }} 
+                    <strong>Poslední změna:</strong> {{ image.updated_at|date('d. m. y H:i') }}</p>
+                    <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" class="img-fluid">
+                    <!-- Zde můžete přidat další podrobnosti nebo obsah modálního okna -->
+                    <!-- Výpis všech dostupných variant obrázku -->
+                    <div class="image-variants">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Náhled</th>
+                                    <th scope="col">Označení a rozměr</th>
+                                    <th scope="col">URL</th>
+                                    <th scope="col">Vytvořeno</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for variant_name, variant in image.variants %}
+                                <tr>
+                                    <th scope="row"><a data-fslightbox="sub_gallery_{{ loop.parent.loop.index }}" href="{{ variant.public_url }}">
+                                        <img src="{{ variant.public_url }}" alt="Popis obrázku" class="img-thumbnail" width="200">
+                                    </a></th>
+                                    <td><h6>{{ variant.variant_name }} ({{ variant.width }}x{{ variant.height }}px)</h6></td>
+                                    <td><pre><code class="html" onclick="copyToClipboard('{{ variant.public_url }}')"><span class="material-icons">content_copy</span></code></pre></td>
+                                    <td>{{ variant.created_at|date('d. m. y H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavřít</button>
+                    <!-- Zde můžete přidat další tlačítka nebo funkce pro modální okno -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
 <div class="row">
     <div class="col">
