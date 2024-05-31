@@ -32,7 +32,7 @@ div.accordion-body, .accordion-button{
         {% for category in categories %}
             <li class="accordion-item" data-id="{{ category.id }}" data-indent-level="{{ category.pathInfo|length - 1 }}">
                 <div class="accordion-header" id="heading{{ category.id }}">
-                    <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }} {{ category.is_active }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
+                    <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }} {{ category.is_active }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}" title="{{ category.id }}">
                         {{ category.title }}
                     </button>
                 </div>
