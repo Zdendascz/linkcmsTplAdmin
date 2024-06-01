@@ -112,10 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var labels = document.querySelectorAll('label[for^="category_"]');
 
     labels.forEach(function(label) {
-        label.addEventListener('click', function(event) {
+        label.addEventListener('dblclick', function(event) {
             var url = label.getAttribute('data-url');
             var articleFullUrl = url+stringToUrlSafe(articleName.value)
-            console.log('URL kategorie:', articleFullUrl+'.html');
             articleUrl.value = articleFullUrl+'.html'
         });
     });
