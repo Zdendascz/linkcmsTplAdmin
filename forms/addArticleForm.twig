@@ -10,7 +10,7 @@
         {% endfor %}
         <li>
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
-            <label for="category_{{ category.id }}">{{ category.title }}</label>
+            <label for="category_{{ category.id }}" data-url="{{ category.url }}">{{ category.title }}</label>
             {% if category.children|length > 0 %}
                 {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
             {% endif %}
@@ -98,7 +98,7 @@
                 <!-- Url -->
                 <div class="mb-3">
                     <label for="url" class="form-label">Adresa stránky</label>
-                    <input type="text" class="form-control" id="url" readonly name="url" value="{{ pageData.article.url|default('') }}">
+                    <input type="text" class="form-control" id="url" name="url" value="{{ pageData.article.url|default('') }}">
                 </div>
 
                 <!-- Podnázev -->
@@ -162,6 +162,7 @@
                     <h5>Vyberte kategorii</h5>
                     {% import _self as macros %}
                     {{ macros.renderCategoryCheckboxes(pageData.allCats, pageData.article.categories) }}
+                    <p>Kliknutím na název kategorie vytvoříte url článku s použitím url kategorie.</p>
                 </div>
                  {% include 'inc/imageModal1.twig' %} {# zde se přikládají tři modalní okna pro výběr obrázků #}
             </div>

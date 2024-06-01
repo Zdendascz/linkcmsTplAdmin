@@ -46,7 +46,7 @@ window.updateSelectedImage2 = function(value) {
 
     // Získání všech elementů s atributem data-image-id a aplikování třídy 'selected-image' pouze na ten, který odpovídá hodnotě
     var selectedElement = document.querySelector('[data-image2-id="' + value + '"]');
-    console.log('[data-image2-id="' + value + '"]');
+   // console.log('[data-image2-id="' + value + '"]');
     if (selectedElement) {
         selectedElement.classList.add('selected-image');
     } else {
@@ -103,6 +103,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const articleName = document.getElementById('title')
+    const articleUrl = document.getElementById('url')
+
+    // Předpokládáme, že všechny labely mají data-url atribut s URL
+    var labels = document.querySelectorAll('label[for^="category_"]');
+
+    labels.forEach(function(label) {
+        label.addEventListener('click', function(event) {
+            var url = label.getAttribute('data-url');
+            var articleFullUrl = url+stringToUrlSafe(articleName.value)
+            console.log('URL kategorie:', articleFullUrl+'.html');
+            articleUrl.value = articleFullUrl+'.html'
+        });
+    });
+});
+
+function stringToUrlSafe(str) {
+    // Převést na malá písmena
+    str = str.toLowerCase();
+
+    // Nahradit diakritiku
+    str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // Nahradit mezery a ostatní nepovolené znaky pomlčkami
+    str = str.replace(/[^a-z0-9]+/g, '-');
+
+    // Odstranit přebytečné pomlčky na začátku a na konci
+    str = str.replace(/^-+|-+$/g, '');
+
+    // Omezit délku na 50 znaků
+    if (str.length > 50) {
+        str = str.substring(0, 80);
+        // Odstranit pomlčky na konci, pokud jsou přítomny po zkrácení
+        str = str.replace(/-+$/g, '');
+    }
+
+    return str;
+}
 
 
 document.addEventListener('DOMContentLoaded', function() {
