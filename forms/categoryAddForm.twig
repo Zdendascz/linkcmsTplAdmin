@@ -168,9 +168,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (parentTag.value !== '') {
                     const selectedOption = parentTag.options[parentTag.selectedIndex];
                     const selectedCategoryUrl = selectedOption.getAttribute('data-url');
-                    urlTag.value = stringToUrlSafe(selectedCategoryUrl) + "/" + stringToUrlSafe(titleTag.value) + "/";
+                    urlTag.value = stringToUrlSafe(selectedCategoryUrl).slice(0, 40) + "/" + stringToUrlSafe(titleTag.value).slice(0, 40) + "/";
                 } else {
-                    urlTag.value = stringToUrlSafe(titleTag.value) + "/";
+                    urlTag.value = stringToUrlSafe(titleTag.value).slice(0, 50) + "/";
                 }
             }
         }
