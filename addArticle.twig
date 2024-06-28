@@ -105,19 +105,56 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const articleName = document.getElementById('title')
-    const articleUrl = document.getElementById('url')
+    // Zpracování pro třetí modal
+    const mainId = document.getElementById('id')
+    const urlInput = document.getElementById('url')
+
+    if(mainId.value !== ''){
+        console.log("edit")
+        urlInput.readOnly = true;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const articleName = document.getElementById('title');
+    const articleUrl = document.getElementById('url');
+    const mainCat = document.getElementById('mainCatid');
+    const mainCatValue = mainCat.value;
 
     // Předpokládáme, že všechny labely mají data-url atribut s URL
     var labels = document.querySelectorAll('label[for^="category_"]');
 
     labels.forEach(function(label) {
+        label.style.fontWeight = 'normal';
+        label.style.textDecoration = 'none';
         label.addEventListener('dblclick', function(event) {
+            // Reset všech labelů na normální styl
+            labels.forEach(function(lbl) {
+                lbl.style.fontWeight = 'normal';
+                lbl.style.textDecoration = 'none';
+            });
+
+            // Nastavení stylu pro aktuální vybraný label
             var url = label.getAttribute('data-url');
-            var articleFullUrl = url+stringToUrlSafe(articleName.value)
-            articleUrl.value = articleFullUrl+'.html'
+            var catId = label.getAttribute('data-id');
+            var articleFullUrl = url + stringToUrlSafe(articleName.value);
+            if(!articleUrl.readOnly)
+                articleUrl.value = articleFullUrl + '.html';
+            mainCat.value = catId;
+            label.style.fontWeight = 'bold';
+            label.style.textDecoration = 'underline';
         });
     });
+
+    // Při načtení stránky ztučnit a podtrhnout label, jehož id odpovídá hodnotě mainCatid
+    if (mainCatValue) {
+        const mainCatSel = document.querySelector('label[for="category_' + mainCatValue + '"]');
+        
+        if (mainCatSel) {
+            mainCatSel.style.fontWeight = 'bold';
+            mainCatSel.style.textDecoration = 'underline';
+        }
+    }
 });
 
 function stringToUrlSafe(str) {

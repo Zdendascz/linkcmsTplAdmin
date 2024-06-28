@@ -10,7 +10,7 @@
         {% endfor %}
         <li>
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
-            <label for="category_{{ category.id }}" data-url="{{ category.url }}" style="cursor: pointer;">{{ category.title }}</label>
+            <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
             {% if category.children|length > 0 %}
                 {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
             {% endif %}
@@ -50,6 +50,13 @@
 .selected-image {
     border: 2px solid blue; // Příklad vizuálního označení
 }
+
+.no-select {
+            user-select: none; /* Pro moderní prohlížeče */
+            -webkit-user-select: none; /* Pro Safari */
+            -moz-user-select: none; /* Pro Firefox */
+            -ms-user-select: none; /* Pro Internet Explorer/Edge */
+        }
 </style>
 <form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
     <div class="card">
@@ -60,6 +67,7 @@
         
             <!-- Skryté ID článku -->
             <input type="hidden" class="form-control" id="id" name="id" value="{{ pageData.article.id|default('') }}" />
+            <input type="hidden" class="form-control" id="mainCatid" name="mainCatid" value="{{ pageData.article.meta.mainCatid|default('') }}" />
 
             <!-- Skryté ID uživatele -->
             <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ pageData.article.user_id|default(userData.uid) }}" />
