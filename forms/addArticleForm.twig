@@ -10,7 +10,7 @@
         {% endfor %}
         <li>
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
-            <label for="category_{{ category.id }}" data-url="{{ category.url }}">{{ category.title }}</label>
+            <label for="category_{{ category.id }}" data-url="{{ category.url }}" style="cursor: pointer;">{{ category.title }}</label>
             {% if category.children|length > 0 %}
                 {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
             {% endif %}
@@ -69,7 +69,7 @@
             <div class="row mb-3">
                 <div class="col-md-9">
                     <label for="title" class="form-label">Název článku</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{ pageData.article.title|default('') }}" required>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ pageData.article.title|default('') }}" required  maxlength="255">
                 </div>
                 <div class="col-md-3">
                     <label for="status" class="form-label">Stav</label>
@@ -104,7 +104,7 @@
                 <!-- Podnázev -->
                 <div class="mb-3">
                     <label for="subtitle" class="form-label">Podnázev</label>
-                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ pageData.article.subtitle|default('') }}">
+                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ pageData.article.subtitle|default('') }}"  maxlength="255">
                 </div>
 
                 <!-- Snippet -->
@@ -116,7 +116,7 @@
                 <!-- Krátký text -->
                 <div class="mb-3">
                     <label for="short_text" class="form-label">Krátký text</label>
-                    <input type="text" class="form-control" id="short_text" name="short_text" value="{{ pageData.article.short_text|default('') }}">
+                    <input type="text" class="form-control" id="short_text" name="short_text" value="{{ pageData.article.short_text|default('') }}"  maxlength="255">
                 </div>
 
                 <!-- Meta Title -->
@@ -162,7 +162,7 @@
                     <h5>Vyberte kategorii</h5>
                     {% import _self as macros %}
                     {{ macros.renderCategoryCheckboxes(pageData.allCats, pageData.article.categories) }}
-                    <p>Kliknutím na název kategorie vytvoříte url článku s použitím url kategorie.</p>
+                    <p>Dvojkliknutím na název kategorie vytvoříte url článku s použitím url kategorie.</p>
                 </div>
                  {% include 'inc/imageModal1.twig' %} {# zde se přikládají tři modalní okna pro výběr obrázků #}
             </div>
