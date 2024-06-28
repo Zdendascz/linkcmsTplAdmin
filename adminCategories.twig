@@ -36,6 +36,7 @@
 
     <script>
     updateUrlParamsAndShowAlert("categoryForm");
+    
     {% for category in categories %}
     updateUrlParamsAndShowAlert("editCategoryForm{{ category.id }}");
     {% endfor %}
