@@ -66,3 +66,26 @@ function validateFormFields(form) {
         }
     });
 }
+
+function stringToUrlSafe(str) {
+    // Převést na malá písmena
+    str = str.toLowerCase();
+
+    // Nahradit diakritiku
+    str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // Nahradit mezery a ostatní nepovolené znaky pomlčkami
+    str = str.replace(/[^a-z0-9]+/g, '-');
+
+    // Odstranit přebytečné pomlčky na začátku a na konci
+    str = str.replace(/^-+|-+$/g, '');
+
+    // Omezit délku na 50 znaků
+    if (str.length > 50) {
+        str = str.substring(0, 80);
+        // Odstranit pomlčky na konci, pokud jsou přítomny po zkrácení
+        str = str.replace(/-+$/g, '');
+    }
+
+    return str;
+}

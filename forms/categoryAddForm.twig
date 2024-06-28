@@ -4,7 +4,7 @@
         {% for i in range(0, indent) %}
             {% set padding = padding ~ '— ' %}
         {% endfor %}
-        <option value="{{ category.id }}" {% if categoryInfo.parent_id == category.id %}selected{% endif %}>
+        <option value="{{ category.id }}"  data-url="{{ category.title }}" {% if categoryInfo.parent_id == category.id %}selected{% endif %}>
             {{ padding }}{{ category.title }}
         </option>
         {% if category.children|length > 0 %}
@@ -23,6 +23,7 @@
             <input type="hidden" name="site_id" value="{{ domainData.SITE_ID }}">
             <input type="hidden" name="order_cat" value="{{ categoryInfo.order_cat ?? '' }}">
             <input type="hidden" name="navigation_id" value="{{ get.navigation_id }}">
+            <input type="hidden" name="domain" id="domain" value="{{ domainData.SITE_WEB }}">
 
             <!-- Název kategorie a Zobrazovaný název -->
             <div class="row">
@@ -54,14 +55,18 @@
                     <label for="urlSelect" class="form-label">Vybrat existující URL</label>
                     <select class="form-select" id="urlSelect" name="url">
                         <option value="">Vyberte URL...</option>
+                        <option value="*">Externí URL</option>
                         {% for url in pageData.urlListToAdd %}
-                            <option value="{{ url.url }}">{{ url.title }}</option>
+                            <option value="{{ url.url }}">{{ url.title|slice(0, 100) ~ (text|length > 100 ? '...' : '') }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-6 mb-3">
-                    <label for="url_manual" class="form-label">Vlastní URL</label>
-                    <input type="text" class="form-control" id="url_manual" name="url_manual" placeholder="Vlastní URL" required>
+                    <label for="basic-url" class="form-label">Vlastní URL</label>
+                    <div class="input-group mb-4">
+                        <span class="input-group-text input-group-text-material" id="custom-addon3">{{ domainData.SITE_WEB }}/</span>
+                        <input type="text" class="form-control form-control-material"  id="url_manual" name="url_manual" placeholder="Vlastní URL" required aria-describedby="custom-addon3">
+                    </div>
                 </div>
             </div>
 
@@ -119,15 +124,26 @@
 document.addEventListener("DOMContentLoaded", function() {
     var urlSelect = document.getElementById('urlSelect');
     var urlManualInput = document.getElementById('url_manual');
+    var urlManualDesc = document.getElementById('custom-addon3');
 
     // Funkce pro aktualizaci stavu inputu
     function updateUrlManualInput() {
         if (urlSelect.value === "") {
             urlManualInput.readOnly = false;
             urlManualInput.value = ''; // Případně můžete ponechat hodnotu, kterou uživatel zadal
-        } else {
+            urlManualDesc.style = 'display: inline';
+            urlManualInput.placeholder = 'Vložte url';
+        } else if (urlSelect.value === "*") {
+            console.log("Bude použita externí url")
+            urlManualInput.readOnly = false;
+            urlManualInput.placeholder = 'https://';
+            urlManualInput.value = '';
+            urlManualDesc.style = 'display: none';
+        } 
+        else {
             urlManualInput.readOnly = true;
             urlManualInput.value = urlSelect.value;
+            urlManualDesc.style = 'display: none';
         }
     }
 
@@ -137,4 +153,40 @@ document.addEventListener("DOMContentLoaded", function() {
     // Při změně hodnoty selectu aktualizujte input
     urlSelect.addEventListener('change', updateUrlManualInput);
 });
+
+// čtení názvu kategorie a přepis do input url
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleTag = document.getElementById('title');
+        const domainTag = document.getElementById('domain');
+        const urlTag = document.getElementById('url_manual');
+        const parentTag = document.getElementById('parentCategory');
+        const urlSelectTag = document.getElementById('urlSelect');
+
+        // Funkce pro aktualizaci URL
+        function updateUrl() {
+            if(urlSelectTag.value === ''){
+                if (parentTag.value !== '') {
+                    const selectedOption = parentTag.options[parentTag.selectedIndex];
+                    const selectedCategoryUrl = selectedOption.getAttribute('data-url');
+                    urlTag.value = stringToUrlSafe(selectedCategoryUrl) + "/" + stringToUrlSafe(titleTag.value) + "/";
+                } else {
+                    urlTag.value = stringToUrlSafe(titleTag.value) + "/";
+                }
+            }
+        }
+
+        // Posluchač události blur na titleTag
+        titleTag.addEventListener('blur', function() {
+            updateUrl();
+        });
+
+        // Posluchač události change na parentTag
+        parentTag.addEventListener('change', function() {
+            updateUrl();
+        });
+
+        urlSelectTag.addEventListener('change', function() {
+            updateUrl();
+        });
+    });
 </script>
