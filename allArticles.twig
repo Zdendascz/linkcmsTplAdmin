@@ -11,62 +11,64 @@
 
 {% block content %}
 <div class="row">
-<div class="section-description section-description-inline">
-    <h1>Seznam článků a stránek</h1>
-    <span>Tabulka obsahuje seznam článků a stránek.</span>
-</div>
-<div class="card">
-    <div class="card-body">
-        <table id="datatable3" class="display nowrap" style="width:100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Název</th>
-                    <th>Druh obsahu</th>
-                    <th>Kategorie</th>
-                    <th>Krátký text</th>
-                    <th>ID uživatele</th>
-                    <th>Datum poslední změny</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for article in displayData %}
-                <tr>
-                    <td>{{ article.id }}</td>
-                    {% if article.meta.content_typ == 'article' %}
-                    <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}"><strong>{{ article.title }}</strong></a></td>
-                    {% else %}
-                    <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}"><strong>{{ article.title }}</strong></a></td>
-                    {% endif %}
-                    {% if article.meta.content_typ == 'article' %}
-                    <td>Článek</td>
-                    {% else %}
-                    <td>Kód stránky</td>
-                    {% endif %}
-                    <td>
-                        {% for category in article.categories %}
-                            {{ category.title }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>{{ article.short_text }}</td>
-                    <td>A{{ article.author_id }}</td>
-                    <td>{{ article.updated_at|date('d. m. y H:i') }}</td>
-                    <td>{% if article.status == 'development' %}
-                            Ve vývoji
-                        {% elseif article.status == 'active' %}
-                            Aktivní
-                        {% elseif article.status == 'suspend' %}
-                            Pozastaveno
-                        {% else %}
-                            Neznámý
-                        {% endif %}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="section-description section-description-inline">
+        <h1>Seznam článků a stránek</h1>
+        <span>Tabulka obsahuje seznam článků a stránek.</span>
     </div>
-</div>
+    <div class="card">
+        <div class="card-body">
+            <table id="datatable3" class="display nowrap" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Název</th>
+                        <th>Kategorie</th>
+                        <th>ID uživatele</th>
+                        <th>Datum poslední změny</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in displayData %}
+                    <tr>
+                        {% if article.meta.content_typ == 'article' %}
+                        <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30)  }}</strong></a></td>
+                        {% else %}
+                        <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) }}</strong></a></td>
+                        {% endif %}
+
+
+                        {# <td>
+                            
+                        </td> #}
+                        <td>
+                        <span>{% for category in article.categories %}
+                               {% if article.mainCategoryInfo.categoryInfo.id == category.id %}
+                                    <strong style="text-decoration: underline;">{{ category.title }}</strong>
+                                {% else %}
+                                    {{ category.title }}
+                                {% endif %}
+                                {% if not loop.last %}/ {% endif %}
+                            {% endfor %}</span>
+                        </td>
+
+                        <td>{{ article.author_id }}</td>
+                        <td>{{ article.updated_at|date('d. m. y H:i') }}</td>
+                        <td>{% if article.status == 'development' %}
+                                Ve vývoji
+                            {% elseif article.status == 'active' %}
+                                Aktivní
+                            {% elseif article.status == 'suspend' %}
+                                Pozastaveno
+                            {% else %}
+                                Neznámý
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
 {% block jsLinks %}
