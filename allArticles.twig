@@ -20,39 +20,50 @@
             <table id="datatable3" class="display nowrap" style="width: 100%;">
                 <thead>
                     <tr>
+                        <th>Obrázek</th>
                         <th>Název</th>
                         <th>Kategorie</th>
                         <th>ID uživatele</th>
-                        <th>Datum poslední změny</th>
+                        <th>Datum poslední změny<br />Datum publikace</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for article in displayData %}
                     <tr>
-                        {% if article.meta.content_typ == 'article' %}
-                        <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30)  }}</strong></a></td>
-                        {% else %}
-                        <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) }}</strong></a></td>
-                        {% endif %}
-
-
-                        {# <td>
-                            
-                        </td> #}
                         <td>
-                        <span>{% for category in article.categories %}
-                               {% if article.mainCategoryInfo.categoryInfo.id == category.id %}
-                                    <strong style="text-decoration: underline;">{{ category.title }}</strong>
-                                {% else %}
-                                    {{ category.title }}
-                                {% endif %}
-                                {% if not loop.last %}/ {% endif %}
-                            {% endfor %}</span>
+                        <img src="{{ article.images.images.articles.varianta.galleryThumbnail.public_url }}" width="100px" />
+                        </td>
+                        {% if article.meta.content_typ == 'article' %}
+                        <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) ~ '...'   }}</strong></a></td>
+                        {% else %}
+                        <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) ~ '...' }}</strong></a></td>
+                        {% endif %}
+                        <td>
+                            <span>
+                                {% set count = 0 %}
+                                {% for category in article.categories %}
+                                    {% if article.mainCategoryInfo.categoryInfo.id == category.id %}
+                                        <strong style="text-decoration: underline;">{{ category.title }}</strong>
+                                    {% else %}
+                                        {{ category.title|length > 20 ? category.title|slice(0, 16) ~ '...' : category.title  }}
+                                    {% endif %}
+                                    {% set count = count + 1 %}
+                                    {% if not loop.last %}
+                                        /
+                                        {% if count == 3 %}
+                                            <br />
+                                            {% set count = 0 %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
                         </td>
 
-                        <td>{{ article.author_id }}</td>
-                        <td>{{ article.updated_at|date('d. m. y H:i') }}</td>
+
+                        <td>autor {{ article.author_id }}</td>
+                        <td>{{ article.updated_at|date('d. m. y H:i') }}<br />
+                            <strong>{{ article.publish_at|date('d. m. y') }}</strong></td>
                         <td>{% if article.status == 'development' %}
                                 Ve vývoji
                             {% elseif article.status == 'active' %}
