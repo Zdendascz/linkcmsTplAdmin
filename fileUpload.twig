@@ -88,34 +88,38 @@ function copyToClipboard(textToCopy) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('editImageForm');
+    // Získáme všechny formuláře s třídou 'editImageForm'
+    const forms = document.querySelectorAll('form[id^="editImageForm-"]');
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Zabránit klasickému odeslání formuláře
+    forms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Zabránit klasickému odeslání formuláře
 
-        // Vytvoření FormData objektu z formuláře
-        var formData = new FormData(form);
+            // Vytvoření FormData objektu z formuláře
+            var formData = new FormData(form);
 
-        // Odeslání požadavku pomocí Fetch API
-        fetch("{{ domainData.SITE_WEB }}/admin/doEditFile", {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                console.log('Data byla úspěšně uložena.', data.message);
-                alert("Úprava byla úspěšně uložena."); // Volitelně zobrazit zprávu uživateli
-            } else {
-                console.error('Došlo k chybě při ukládání dat: ', data.message);
-                alert("Chyba při ukládání úprav.");
-            }
-        })
-        .catch(error => {
-            console.error('Došlo k chybě: ', error);
-            alert("Chyba při komunikaci se serverem.");
+            // Odeslání požadavku pomocí Fetch API
+            fetch("{{ domainData.SITE_WEB }}/admin/doEditFile", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    console.log('Data byla úspěšně uložena.', data.message);
+                    alert("Úprava byla úspěšně uložena."); // Volitelně zobrazit zprávu uživateli
+                } else {
+                    console.error('Došlo k chybě při ukládání dat: ', data.message);
+                    alert("Chyba při ukládání úprav.");
+                }
+            })
+            .catch(error => {
+                console.error('Došlo k chybě: ', error);
+                alert("Chyba při komunikaci se serverem.");
+            });
         });
     });
 });
+
 </script>
 {% endblock %}

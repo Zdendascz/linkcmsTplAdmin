@@ -32,7 +32,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- Formulář pro editaci názvu, titulku a alt textu -->
-                <form id="editImageForm"> <!-- Změňte URL akce podle vaší aplikace -->
+                <form id="editImageForm-{{ loop.index }}"> <!-- Změňte URL akce podle vaší aplikace -->
                     <!-- Skrytý prvek pro ID obrázku -->
                     <input type="hidden" name="id" value="{{ image.id }}">
 
