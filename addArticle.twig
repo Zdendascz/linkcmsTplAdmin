@@ -1,6 +1,11 @@
 {% extends 'layout.twig' %}
 {% block headLinks %}
-<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/27.0.0/classic/themes/lark.css">
+<!-- CSS pro Medium Editor -->
+<link href="https://cdn.jsdelivr.net/npm/medium-editor/dist/css/medium-editor.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/medium-editor/dist/css/themes/default.min.css" rel="stylesheet">
+<!-- Skript pro Medium Editor -->
+<script src="https://cdn.jsdelivr.net/npm/medium-editor/dist/js/medium-editor.min.js"></script>
+
 {% endblock %}
 
 {% block titulek %}Editace {% endblock %}
@@ -235,22 +240,74 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+/*********************************** EDITOR *****************/
+document.addEventListener('DOMContentLoaded', function () {
+    const editor = new MediumEditor('#editor', {
+        toolbar: {
+            buttons: [
+                'bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'h4', 'quote', 
+                'unorderedlist', 'orderedlist', 'removeFormat', 'justifyLeft', 
+                'justifyCenter', 'justifyRight', 'justifyFull', 'superscript', 'subscript'
+            ]
+        },
+        placeholder: {
+            text: 'Začněte psát svůj článek zde...'
+        }
+    });
 
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            simpleUpload: {
-                // URL endpointu pro nahrávání obrázků
-                uploadUrl: 'doCKupload',
-                
-                // Volitelně, nastavení pro hlavičky HTTP, například pro autentizaci
-                headers: {
-                    'X-CSRF-TOKEN': 'váš-csrf-token'
-                }
+    // Událost pro zachycení přetažení obrázku do editoru
+    document.getElementById('editor').addEventListener('drop', function (event) {
+        event.preventDefault();
+        
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            const firstImageFile = Array.from(files).find(file => file.type.startsWith('image/'));
+            if (firstImageFile) {
+                // Nahrání pouze prvního obrázkového souboru
+                uploadImage(firstImageFile);
             }
-        })
-        .catch(error => {
-            console.error('There was a problem initializing the editor:', error);
-        });
+        }
+    });
+
+    // Přenos obsahu editoru do skryté textarea před odesláním formuláře
+    document.getElementById('articleForm').addEventListener('submit', function(event) {
+        const editorContent = document.getElementById('editor').innerHTML;
+        document.getElementById('body').value = editorContent; // Přenos obsahu editoru do textarea s ID "body"
+    });
+});
+
+// Funkce pro nahrání obrázku na server
+function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/admin/doEditorupload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.urls && data.urls.length > 0) {
+            // Vloží pouze první URL z odpovědi
+            const imageUrl = data.urls[0];
+            console.log("Image URL:", imageUrl); // Debugging výstup pro kontrolu URL
+            insertImageToEditor(imageUrl);
+        } else {
+            console.error('Error uploading image:', data.message || 'Unknown error');
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading image:', error);
+    });
+}
+
+// Funkce pro vložení obrázku do editoru
+function insertImageToEditor(url) {
+    // Vloží obrázek jako HTML do editoru na místo kurzoru
+    const imageHTML = `<img src="${url}" alt="Uploaded Image" style="max-width: 100%;">`;
+    const editorInstance = MediumEditor.getEditorFromElement(document.getElementById('editor'));
+    editorInstance.pasteHTML(imageHTML); // Používá pasteHTML místo appendChild
+}
 
 </script>
 {% endblock %}

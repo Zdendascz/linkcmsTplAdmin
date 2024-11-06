@@ -41,14 +41,22 @@
     padding: 0 5px;
 }
 
-.ql-editor {
-    min-height: 700px; /* Minimální výška */
-    max-height: 1500px; /* Maximální výška */
-    overflow-y: auto; /* Povolí posouvání, pokud je obsah delší */
+.editable {
+    min-height: 300px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    background-color: #fff;
 }
+
 
 .selected-image {
     border: 2px solid blue; // Příklad vizuálního označení
+}
+
+.medium-editor-toolbar {
+    top: 110px !important; /* Nastavte hodnotu podle výšky horní administrační lišty */
 }
 
 .no-select {
@@ -91,7 +99,9 @@
 
             <!-- Tělo článku -->
             <div class="mb-3">
-                <textarea name="body" id="editor">{{ pageData.article.body|default('')|raw }}</textarea>
+                {# <textarea name="body" id="editor">{{ pageData.article.body|default('')|raw }}</textarea> #}
+                <div id="editor" class="editable">{{ pageData.article.body|default('')|raw }}</div>
+                <textarea name="body" id="body" style="display:none;"></textarea>
             </div>
         </div>
     </div>
