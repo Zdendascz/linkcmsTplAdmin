@@ -50,14 +50,36 @@
     background-color: #fff;
 }
 
+#contextMenu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#contextMenu button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 10px;
+}
+
+#contextMenu button:hover {
+    text-decoration: underline;
+}
+
+
 
 .selected-image {
     border: 2px solid blue; // Příklad vizuálního označení
 }
 
-.medium-editor-toolbar {
-    top: 110px !important; /* Nastavte hodnotu podle výšky horní administrační lišty */
-}
 
 .no-select {
             user-select: none; /* Pro moderní prohlížeče */
@@ -66,6 +88,7 @@
             -ms-user-select: none; /* Pro Internet Explorer/Edge */
         }
 </style>
+
 <form id="articleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doArticle">
     <div class="card">
         <div class="card-header">
@@ -99,6 +122,10 @@
 
             <!-- Tělo článku -->
             <div class="mb-3">
+            <div id="uploadIndicator" style="display: none; position: fixed; top: 50%; margin: 0 auto; background-color: #fff; opacity: 0.85; color: #000; padding: 10px; border: 2px red solid; border-radius: 5px; z-index: 1000; text-align: center;">
+    <h3>Obrázek se zpracovává</h3><p>Obrázek nahrávám, následně jej optimalizuji a pak vytvářím vhodné formáty velikosti</p><p>Obvykle proces zabere přibližně 5s</p>
+    <img src="{{ domainData.SITE_WEB }}/templates/admin/assets/images/veverku_transp.svg" width="200px" />
+</div>
                 {# <textarea name="body" id="editor">{{ pageData.article.body|default('')|raw }}</textarea> #}
                 <div id="editor" class="editable">{{ pageData.article.body|default('')|raw }}</div>
                 <textarea name="body" id="body" style="display:none;"></textarea>

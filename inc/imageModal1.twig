@@ -104,3 +104,29 @@
     <a data-fslightbox="gallery" href="{{ image.varianta.galleryThumbnail.public_url }}"><img src="{{ image.varianta.galleryThumbnail.public_url }}" width="75px" /></a>
 {% endfor %}
 </div>
+
+<!-- Modal pro výběr obrázku z databáze -->
+<div class="modal fade" id="editorImageModal" tabindex="-1" aria-labelledby="editorImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editorImageModalLabel">Výběr obrázku pro vložení do editoru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editorImageContainer">
+                    {% for image in pageData.allImages %}
+                    <label class="img-thumbnail" data-image-id="{{ image.id }}">
+                        <input type="radio" name="selectedEditorImage" value="{{ image.id }}" style="display:none;" />
+                        <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="Popis obrázku" width="200" height="200">
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="insertSelectedImageIntoEditor()">Vložit obrázek</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavřít</button>
+            </div>
+        </div>
+    </div>
+</div>

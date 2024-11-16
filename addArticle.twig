@@ -244,25 +244,27 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function () {
     const editor = new MediumEditor('#editor', {
         toolbar: {
-            buttons: [
-                'bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'h4', 'quote', 
-                'unorderedlist', 'orderedlist', 'removeFormat', 'justifyLeft', 
-                'justifyCenter', 'justifyRight', 'justifyFull', 'superscript', 'subscript'
-            ]
+            buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote', 'unorderedlist', 'orderedlist']
         },
         placeholder: {
             text: 'Začněte psát svůj článek zde...'
-        }
+        },
+        static: true,    // Statický toolbar
+        sticky: true,     // Zajistí, že toolbar zůstane přichycený při scrollování
+        imageDragging: false // Zakáže přirozené zpracování přetažení obrázku v editoru
     });
 
     // Událost pro zachycení přetažení obrázku do editoru
     document.getElementById('editor').addEventListener('drop', function (event) {
         event.preventDefault();
-        
+
         const files = event.dataTransfer.files;
         if (files.length > 0) {
             const firstImageFile = Array.from(files).find(file => file.type.startsWith('image/'));
             if (firstImageFile) {
+                // Najdeme vložený obrázek editoru a odstraníme ho
+                removeTemporaryEditorImage();
+                
                 // Nahrání pouze prvního obrázkového souboru
                 uploadImage(firstImageFile);
             }
@@ -274,10 +276,66 @@ document.addEventListener('DOMContentLoaded', function () {
         const editorContent = document.getElementById('editor').innerHTML;
         document.getElementById('body').value = editorContent; // Přenos obsahu editoru do textarea s ID "body"
     });
+
+
+    // Kontextová nabídka po kliknutí pravým tlačítkem
+    
+    const contextMenu = document.getElementById('contextMenu');
+
+    document.getElementById('editor').addEventListener('contextmenu', function (event) {
+    event.preventDefault();
+
+        const contextMenu = document.getElementById('contextMenu');
+
+        // Nastavení pozice vedle kurzoru myši
+        contextMenu.style.display = 'block';
+        contextMenu.style.top = `${event.clientY + window.scrollY}px`; // Vertikální pozice
+        contextMenu.style.left = `${event.clientX + window.scrollX}px`; // Horizontální pozice
+    });
+
+    // Skrytí kontextového menu při kliknutí mimo
+    document.addEventListener('click', function (event) {
+        const contextMenu = document.getElementById('contextMenu');
+        if (contextMenu.style.display === 'block') {
+            contextMenu.style.display = 'none';
+        }
+    });
+
+    // Otevření modalu pro výběr obrázku
+    window.openImageModal = function (event) {
+        event.stopPropagation(); // Zabrání kliknutí spustit odeslání formuláře
+        event.preventDefault();  // Zabrání defaultnímu chování formuláře
+        
+        console.log('Otevírání modalu pro výběr obrázku'); // Debug: otevření modalu
+        const modal = new bootstrap.Modal(document.getElementById('editorImageModal'));
+        modal.show();
+    };
+
+    // Vložení vybraného obrázku do editoru
+    window.insertSelectedImageIntoEditor = function () {
+        const selectedImage = document.querySelector('input[name="selectedEditorImage"]:checked');
+        if (selectedImage) {
+            const imageId = selectedImage.value;
+            const imageElement = document.querySelector(`[data-image-id="${imageId}"] img`);
+            const imageURL = imageElement.src;
+
+            const imageHTML = `<img src="${imageURL}" alt="Vybraný obrázek" style="max-width: 100%;">`;
+            editor.pasteHTML(imageHTML);
+
+            console.log('Vložení obrázku do editoru:', imageURL); // Debug: vložení obrázku
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editorImageModal'));
+            modal.hide();
+        } else {
+            alert("Vyberte obrázek, který chcete vložit do editoru.");
+        }
+    };
 });
+
 
 // Funkce pro nahrání obrázku na server
 function uploadImage(file) {
+    document.getElementById("uploadIndicator").style.display = 'block';
     const formData = new FormData();
     formData.append('file', file);
 
@@ -290,8 +348,8 @@ function uploadImage(file) {
         if (data.success && data.urls && data.urls.length > 0) {
             // Vloží pouze první URL z odpovědi
             const imageUrl = data.urls[0];
-            console.log("Image URL:", imageUrl); // Debugging výstup pro kontrolu URL
             insertImageToEditor(imageUrl);
+            document.getElementById("uploadIndicator").style.display = 'none';
         } else {
             console.error('Error uploading image:', data.message || 'Unknown error');
         }
@@ -301,12 +359,20 @@ function uploadImage(file) {
     });
 }
 
+// Funkce pro odstranění dočasného obrázku vloženého editorem
+function removeTemporaryEditorImage() {
+    const editor = document.getElementById('editor');
+    const tempImage = editor.querySelector('img[src^="data:image"]'); // Najdeme obrázek s base64 daty
+    if (tempImage) {
+        tempImage.remove(); // Odstraníme dočasný obrázek
+    }
+}
+
 // Funkce pro vložení obrázku do editoru
 function insertImageToEditor(url) {
-    // Vloží obrázek jako HTML do editoru na místo kurzoru
     const imageHTML = `<img src="${url}" alt="Uploaded Image" style="max-width: 100%;">`;
     const editorInstance = MediumEditor.getEditorFromElement(document.getElementById('editor'));
-    editorInstance.pasteHTML(imageHTML); // Používá pasteHTML místo appendChild
+    editorInstance.pasteHTML(imageHTML); // Vloží náš obrázek do editoru
 }
 
 </script>

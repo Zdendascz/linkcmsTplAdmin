@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -234,6 +234,10 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Kontextové menu pro vkládání obrázků -->
+    <div id="contextMenu" style="display: none; position: absolute; z-index: 1000; background-color: #333; color: white; padding: 10px; border-radius: 5px;">
+        <button onclick="openImageModal()">Vložit obrázek</button>
     </div>
     {% block jsLinks %}{% endblock %}
 </body>

@@ -42,7 +42,7 @@
     </div>
     <div class="col-6 mb-3">
         <label for="url{{ category.id }}" class="form-label">Vlastní URL</label>
-        <input type="text" class="form-control" id="url{{ category.id }}" name="url_manual" placeholder="Vlastní URL" value="{{ category.url }}" {% if category.url != '' %} readonly {% endif %} required>
+        <input type="text" class="form-control" id="url{{ category.id }}" name="url_manual" placeholder="Vlastní URL" value="{{ category.url }}" {% if category.is_active != 'development' %} readonly {% endif %} {{ category.is_active  }} required>
     </div>
 </div>
 
@@ -101,11 +101,15 @@
 <script>
     document.getElementById('urlSelect{{ category.id }}').addEventListener('change', function() {
         var input = document.getElementById('url{{ category.id }}');
+        var active = document.getElementById('isActive{{ category.id }}');
         var selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value === '') {
+        var selectedActive = this.options[this.selectedIndex];
+        if (selectedOption.value === '' || active === 'development' ) {
+            console.log("má být aktivní")
             input.removeAttribute('readonly');
         } else {
             input.value = selectedOption.value;
+            console.log("nemá být aktivní")
             input.setAttribute('readonly', true);
         }
     });
