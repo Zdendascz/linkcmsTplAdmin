@@ -237,7 +237,7 @@
     </div>
     <!-- Kontextové menu pro vkládání obrázků -->
     <div id="contextMenu" style="display: none; position: absolute; z-index: 1000; background-color: #333; color: white; padding: 10px; border-radius: 5px;">
-        <button onclick="openImageModal()">Vložit obrázek</button>
+        <button onclick="openImageModal(event)" data-bs-target="#editorImageModal">Vložit obrázek</button>
     </div>
     {% block jsLinks %}{% endblock %}
 </body>

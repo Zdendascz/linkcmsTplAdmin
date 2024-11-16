@@ -109,6 +109,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// modal výběru obrázku do editoru
+document.addEventListener('DOMContentLoaded', function () {
+    // Přidání události pro všechny obrázky v modalu
+    const imageThumbnails = document.querySelectorAll('.img-thumbnail img');
+
+    imageThumbnails.forEach(function (thumbnail) {
+        thumbnail.addEventListener('click', function () {
+            // Nejprve odstraníme třídu .selected-image ze všech obrázků
+            imageThumbnails.forEach(function (img) {
+                img.classList.remove('selected-image');
+            });
+
+            // Přidáme třídu .selected-image na aktuálně kliknutý obrázek
+            this.classList.add('selected-image');
+        });
+    });
+});
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // Zpracování pro třetí modal
     const mainId = document.getElementById('id')
@@ -303,12 +322,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Otevření modalu pro výběr obrázku
     window.openImageModal = function (event) {
-        event.stopPropagation(); // Zabrání kliknutí spustit odeslání formuláře
-        event.preventDefault();  // Zabrání defaultnímu chování formuláře
+        event.stopPropagation();
+        event.preventDefault();
         
-        console.log('Otevírání modalu pro výběr obrázku'); // Debug: otevření modalu
-        const modal = new bootstrap.Modal(document.getElementById('editorImageModal'));
-        modal.show();
+        const modalElement = document.getElementById('editorImageModal');
+        if (modalElement) {
+            console.log('Modal element found:', modalElement);
+            const modalInstance = new bootstrap.Modal(modalElement);
+            modalInstance.show();
+            console.log('Modal shown successfully.');
+        } else {
+            console.error('Modal element not found!');
+        }
     };
 
     // Vložení vybraného obrázku do editoru
@@ -317,15 +342,32 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedImage) {
             const imageId = selectedImage.value;
             const imageElement = document.querySelector(`[data-image-id="${imageId}"] img`);
-            const imageURL = imageElement.src;
 
-            const imageHTML = `<img src="${imageURL}" alt="Vybraný obrázek" style="max-width: 100%;">`;
-            editor.pasteHTML(imageHTML);
+            if (imageElement) {
+                // Získání atributů `src`, `alt` a `title` z obrázku
+                const imageURL = imageElement.src;
+                const imageAlt = imageElement.getAttribute('alt') || '';
+                const imageTitle = imageElement.getAttribute('title') || '';
+                console.log("alt: "+imageAlt+" title "+imageTitle);
 
-            console.log('Vložení obrázku do editoru:', imageURL); // Debug: vložení obrázku
+                // Vytvoření HTML pro obrázek s atributy
+                const imageHTML = `<img src="${imageURL}" alt="${imageAlt}" title="${imageTitle}" style="max-width: 100%;">`;
 
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editorImageModal'));
-            modal.hide();
+                // Vložení obrázku do editoru
+                const editor = MediumEditor.getEditorFromElement(document.getElementById('editor'));
+                if (editor) {
+                    editor.pasteHTML(imageHTML); // Vloží obrázek do editoru
+                    console.log('Obrázek vložen do editoru:', imageURL);
+                } else {
+                    console.error('Editor nebyl nalezen!');
+                }
+
+                // Zavření modalu
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editorImageModal'));
+                modal.hide();
+            } else {
+                alert("Vyberte platný obrázek.");
+            }
         } else {
             alert("Vyberte obrázek, který chcete vložit do editoru.");
         }
@@ -374,6 +416,109 @@ function insertImageToEditor(url) {
     const editorInstance = MediumEditor.getEditorFromElement(document.getElementById('editor'));
     editorInstance.pasteHTML(imageHTML); // Vloží náš obrázek do editoru
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const editor = document.getElementById('editor');
+
+    // Nastavení obrázků v editoru jako draggable
+    editor.addEventListener('DOMNodeInserted', function (event) {
+        if (event.target.tagName === 'IMG') {
+            event.target.setAttribute('draggable', 'true');
+        }
+    });
+
+    // Nastavíme existující obrázky (při načtení stránky)
+    editor.querySelectorAll('img').forEach(function (img) {
+        img.setAttribute('draggable', 'true');
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const editor = document.getElementById('editor');
+
+    let draggedElement = null; // Element, který se přetahuje
+
+    // Když začneme přetahovat obrázek
+    editor.addEventListener('dragstart', function (event) {
+        if (event.target.tagName === 'IMG') {
+            draggedElement = event.target;
+            event.dataTransfer.effectAllowed = 'move';
+        }
+    });
+
+    // Povolení přetažení na jiná místa uvnitř editoru
+    editor.addEventListener('dragover', function (event) {
+        event.preventDefault(); // Povolit přetažení
+        event.dataTransfer.dropEffect = 'move';
+    });
+
+    // Když je obrázek puštěn
+    editor.addEventListener('drop', function (event) {
+        event.preventDefault();
+
+        // Ujistíme se, že je přetahován obrázek
+        if (draggedElement) {
+            // Získáme pozici, kde byl obrázek puštěn
+            const dropPosition = document.caretRangeFromPoint(event.clientX, event.clientY);
+
+            if (dropPosition) {
+                // Vložíme obrázek na nové místo
+                const parent = dropPosition.startContainer.parentNode;
+                parent.insertBefore(draggedElement, dropPosition.startContainer.nextSibling);
+            }
+
+            draggedElement = null; // Reset
+        }
+    });
+
+    // Když přetahování skončí
+    editor.addEventListener('dragend', function () {
+        draggedElement = null; // Reset
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const editor = document.getElementById('editor');
+    let selectedImage = null; // Uloží aktuálně vybraný obrázek
+
+    // Kontextová nabídka při kliknutí pravým tlačítkem na obrázek
+    editor.addEventListener('contextmenu', function (event) {
+        if (event.target.tagName === 'IMG') {
+            event.preventDefault(); // Zabraňte zobrazení výchozího kontextového menu
+
+            // Uložení vybraného obrázku
+            selectedImage = event.target;
+
+            // Předvyplnění modalu s aktuálními atributy
+            const altText = selectedImage.getAttribute('alt') || '';
+            const titleText = selectedImage.getAttribute('title') || '';
+
+            document.getElementById('imageAltInput').value = altText;
+            document.getElementById('imageTitleInput').value = titleText;
+
+            // Zobrazení modalu
+            const modal = new bootstrap.Modal(document.getElementById('editImageAttributesModal'));
+            modal.show();
+        }
+    });
+
+    // Uložení změn po kliknutí na tlačítko "Uložit změny"
+    document.getElementById('saveImageAttributes').addEventListener('click', function () {
+        if (selectedImage) {
+            // Aktualizace atributů obrázku
+            const newAlt = document.getElementById('imageAltInput').value;
+            const newTitle = document.getElementById('imageTitleInput').value;
+
+            selectedImage.setAttribute('alt', newAlt);
+            selectedImage.setAttribute('title', newTitle);
+
+            // Zavření modalu
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editImageAttributesModal'));
+            modal.hide();
+        }
+    });
+});
+
 
 </script>
 {% endblock %}
