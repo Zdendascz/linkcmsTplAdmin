@@ -265,6 +265,12 @@ document.addEventListener('DOMContentLoaded', function () {
         toolbar: {
             buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote', 'unorderedlist', 'orderedlist']
         },
+        paste: {
+            forcePlainText: false, // Umožní zachovat HTML strukturu
+            cleanPastedHTML: true, // Vyčistí nepodporované styly
+            cleanAttrs: ['class', 'style', 'dir'], // Odstraní nepotřebné atributy
+            cleanTags: ['meta', 'script', 'iframe'] // Odstraní nebezpečné nebo nechtěné tagy
+        },
         placeholder: {
             text: 'Začněte psát svůj článek zde...'
         },
