@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -29,6 +28,7 @@
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/neptune.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/neptune.png" />
+    {# <link rel=stylesheet href='{{ domainData.SITE_WEB }}/{{ domainData.SITE_TEMPLATE_DIR }}css/tailwind.css'  onload="this.media='all'"> #}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -46,7 +46,7 @@
                     <a href="#">
                         <img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/avatars/avatar.png">
                         <span class="activity-indicator"></span>
-                        <span class="user-info-text">Chloe<br><span class="user-state-info">On a call</span></span>
+                        <span class="user-info-text">{{ userData.info.fullname }}<br><span class="user-state-info"><a href="{{ domainData.SITE_WEB }}/doLogOut">odhlásit</a></span>
                     </a>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 {% macro renderCategoryCheckboxes(categories, selectedCategories) %}
     {% import _self as self %}
-    <ul>
+    <ul class="list-disc ml-6 space-y-2">
     {% for category in categories %}
         {% set isChecked = false %}
         {% for selectedCategory in selectedCategories %}
@@ -8,7 +8,7 @@
                 {% set isChecked = true %}
             {% endif %}
         {% endfor %}
-        <li>
+        <li class="ml-5">
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
             <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
             {% if category.children|length > 0 %}
