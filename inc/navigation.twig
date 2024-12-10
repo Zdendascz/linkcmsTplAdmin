@@ -6,14 +6,11 @@
     <li>
         <a href="{{ domainData.SITE_WEB }}/admin/fileManager"><i class="material-icons-two-tone">cloud_queue</i>Soubory</a>
     </li>
-    <li>
-        <a href="{{ domainData.SITE_WEB }}/admin/imageManager"><i class="material-icons-two-tone">calendar_today</i>Galerie</a>
-    </li>
     <li class="sidebar-title">
         Obsah webu 
     </li>
     {% if userData.prava.pagesAdmin == 1 %}<li>
-        <a href="#"><i class="material-icons-two-tone">color_lens</i>Stránky <i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+        <a href="#"><i class="material-icons">auto_stories</i>Stránky <i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
             <li>
                 <a href="{{ domainData.SITE_WEB }}/admin/AddArticle">Nový článek</a>
@@ -29,8 +26,8 @@
             </li>-->
         </ul>
     </li>{% endif %}
-    <li>
-        <a href="#"><i class="material-icons-two-tone">grid_on</i>Navigace<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+    {% if userData.prava.navigationsAdmin == 1 %}<li>
+        <a href="#"><i class="material-icons">category</i>Navigace<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
             {% for navigation in webNavigations %}
                 <li>
@@ -41,9 +38,9 @@
                 <a href="{{ domainData.SITE_WEB }}/admin/getNavigation">Správa navigací webu</a>
             </li>
         </ul>
-    </li>
-    <li>
-        <a href=""><i class="material-icons-two-tone">sentiment_satisfied_alt</i>Správa uživatelů<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+    </li>{% endif %}
+    {% if userData.prava.usersAdmin == 1 %}<li>
+        <a href=""><i class="material-icons">people</i>Správa uživatelů<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
             <li>
                 <a href="ui-alerts.html">Přidat uživatele</a>
@@ -52,46 +49,82 @@
                 <a href="ui-avatars.html">Seznam uživatelů</a>
             </li>
         </ul>
-    </li>
-    <li>
-        <a href="{{ domainData.SITE_WEB }}/admin/config">Konfigurace</a>
-    </li>
-    <li class="sidebar-title">
+    </li>{% endif %}
+    {% if userData.prava.configuratinsAdmin == 1 %}<li>
+        <a href="{{ domainData.SITE_WEB }}/admin/config"><i class="material-icons">settings</i>Konfigurace webu</a>
+    </li>{% endif %}
+    {% if userData.prava.mywebAdmin == 1 %}<li class="sidebar-title">
         Další weby
     </li>
     <li>
-        <a href="#"><i class="material-icons-two-tone">analytics</i>Moje weby<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+        <a href="#"><i class="material-icons">layers</i>Moje weby<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
             <li>
                 <a href="{{ domainData.SITE_WEB }}/admin/myWeb">Nastavení {{ domainData.SITE_WEB }}</a>
             </li>
             <li>
-                <a href="charts-apex.html">Nový web</a>
+                <a href="#">Nový web</a>
             </li>
             <li>
-                <a href="charts-chartjs.html">Přehled webů</a>
+                <a href="#">Přehled webů</a>
             </li>
         </ul>
-    </li>
-    <li class="sidebar-title">
+    </li>{% endif %}
+    {% if userData.prava.fullcontrol == 1 %}<li class="sidebar-title">
         SuperAdmin
     </li>
     <li>
+            {% if userData.prava.permissionsAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/superOpravneni"><i class="material-icons">key</i>Oprávnění</a>
+            </li>{% endif %}
+            {% if userData.prava.allUserAdmin == 1 %}<li>
+                <a href=""><i class="material-icons">people</i>Správa uživatelů<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="ui-alerts.html">Přidat uživatele</a>
+                    </li>
+                    <li>
+                        <a href="ui-avatars.html">Seznam uživatelů</a>
+                    </li>
+                </ul>
+            </li>{% endif %}
+            {% if userData.prava.urlAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/urlAdd"><i class="material-icons">http</i>Správa URL</a>
+            </li>{% endif %}
+            {% if userData.prava.domainAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/newWeb"><i class="material-icons">domain</i>Správa domén</a>
+            </li>{% endif %}
+            {% if userData.prava.templatesAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/templates/"><i class="material-icons">web</i>Správa šablon</a>
+            </li>{% endif %}
+            {% if userData.prava.variablesAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/confDef"><i class="material-icons">tune</i>Konfigurace proměnných</a>
+            </li>{% endif %}
             <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/superOpravneni"><i class="material-icons-two-tone">cloud_queue</i>Oprávnění</a>
-            </li>
-            <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/urlAdd"><i class="material-icons-two-tone">cloud_queue</i>Správa URL</a>
-            </li>
-            <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/newWeb"><i class="material-icons-two-tone">cloud_queue</i>Správa domén</a>
-            </li>
-            <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/templates/"><i class="material-icons-two-tone">cloud_queue</i>Správa šablon</a>
+                <a href=""><i class="material-icons-two-tone">cloud_queue</i>Logy<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="#">Debug</a>
+                    </li>
+                    <li>
+                        <a href="#">Info</a>
+                    </li>
+                    <li>
+                        <a href="#">Warning</a>
+                    </li>
+                    <li>
+                        <a href="#">Error</a>
+                    </li>
+                    <li>
+                        <a href="#">Consens</a>
+                    </li>
+                    <li>
+                        <a href="#">Cron</a>
+                    </li>
+                </ul>
             </li>
             <li>
                 <a href="{{ domainData.SITE_WEB }}/admin/confDef"><i class="material-icons-two-tone">cloud_queue</i>Konfigurace proměnných</a>
             </li>
-
-    </li>
+    </li>{% endif %}
 </ul>

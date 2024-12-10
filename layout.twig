@@ -46,7 +46,7 @@
                     <a href="#">
                         <img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/avatars/avatar.png">
                         <span class="activity-indicator"></span>
-                        <span class="user-info-text">{{ userData.info.fullname }}<br><span class="user-state-info"><a href="{{ domainData.SITE_WEB }}/doLogOut">odhlásit</a></span>
+                        <span class="user-info-text">{{ userData.info.fullname }}<span class="user-state-info"></span></span>
                     </a>
                 </div>
             </div>
@@ -131,11 +131,10 @@
                                     <a class="nav-link toggle-search" href="#"><i class="material-icons">search</i></a>
                                 </li>
                                 <li class="nav-item hidden-on-mobile">
-                                    <a class="nav-link language-dropdown-toggle" href="#" id="languageDropDown" data-bs-toggle="dropdown"><img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/flags/us.png" alt=""></a>
+                                    <a class="nav-link language-dropdown-toggle" href="#" id="languageDropDown" data-bs-toggle="dropdown"><img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/avatars/avatar.png" alt="Informace o uživateli"></a>
                                         <ul class="dropdown-menu dropdown-menu-end language-dropdown" aria-labelledby="languageDropDown">
-                                            <li><a class="dropdown-item" href="#"><img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/flags/germany.png" alt="">German</a></li>
-                                            <li><a class="dropdown-item" href="#"><img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/flags/italy.png" alt="">Italian</a></li>
-                                            <li><a class="dropdown-item" href="#"><img src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/images/flags/china.png" alt="">Chinese</a></li>
+                                            <li><a href="{{ domainData.SITE_WEB }}/#"><i class="material-icons">account_circle</i></a></li>
+                                            <li><a href="{{ domainData.SITE_WEB }}/doLogOut"><span class="material-icons">logout</span></a></li>
                                         </ul>
                                 </li>
                                 <li class="nav-item hidden-on-mobile">
