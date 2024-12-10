@@ -70,7 +70,14 @@
             <!-- Autor šablony -->
             <div class="mb-3">
                 <label for="author_id" class="form-label">Autor šablony</label>
-                <input type="number" class="form-control" id="author_id" name="author_id" placeholder="ID autora šablony">
+                <select class="form-select" id="author_id" name="author_id">
+                    <option value="" selected>Vyberte autora šablony</option>
+                    {% for user_id, user_data in pageData.usersInRole %}
+                        <option value="{{ user_id }}">
+                            {{ user_data.user_name }} ({{ user_data.user_email }} - {{ user_data.user_role }})
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
             <!-- Typ licence -->
             <div class="mb-3">
