@@ -77,15 +77,64 @@ document.addEventListener("DOMContentLoaded", function() {
 } #}
 
 // Funkce pro kopírování textu
-function copyToClipboard(textToCopy) {
-  // Vytvoření dočasného textového pole
-  var tempInput = document.createElement("input");
-  tempInput.value = textToCopy;
-  document.body.appendChild(tempInput);
-  tempInput.select(); // Vybrání textu v poli
-  document.execCommand("copy"); // Spuštění příkazu kopírování
-  document.body.removeChild(tempInput); // Odstranění dočasného pole
+ function copyToClipboard(textToCopy) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                console.log("Text zkopírován:", textToCopy); // Úspěšné kopírování
+            })
+            .catch(err => {
+                console.error("Chyba při kopírování do schránky:", err); // Chyba
+            });
+    } else {
+        console.warn("API Clipboard není podporováno, používám fallback metodu.");
+        // Fallback pro starší prohlížeče
+        var tempInput = document.createElement("textarea");
+        tempInput.value = textToCopy;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand("copy");
+            console.log("Text zkopírován (fallback):", textToCopy);
+        } catch (err) {
+            console.error("Chyba při fallback kopírování:", err);
+        }
+        document.body.removeChild(tempInput);
+    }
 }
+
+function changeIcon(element) {
+    // Uložení původní ikonky
+    const originalIcon = element.innerHTML;
+
+    // Změna ikonky na "check"
+    element.innerHTML = '<span class="material-icons">check</span>';
+
+    // Po 2 sekundách vrácení původní ikonky
+    setTimeout(() => {
+        element.innerHTML = originalIcon;
+    }, 2000);
+}
+
+// Funkce pro kopírování textu
+{# function copyToClipboard(textToCopy, element) {
+    // Vytvoření dočasného textového pole
+    var tempInput = document.createElement("input");
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select(); // Vybrání textu v poli
+    document.execCommand("copy"); // Spuštění příkazu kopírování
+    document.body.removeChild(tempInput); // Odstranění dočasného pole
+
+    // Změna ikonky na "check" nebo jinou indikaci
+    const originalIcon = element.innerHTML;
+    element.innerHTML = '<span class="material-icons">check</span>'; // Ikonka pro potvrzení
+
+    // Vrácení původní ikonky po 2 sekundách
+    setTimeout(() => {
+        element.innerHTML = originalIcon;
+    }, 2000);
+} #}
 
 document.addEventListener('DOMContentLoaded', function() {
     // Získáme všechny formuláře s třídou 'editImageForm'

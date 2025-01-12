@@ -15,7 +15,7 @@
                         </a>
                     </div>
                     <div class="example-code">
-                        <pre><code class="html" onclick="copyToClipboard('{{ image.public_url }}')"><span class="material-icons">content_copy</span></code></pre>
+                        <pre><code class="html" onclick="copyToClipboard('{{ image.public_url }}');changeIcon(this)"><span class="material-icons">content_copy</span></code></pre>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,15 @@
                                         <img src="{{ variant.public_url }}" alt="Popis obrázku" class="img-thumbnail" width="200">
                                     </a></th>
                                     <td><h6>{{ variant.variant_name }} ({{ variant.width }}x{{ variant.height }}px)</h6></td>
-                                    <td><pre><code class="html" onclick="copyToClipboard('{{ variant.public_url }}')"><span class="material-icons">content_copy</span></code></pre></td>
+                                    <td><pre>
+                                    <code 
+                                        class="html hljs xml" 
+                                        id="copy-btn-{{ loop.index }}" 
+                                        data-text="{{ variant.public_url }}" 
+                                        onclick="copyToClipboard( '{{ variant.public_url }}' )">
+                                        <span class="material-icons">content_copy</span>
+                                    </code>
+                                    </pre>{{ variant.public_url }}</td>
                                     <td>{{ variant.created_at|date('d. m. y H:i') }}</td>
                                 </tr>
                             {% endfor %}
