@@ -346,14 +346,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedImage = document.querySelector('input[name="selectedEditorImage"]:checked');
         if (selectedImage) {
             const imageId = selectedImage.value;
-            const imageElement = document.querySelector(`[data-image-id="${imageId}"] img`);
+            const imageElement = document.querySelector(`[data-imageThumbnail-id="${imageId}"] img`);
 
             if (imageElement) {
                 // Získání atributů `src`, `alt` a `title` z obrázku
-                const imageURL = imageElement.src;
+                //const imageURL = imageElement.src;
+                const imageURL = imageElement.dataset.articleimageurl;
                 const imageAlt = imageElement.getAttribute('alt') || '';
                 const imageTitle = imageElement.getAttribute('title') || '';
-                console.log("alt: "+imageAlt+" title "+imageTitle);
+                console.log("URL: "+imageURL+" alt: "+imageAlt+" title "+imageTitle);
 
                 // Vytvoření HTML pro obrázek s atributy
                 const imageHTML = `<img src="${imageURL}" alt="${imageAlt}" title="${imageTitle}" style="max-width: 100%;">`;
@@ -497,9 +498,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Předvyplnění modalu s aktuálními atributy
             const altText = selectedImage.getAttribute('alt') || '';
             const titleText = selectedImage.getAttribute('title') || '';
+            const urlText = selectedImage.getAttribute('src') || '';
 
             document.getElementById('imageAltInput').value = altText;
             document.getElementById('imageTitleInput').value = titleText;
+            document.getElementById('imageUrlInput').value = urlText;
 
             // Zobrazení modalu
             const modal = new bootstrap.Modal(document.getElementById('editImageAttributesModal'));

@@ -132,9 +132,9 @@
             <div class="modal-body" style="max-height: 90%">
                 <div id="editorImageContainer">
                     {% for image in pageData.allImages %}
-                    <label class="img-thumbnail" data-image-id="{{ image.id }}">
+                    <label class="img-thumbnail" data-imageThumbnail-id="{{ image.id }}">
                         <input type="radio" name="selectedEditorImage" value="{{ image.id }}" style="display:none;" />
-                        <img src="{{ image.variants.galleryThumbnail.public_url }}" alt="{{ image.alt }}" title="{{ image.title }}" width="200" height="200">
+                        <img src="{{ image.variants.galleryThumbnail.public_url }}" data-articleImageUrl="{{ image.variants.articleDetail.public_url }}" alt="{{ image.alt }}" title="{{ image.title }}" width="200" height="200">
                     </label>
                     {% endfor %}
                 </div>
@@ -159,6 +159,10 @@
             </div>
             <div class="modal-body">
                 <form id="imageAttributesForm">
+                    <div class="mb-3">
+                        <label for="imageAltInput" class="form-label">Url obrázku</label>
+                        <input type="text" class="form-control" id="imageUrlInput" placeholder="Url obrázku" readonly="readonly">
+                    </div>
                     <div class="mb-3">
                         <label for="imageAltInput" class="form-label">Alt text</label>
                         <input type="text" class="form-control" id="imageAltInput" placeholder="Popis obrázku">
