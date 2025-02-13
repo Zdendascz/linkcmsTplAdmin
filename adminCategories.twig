@@ -41,24 +41,83 @@
     updateUrlParamsAndShowAlert("editCategoryForm{{ category.id }}");
     {% endfor %}
 
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    // Globální proměnné pro hover logiku
+    var hoverTimer = null;
+    var currentHoverTarget = null;
+
     var containers = document.querySelectorAll('.drag-container');
     containers.forEach(function(container) {
         new Sortable(container, {
             group: 'categories',
             animation: 150,
+            onMove: function(evt, originalEvent) {
+                var draggedItem = evt.dragged;
+                var relatedItem = evt.related; // element, přes který právě letí
+                if (relatedItem) {
+                    var newHoverTarget = relatedItem.closest('.accordion-item');
+                    if (newHoverTarget && newHoverTarget !== currentHoverTarget) {
+                        if (hoverTimer) {
+                            clearTimeout(hoverTimer);
+                        }
+                        currentHoverTarget = newHoverTarget;
+                        hoverTimer = setTimeout(function() {
+                            // Zjistíme, zda v elementu již existuje vnořený seznam
+                            var nestedList = newHoverTarget.querySelector('ul.drag-container');
+                            if (!nestedList) {
+                                // Vytvoříme nový seznam pro podkategorie
+                                nestedList = document.createElement('ul');
+                                nestedList.classList.add('drag-container');
+                                newHoverTarget.appendChild(nestedList);
+                                // Inicializace Sortable na nově vytvořeném seznamu
+                                new Sortable(nestedList, {
+                                    group: 'categories',
+                                    animation: 150,
+                                    onEnd: function(evt) {
+                                        var item = evt.item;
+                                        var newParentContainer = item.parentNode.closest('.accordion-item');
+                                        var newParentId = newParentContainer ? newParentContainer.dataset.id : null;
+                                        var newOrder = Array.from(item.parentNode.children).indexOf(item);
+                                        var originalParentId = item.dataset.parentId;
+                                        var originalOrder = item.dataset.orderCat;
+                                        console.log('Původní hodnoty: parent_id=' + originalParentId + ', order_cat=' + originalOrder);
+                                        console.log('Před aktualizací: parent_id=' + newParentId + ', order_cat=' + newOrder);
+                                        updateCategoryOnServer(item.dataset.id, newParentId, newOrder);
+                                    }
+                                });
+                            }
+                            // Přesuneme přetahovanou kategorii do vnořeného seznamu – tedy se stane potomkem
+                            nestedList.appendChild(draggedItem);
+                            // Aktualizujeme datový atribut, aby odrážel nový parent_id
+                            draggedItem.dataset.parentId = newHoverTarget.dataset.id;
+                        }, 500); // čekání 500 ms
+                    }
+                } else {
+                    // Pokud není nad žádným cílovým elementem, timer vymažeme
+                    if (hoverTimer) {
+                        clearTimeout(hoverTimer);
+                        hoverTimer = null;
+                        currentHoverTarget = null;
+                    }
+                }
+            },
             onEnd: function(evt) {
+                // Vymažeme případný hover timer při ukončení drag operace
+                if (hoverTimer) {
+                    clearTimeout(hoverTimer);
+                    hoverTimer = null;
+                    currentHoverTarget = null;
+                }
                 var item = evt.item; // přesunutý element
                 var newParentContainer = item.parentNode.closest('.accordion-item');
                 var newParentId = newParentContainer ? newParentContainer.dataset.id : null; // ID rodiče nebo null pro hlavní kategorii
                 var newOrder = Array.from(item.parentNode.children).indexOf(item); // nové pořadí v rámci rodiče
 
-                // Získání původních hodnot
+                // Získání původních hodnot (pokud jsou nastavené)
                 var originalParentId = item.dataset.parentId;
                 var originalOrder = item.dataset.orderCat;
-                
-                console.log('Původní hodnoty: parent_id=' + originalParentId + ', order_cat=' + originalOrder); // Logování původních hodnot
-                console.log('Před aktualizací: parent_id=' + newParentId + ', order_cat=' + newOrder); // Logování před odesláním
+                console.log('Původní hodnoty: parent_id=' + originalParentId + ', order_cat=' + originalOrder);
+                console.log('Před aktualizací: parent_id=' + newParentId + ', order_cat=' + newOrder);
 
                 // AJAX požadavek pro aktualizaci na serveru
                 updateCategoryOnServer(item.dataset.id, newParentId, newOrder);
@@ -87,14 +146,12 @@
             return response.json();
         })
         .then(data => {
-            console.log('Po úspěšné aktualizaci:', data); // Logování po odpovědi
+            console.log('Po úspěšné aktualizaci:', data);
         })
         .catch((error) => {
             console.error('Chyba při aktualizaci:', error);
         });
     }
 });
-
-  
-    </script>
+</script>
 {% endblock %}
