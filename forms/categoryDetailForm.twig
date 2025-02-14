@@ -33,7 +33,7 @@ div.accordion-body, .accordion-button{
             <li class="accordion-item" data-id="{{ category.id }}" data-indent-level="{{ category.pathInfo|length - 1 }}">
                 <div class="accordion-header" id="heading{{ category.id }}">
                     <button class="accordion-button collapsed category-indent-{{ category.pathInfo|length - 1 }} {{ category.is_active }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}" title="{{ category.id }}">
-                       {{ category.title }}
+                       {{ category.title }} [{{ category.id }}]
                     </button>
                 </div>
                 <div id="collapse{{ category.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ category.id }}">
@@ -51,3 +51,4 @@ div.accordion-body, .accordion-button{
 
 {% import _self as macros %}
 {{ macros.renderCategories(pageData.allCats, domainData, pageData, true) }}
+

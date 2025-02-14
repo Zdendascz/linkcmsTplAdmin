@@ -54,8 +54,8 @@
                 <div class="col-6 mb-3">
                     <label for="urlSelect" class="form-label">Vybrat existující URL</label>
                     <select class="form-select" id="urlSelect" name="url">
-                        <option value="">Vyberte URL...</option>
-                        <option value="*">Externí URL</option>
+                        <option value="0">URL z názvu kategorie</option>
+                        <option value="1">Externí URL</option>
                         {% for url in pageData.urlListToAdd %}
                             <option value="{{ url.url }}">{{ url.title|slice(0, 100) ~ (text|length > 100 ? '...' : '') }}</option>
                         {% endfor %}
@@ -95,6 +95,28 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="contentType" class="form-label">Typ obsahu v kategorii</label>
+                    <select class="form-select" id="contentType" name="contentType">
+                        <option value="all">vše</option>
+                        <option value="articles">články</option>
+                        <option value="catalogs">položky katalogu</option>
+                        <option value="pages">stránky</option>
+                    </select>
+                </div>
+                <div class="col mb-3">
+                    <div class="form-check form-switch">
+                        <label for="listArticles" class="form-check-label">Nezobrazovat u článků</label>
+                        <input type="checkbox" class="form-check-input" id="listArticles" name="listArticles" />
+                    </div>
+                    <div class="form-check form-switch">
+                        <label for="sitemapView" class="form-check-label">Nezobrazovat v sitemap kategorií</label>
+                        <input type="checkbox" class="form-check-input" id="sitemapView" name="sitemapView" />
+                    </div>
+                </div>
+            </div>
+
             <!-- CSS Customizations -->
             <div class="row">
                 <div class="col mb-3">
@@ -128,12 +150,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Funkce pro aktualizaci stavu inputu
     function updateUrlManualInput() {
-        if (urlSelect.value === "") {
+        if (urlSelect.value === "0") {
             urlManualInput.readOnly = false;
             urlManualInput.value = ''; // Případně můžete ponechat hodnotu, kterou uživatel zadal
             urlManualDesc.style = 'display: inline';
             urlManualInput.placeholder = 'Vložte url';
-        } else if (urlSelect.value === "*") {
+        } else if (urlSelect.value === "1") {
             console.log("Bude použita externí url")
             urlManualInput.readOnly = false;
             urlManualInput.placeholder = 'https://';
@@ -164,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Funkce pro aktualizaci URL
         function updateUrl() {
-            if(urlSelectTag.value === ''){
+            if(urlSelectTag.value === '0'){
                 if (parentTag.value !== '') {
                     const selectedOption = parentTag.options[parentTag.selectedIndex];
                     const selectedCategoryUrl = selectedOption.getAttribute('data-url');

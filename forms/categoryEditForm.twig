@@ -1,9 +1,47 @@
+<style>
+.selected-image {
+    border: 2px blue solid !important;
+}
+
+.img-thumbnail {
+    display: inline-block !important;  /* Zobrazovat vedle sebe */
+    float: left;
+    margin: 5px;                         /* Malý odsazení mezi obrázky */
+    padding: 5px;
+    width: 220px;
+    height: 220px;
+    border: 1px red solid;
+    vertical-align: top;                 /* Zarovnání nahoře */
+}
+
+.img-thumbnail img{
+    margin: 0px;
+    padding: 0px;
+}
+.img-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* volitelně, pro odsazení mezi obrázky */
+    height: 480px;
+    overflow-y: auto;
+}
+
+.img-thumbnail {
+    /* Pokud nadřazený flex kontejner způsobuje, že se obrázky roztahují, můžeme přidat: */
+    flex: 0 0 auto;
+    border: 1px red solid;
+    width: 220px;
+    height: 220px;
+}
+</style>
+
 <form id="editCategoryForm{{ category.id }}" method="post" action="{{ domainData.SITE_WEB }}/admin/DoCatEdit">
     <input type="hidden" name="id" value="{{ category.id|default('') }}">
     <input type="hidden" name="site_id" value="{{ category.site_id|default('') }}">
     <input type="hidden" name="order_cat" value="{{ category.order_cat|default('') }}">
     <input type="hidden" name="parent_id" value="{{ category.parent_id }}">
     <input type="hidden" name="navigation_id" value="{{ category.navigation_id }}">
+    <input type="hidden" name="url_normal" value="{{ category.url }}">
 
     <!-- Název kategorie a Zobrazovaný název -->
     <div class="row">
@@ -32,9 +70,11 @@
     <!-- URL a Aktivní/Neaktivní -->
 <div class="row">
     <div class="col-6 mb-3">
-        <label for="urlSelect{{ category.id }}" class="form-label">Vybrat existující URL</label>
+        <label for="urlSelect{{ category.id }}" class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">Vybrat existující URL</label>
         <select class="form-select" id="urlSelect{{ category.id }}" name="url">
-            <option value="">Vyberte URL...</option>
+            <option disabled selected>Vybert, pokud chcete měnit URL</option>
+            <option value="0">URL z názvu kategorie</option>
+            <option value="1">Externí URL</option>
             {% for url in pageData.urlListToAdd %}
                 <option value="{{ url.url }}" {% if url.url == category.url %} selected {% endif %}>{{ url.title }}</option>
             {% endfor %}
@@ -43,6 +83,7 @@
     <div class="col-6 mb-3">
         <label for="url{{ category.id }}" class="form-label">Vlastní URL</label>
         <input type="text" class="form-control" id="url{{ category.id }}" name="url_manual" placeholder="Vlastní URL" value="{{ category.url }}" {% if category.is_active != 'development' %} readonly {% endif %} {{ category.is_active  }} required>
+        {% if category.is_active != 'development' %}<i>Pokud chcete změnit url, převeďte kategorii do stavu <u>V přípravě</u>.</i>{% endif %}
     </div>
 </div>
 
@@ -75,6 +116,49 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col mb-3">
+            <label for="contentType" class="form-label">Typ obsahu v kategorii</label>
+            <select class="form-select" id="contentType" name="contentType">
+                <option value="all" {% if category.meta.contentType == 'all' %}selected{% endif %}>vše</option>
+                <option value="articles"  {% if category.meta.contentType == 'articles' %}selected{% endif %}>články</option>
+                <option value="catalogs"  {% if category.meta.contentType == 'catalogs' %}selected{% endif %}>položky katalogu</option>
+                <option value="pages"  {% if category.meta.contentType == 'pages' %}selected{% endif %}>stránky</option>
+            </select>
+        </div>
+        <div class="col mb-3">
+            <div class="form-check form-switch">
+                <label for="listArticles" class="form-check-label">Nezobrazovat u článků</label>
+                <input type="checkbox" class="form-check-input" id="listArticles" name="listArticles" {% if category.meta.listArticles == 'true' %}checked="checked"{% endif %} />
+            </div>
+            <div class="form-check form-switch">
+                <label for="sitemapView" class="form-check-label">Nezobrazovat v sitemap</label>
+                <input type="checkbox" class="form-check-input" id="sitemapView" name="sitemapView" {% if category.meta.sitemapView == 'true' %}checked="checked"{% endif %} />
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+            <h5>Obrázek kategorie</h5>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" {% if category.meta.catImg.variants[2].public_url is defined %}style="background-image: url({{ category.meta.catImg.variants[2].public_url }});background-size: cover;background-repeat: no-repeat; background-position: center; width: 200px; height: 200px; opacity: 0.5; color: #000;"{% endif %}>
+                {% if category.meta.catImg.variants[2].public_url is not defined %}Vybrat obrázek{% endif %}
+            </button>
+            
+
+            
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body ">
+                <div class="img-container">
+                    <input type="hidden" id="catImg{{ category.id }}" name="catImg" />
+                    {% for image in pageData.allImages %}
+                                <img src="{{ image.variants.galleryThumbnail.public_url }}" id="img-sel-{{ category.id }}-{{ image.id }}" alt="{{ image.alt }}" class="rounded mx-auto d-block img-thumbnail"  title="{{ image.title }}" width="200" height="200" 
+                                onclick="updateSelectedImage('catImg{{ category.id }}', '{{ image.id }}', '{{ category.id }}')">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CSS Customizations -->
     <div class="row">
         <div class="col mb-3">
@@ -98,13 +182,14 @@
     <button type="submit" class="btn btn-primary">Uložit změny</button>
 </form>
 
+
 <script>
     document.getElementById('urlSelect{{ category.id }}').addEventListener('change', function() {
         var input = document.getElementById('url{{ category.id }}');
         var active = document.getElementById('isActive{{ category.id }}');
         var selectedOption = this.options[this.selectedIndex];
         var selectedActive = this.options[this.selectedIndex];
-        if (selectedOption.value === '' || active === 'development' ) {
+        if (selectedOption.value === '1' || active === 'development' ) {
             console.log("má být aktivní")
             input.removeAttribute('readonly');
         } else {
@@ -113,4 +198,57 @@
             input.setAttribute('readonly', true);
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleTag = document.getElementById('title{{ category.id }}');
+        const domainTag = document.getElementById('domain{{ category.id }}');
+        const urlTag = document.getElementById('url_manual{{ category.id }}');
+        const parentTag = document.getElementById('parentCategory{{ category.id }}');
+        const urlSelectTag = document.getElementById('urlSelect{{ category.id }}');        
+
+        // Funkce pro aktualizaci URL
+        function updateUrl() {
+            if(urlSelectTag.value === '0'){
+                if (parentTag.value !== '') {
+                    const selectedOption = parentTag.options[parentTag.selectedIndex];
+                    const selectedCategoryUrl = selectedOption.getAttribute('data-url');
+                    urlTag.value = stringToUrlSafe(selectedCategoryUrl).slice(0, 40) + "/" + stringToUrlSafe(titleTag.value).slice(0, 40) + "/";
+                } else {
+                    urlTag.value = stringToUrlSafe(titleTag.value).slice(0, 50) + "/";
+                }
+            }
+        }
+
+        // Posluchač události blur na titleTag
+        titleTag.addEventListener('blur', function() {
+            updateUrl();
+        });
+
+        // Posluchač události change na parentTag
+        parentTag.addEventListener('change', function() {
+            updateUrl();
+        });
+
+        urlSelectTag.addEventListener('change', function() {
+            updateUrl();
+        });
+    });
+
+// Funkce pro aktualizaci vybraného obrázku:
+    window.updateSelectedImage = function(inputId, value,aktualIdCat) {
+        document.getElementById(inputId).value = value;
+        // Odebrat třídu selected-image ze všech obrázků
+        
+        document.querySelectorAll('.img-thumbnail').forEach(function(el) {
+            el.classList.remove('selected-image');
+        });
+        
+        // Přidat třídu selected-image pouze na kliknutý obrázek
+        var selectedEl = document.getElementById('img-sel-'+aktualIdCat+'-' + value);
+        if (selectedEl) {
+            selectedEl.classList.add('selected-image');
+            document.getElementById('img-sel-'+aktualIdCat+'-'+value).classList.add('selected-image');
+            console.log('img-sel-'+aktualIdCat+'-'+value)
+        }
+    };
 </script>
