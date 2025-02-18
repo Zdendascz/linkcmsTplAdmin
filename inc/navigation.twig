@@ -43,24 +43,24 @@
         <a href=""><i class="material-icons">people</i>Správa uživatelů<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
             <li>
-                <a href="ui-alerts.html">Přidat uživatele</a>
+                <a href="{{ domainData.SITE_WEB }}/admin/addSiteUser">Přidat uživatele</a>
             </li>
             <li>
-                <a href="ui-avatars.html">Seznam uživatelů</a>
+                <a href="{{ domainData.SITE_WEB }}/admin/getAllSiteUsers">Seznam uživatelů</a>
             </li>
         </ul>
     </li>{% endif %}
-    {% if userData.prava.configuratinsAdmin == 1 %}<li>
-        <a href="{{ domainData.SITE_WEB }}/admin/config"><i class="material-icons">settings</i>Konfigurace webu</a>
+    {% if userData.prava.mywebAdmin == 1 %}<li>
+        <a href="{{ domainData.SITE_WEB }}/admin/myWeb"><i class="material-icons">settings</i>Konfigurace webu</a>
     </li>{% endif %}
-    {% if userData.prava.mywebAdmin == 1 %}<li class="sidebar-title">
+    {% if userData.prava.configuratinsAdmin == 1 %}<li class="sidebar-title">
         Další weby
     </li>
     <li>
         <a href="#"><i class="material-icons">layers</i>Moje weby<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
             <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/myWeb">Nastavení {{ domainData.SITE_WEB }}</a>
+                <a href="{{ domainData.SITE_WEB }}/admin/config">Nastavení {{ domainData.SITE_WEB }}</a>
             </li>
             <li>
                 <a href="#">Nový web</a>
@@ -81,10 +81,10 @@
                 <a href=""><i class="material-icons">people</i>Správa uživatelů<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="ui-alerts.html">Přidat uživatele</a>
+                        <a href="{{ domainData.SITE_WEB }}/admin/addUser">Přidat uživatele</a>
                     </li>
                     <li>
-                        <a href="ui-avatars.html">Seznam uživatelů</a>
+                        <a href="{{ domainData.SITE_WEB }}/admin/allUsers">Seznam uživatelů</a>
                     </li>
                 </ul>
             </li>{% endif %}

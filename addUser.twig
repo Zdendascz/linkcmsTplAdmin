@@ -1,0 +1,80 @@
+{% extends 'layout.twig' %}
+
+{% block headLinks %}
+<link href="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/highlight/styles/github-gist.css" rel="stylesheet">
+{% endblock %}
+
+{% block titulek %}Vytvoření uživatele{% endblock %}
+{% block nadpis %}Vytvoření nového uživatele{% endblock %}
+{% block podNadpis %}Vyplňte údaje pro nového uživatele.{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ domainData.SITE_WEB }}/admin/doCreateUser" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="fullname" class="form-label">Celé jméno</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Telefon</label>
+                            <input type="text" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="address" class="form-label">Adresa</label>
+                            <input type="text" class="form-control" id="address" name="address">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Heslo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="password" name="password" required>
+                                <button type="button" class="btn btn-secondary" onclick="generatePassword()">Generovat</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password_repeat" class="form-label">Heslo znovu</label>
+                            <input type="text" class="form-control" id="password_repeat" name="password_repeat" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label for="active" class="form-label">Aktivní účet</label>
+                            <input type="checkbox" id="active" name="active" value="1" checked>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary">Vytvořit uživatele</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block jsLinks %}
+<script>
+    function generatePassword() {
+        let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+        let password = "";
+        for (let i = 0; i < 12; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        document.getElementById('password').value = password;
+        document.getElementById('password_repeat').value = password;
+    }
+</script>
+{% endblock %}
