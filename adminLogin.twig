@@ -10,7 +10,7 @@
     <meta name="author" content="Mini-web.cz">
     
     <!-- Title -->
-    <title>Mini-web - Administrace</title>
+    <title>{{ domainData.SITE_NAME }} Přihlášení</title>
 
     <!-- Styles -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -43,7 +43,7 @@
         </div>
         <div class="app-auth-container">
             <div class="logo">
-                <a href="index.html">Mini-web.cz</a>
+                <a href="{{ domainData.SITE_WEB }}">{{ domainData.SITE_NAME }}</a>
             </div>
             <p class="auth-description">Prosím přihlašte se do svého účtu.<br>Nemáte ještě sůj účet? Můžete se zdarma <a href="sign-up.html">zaregistrovat</a>.</p>
 <form action="{{ domainData.SITE_WEB }}/doLogin" method="post">

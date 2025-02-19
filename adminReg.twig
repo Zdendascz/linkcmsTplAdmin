@@ -10,7 +10,7 @@
     <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     
     <!-- Title -->
-    <title>Neptune - Responsive Admin Dashboard Template</title>
+    <title>{{ domainData.SITE_NAME }} Registrace</title>
 
     <!-- Styles -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -43,20 +43,26 @@
         </div>
         <div class="app-auth-container">
             <div class="logo">
-                <a href="index.html">Mini-web.cz Registrace</a>
+                <a href="{{ domainData.SITE_WEB }}">{{ domainData.SITE_NAME }} Registrace</a>
             </div>
-            <p class="auth-description">Prosím zaregistrujte se.<br>Máte už svou registraci? Můžete se <a href="{{ domainData.SITE_WEB }}/admin/login/">přihlásit</a></p>
+            <p class="auth-description">Prosím zaregistrujte se.<br>Máte už svou registraci v systému <a href="https://mini-web.cz/" title="Mini-web, webové řešení pro vás" target="_blank">Mini-web</a>? Můžete se <a href="{{ domainData.SITE_WEB }}/admin/login/">přihlásit</a></p>
 
             <form action="{{ domainData.SITE_WEB }}/doRegister" method="post">
     <div class="auth-credentials m-b-xxl">
-        <label for="email" class="form-label">E-mail:</label>
+        {% if error_message is defined and error_message %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error_message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        <label for="email" class="form-label">E-mail*:</label>
         <input type="email" class="form-control m-b-md" id="email" name="email" required placeholder="Vložte email">
 
-        <label for="password" class="form-label">Heslo:</label>
+        <label for="password" class="form-label">Heslo*:</label>
         <input type="password" class="form-control m-b-md" id="password" name="password" required placeholder="Vložte heslo">
-        <div id="passwordHelp" class="form-text">Password must be minimum 8 characters length*</div>
+        <div id="passwordHelp" class="form-text">Heslo musí mít nejméně 8 znaků*</div>
 
-        <label for="repeat_password" class="form-label">Opakování hesla:</label>
+        <label for="repeat_password" class="form-label">Opakování hesla*:</label>
         <input type="password" class="form-control m-b-md" id="repeat_password" name="repeat_password" required placeholder="Zopakujte heslo">
 
         <label for="fullname" class="form-label">Celé jméno:</label>
@@ -77,6 +83,9 @@
                 <a href="#" class="auth-alts-facebook"></a>
                 <a href="#" class="auth-alts-twitter"></a>
             </div>-->
+            <div class="auth-alts">
+                <p style="color: #999; font-style: italic;">Registrací souhlasíte s Obchodími podmínkami společnosti Prezza s.r.o. (ič: 07542798), provozovatele platformy webových řešení Mini-web.</p>
+            </div>
         </div>
     </div>
     
@@ -87,5 +96,26 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error) {
+            // Dekóduj a zobraz chybu ve stránce
+            const errorMessage = decodeURIComponent(error.replace(/\+/g, ' '));
+            document.querySelector('.auth-credentials').insertAdjacentHTML('beforebegin', 
+                `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${errorMessage}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`
+            );
+
+            // Odstranění parametru "error" z URL
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    });
+</script>
 </body>
 </html>
