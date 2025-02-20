@@ -89,6 +89,7 @@
                                         <th>Doména</th>
                                         <th>Role</th>
                                         <th>Oprávnění</th>
+                                        <th>Akce</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,15 +104,62 @@
                                                     <span class="badge bg-info">{{ permission }}</span>
                                                 {% endfor %}
                                             </td>
+                                            <td>
+                                                <form action="{{ domainData.SITE_WEB }}/admin/doUserRoleRemove" method="post" class="d-inline">
+                                                    <input type="hidden" name="user_id" value="{{ pageData.userDetail.user_id }}">
+                                                    <input type="hidden" name="site_id" value="{{ role.site_id }}">
+                                                    <input type="hidden" name="role_id" value="{{ role.role_id }}">
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Opravdu chcete tuto roli odebrat?')">
+                                                        Odebrat
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     {% else %}
-                                        <tr><td colspan="5">Uživatel nemá žádné přiřazené role.</td></tr>
+                                        <tr><td colspan="6">Uživatel nemá žádné přiřazené role.</td></tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <!-- FORMULÁŘ PRO PŘIDÁNÍ ROLE -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="card-title">Přidat novou roli</h5>
+                        </div>
+                        <div class="card-body">
+                            <form class="row g-2 align-items-center" id="addUserRoleForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doUserRoleAdd">
+                                <input type="hidden" name="user_id" value="{{ pageData.userDetail.user_id }}">
+
+                                <div class="col-md-5">
+                                    <label for="siteSelect" class="form-label">Vyberte stránku</label>
+                                    <select class="form-select" id="siteSelect" name="site_id" required>
+                                        <option selected disabled value="">Vyberte stránku...</option>
+                                        {% for site in pageData.allSites %}
+                                            <option value="{{ site.id }}">{{ site.name }} ({{ site.domain }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <label for="roleSelect" class="form-label">Vyberte roli</label>
+                                    <select class="form-select" id="roleSelect" name="role_id" required>
+                                        <option selected disabled value="">Vyberte roli...</option>
+                                        {% for role in pageData.allRoles %}
+                                            <option value="{{ role.id }}">{{ role.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary">Přidat roli</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+
 
                 <!-- TAB - ČLÁNKY -->
                 <div class="tab-pane fade" id="articles">
