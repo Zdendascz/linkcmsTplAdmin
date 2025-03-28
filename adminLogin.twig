@@ -46,19 +46,21 @@
                 <a href="{{ domainData.SITE_WEB }}">{{ domainData.SITE_NAME }}</a>
             </div>
             <p class="auth-description">Prosím přihlašte se do svého účtu.<br>Nemáte ještě sůj účet? Můžete se zdarma <a href="sign-up.html">zaregistrovat</a>.</p>
-<form action="{{ domainData.SITE_WEB }}/doLogin" method="post">
-            <div class="auth-credentials m-b-xxl">
-                <label for="signInEmail" class="form-label">Emailová adresa</label>
-                <input type="email" class="form-control m-b-md" id="signInEmail" name="email" aria-describedby="signInEmail" placeholder="vasemail@mini-web.cz">
+<form id="login-form" action="{{ domainData.SITE_WEB }}/doLogin" method="post">
+    <input type="hidden" name="g-recaptcha-response" id="recaptcha-token"> <!-- Token reCAPTCHA -->
 
-                <label for="signInPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="signInPassword" name="password" aria-describedby="signInPassword" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
-            </div>
+    <div class="auth-credentials m-b-xxl">
+        <label for="signInEmail" class="form-label">Emailová adresa</label>
+        <input type="email" class="form-control m-b-md" id="signInEmail" name="email" aria-describedby="signInEmail" placeholder="vasemail@mini-web.cz" required>
 
-            <div class="auth-submit">
-                <input type="submit" class="btn btn-primary" value="Přihlásit se" /></a>
-                <a href="#" class="auth-forgot-password float-end">Zapomenuté heslo?</a>
-            </div>
+        <label for="signInPassword" class="form-label">Heslo</label>
+        <input type="password" class="form-control" id="signInPassword" name="password" aria-describedby="signInPassword" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" required>
+    </div>
+
+    <div class="auth-submit">
+        <button type="button" id="login-submit" class="btn btn-primary">Přihlásit se</button>
+        <a href="#" class="auth-forgot-password float-end">Zapomenuté heslo?</a>
+    </div>
 </form>
             <div class="divider"></div>
             <!--<div class="auth-alts">
@@ -76,5 +78,19 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
+
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdJXWAqAAAAAO9xakmUctOwL9Z9jjDxSpeaaHuL"></script>
+<script>
+document.getElementById("login-submit").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    grecaptcha.ready(function() {
+        grecaptcha.execute('6LdJXWAqAAAAAO9xakmUctOwL9Z9jjDxSpeaaHuL', { action: 'login' }).then(function(token) {
+            document.getElementById("recaptcha-token").value = token;
+            document.getElementById("login-form").submit();
+        });
+    });
+});
+</script>
 </body>
 </html>

@@ -47,36 +47,38 @@
             </div>
             <p class="auth-description">Prosím zaregistrujte se.<br>Máte už svou registraci v systému <a href="https://mini-web.cz/" title="Mini-web, webové řešení pro vás" target="_blank">Mini-web</a>? Můžete se <a href="{{ domainData.SITE_WEB }}/admin/login/">přihlásit</a></p>
 
-            <form action="{{ domainData.SITE_WEB }}/doRegister" method="post">
-    <div class="auth-credentials m-b-xxl">
-        {% if error_message is defined and error_message %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ error_message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endif %}
-        <label for="email" class="form-label">E-mail*:</label>
-        <input type="email" class="form-control m-b-md" id="email" name="email" required placeholder="Vložte email">
+            <form id="register-form" action="{{ domainData.SITE_WEB }}/doRegister" method="post">
+                <input type="hidden" name="g-recaptcha-response" id="recaptcha-token"> <!-- Token reCAPTCHA -->
+                
+                <div class="auth-credentials m-b-xxl">
+                    {% if error_message is defined and error_message %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ error_message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                    
+                    <label for="email" class="form-label">E-mail*:</label>
+                    <input type="email" class="form-control m-b-md" id="email" name="email" required placeholder="Vložte email">
 
-        <label for="password" class="form-label">Heslo*:</label>
-        <input type="password" class="form-control m-b-md" id="password" name="password" required placeholder="Vložte heslo">
-        <div id="passwordHelp" class="form-text">Heslo musí mít nejméně 8 znaků*</div>
+                    <label for="password" class="form-label">Heslo*:</label>
+                    <input type="password" class="form-control m-b-md" id="password" name="password" required placeholder="Vložte heslo">
+                    <div id="passwordHelp" class="form-text">Heslo musí mít nejméně 8 znaků*</div>
 
-        <label for="repeat_password" class="form-label">Opakování hesla*:</label>
-        <input type="password" class="form-control m-b-md" id="repeat_password" name="repeat_password" required placeholder="Zopakujte heslo">
+                    <label for="repeat_password" class="form-label">Opakování hesla*:</label>
+                    <input type="password" class="form-control m-b-md" id="repeat_password" name="repeat_password" required placeholder="Zopakujte heslo">
 
-        <label for="fullname" class="form-label">Celé jméno:</label>
-        <input type="text" class="form-control m-b-md" id="fullname" name="fullname" placeholder="Vložte jméno a příjmení">
+                    <label for="fullname" class="form-label">Celé jméno:</label>
+                    <input type="text" class="form-control m-b-md" id="fullname" name="fullname" placeholder="Vložte jméno a příjmení">
 
-        <label for="phone" class="form-label">Telefon:</label>
-        <input type="text" class="form-control m-b-md" id="phone" name="phone" placeholder="+420 111 222 333">
+                    <label for="phone" class="form-label">Telefon:</label>
+                    <input type="text" class="form-control m-b-md" id="phone" name="phone" placeholder="+420 111 222 333">
+                </div>
 
-    </div>
-
-    <div class="auth-submit">
-        <button type="submit" class="btn btn-primary">Registrovat</button>
-    </div>
-</form>
+                <div class="auth-submit">
+                    <button type="button" id="register-submit" class="btn btn-primary">Registrovat</button>
+                </div>
+            </form>
             <div class="divider"></div>
             <!--<div class="auth-alts">
                 <a href="#" class="auth-alts-google"></a>
@@ -116,6 +118,19 @@
             window.history.replaceState({}, document.title, newUrl);
         }
     });
+</script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LdJXWAqAAAAAO9xakmUctOwL9Z9jjDxSpeaaHuL"></script>
+<script>
+document.getElementById("register-submit").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    grecaptcha.ready(function() {
+        grecaptcha.execute('6LdJXWAqAAAAAO9xakmUctOwL9Z9jjDxSpeaaHuL', { action: 'register' }).then(function(token) {
+            document.getElementById("recaptcha-token").value = token;
+            document.getElementById("register-form").submit();
+        });
+    });
+});
 </script>
 </body>
 </html>
