@@ -25,15 +25,22 @@
                 </tr>
             </thead>
             <tbody>
-                {% for variable in displayData %}
+            {% for variable in displayData %}
+                {% set rawValue = domainData.domain[variable.key] %}
+
                 <tr>
                     <td><span title="{{ variable.key }}">{{ variable.name }}</span></td>
                     <td>
-                        <input type="text" class="form-control save-on-blur" data-id="{{ variable.id }}" placeholder="value_{{ variable.default_value }}" name="value_{{ variable.id }}" value="{{ domainData.domain[variable.key] }}">
+                        <input type="text"
+                            class="form-control save-on-blur"
+                            data-id="{{ variable.id }}"
+                            placeholder="value_{{ variable.default_value }}"
+                            name="value_{{ variable.id }}"
+                            value="{{ rawValue is iterable ? rawValue|json_encode(constant('JSON_UNESCAPED_UNICODE')) : rawValue }}">
                     </td>
                     <td><span style="font-size: smaller;">{{ variable.description }}</span></td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
                     <tfoot>
                         <tr>
