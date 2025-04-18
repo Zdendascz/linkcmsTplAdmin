@@ -20,7 +20,6 @@
             <table id="datatable3" class="display nowrap" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th>Obrázek</th>
                         <th>Název</th>
                         <th>Kategorie</th>
                         <th>ID uživatele</th>
@@ -32,13 +31,13 @@
                     {% for article in displayData %}
                     <tr>
                         <td>
-                        <img src="{{ article.images.images.articles.varianta.galleryThumbnail.public_url }}" width="100px" />
-                        </td>
+                        <img src="{{ article.images.images.articles.varianta.galleryThumbnail.public_url }}" width="100px" style="float: left; margin-right: 5px;" />
                         {% if article.meta.content_typ == 'article' %}
-                        <td><a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) ~ '...'   }}</strong></a></td>
+                        <a href="{{ domainData.SITE_WEB }}/admin/AddArticle?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) ~ '...'   }}</strong></a>
                         {% else %}
-                        <td><a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) ~ '...' }}</strong></a></td>
+                        <a href="{{ domainData.SITE_WEB }}/admin/addPage?id={{ article.id }}" title="{{ article.title }}"><strong>{{ article.title|slice(0, 30) ~ '...' }}</strong></a>
                         {% endif %}
+                        </td>
                         <td>
                             <span>
                                 {% set count = 0 %}
@@ -61,17 +60,16 @@
                         </td>
 
 
-                        <td>autor {{ article.author_id }}</td>
-                        <td>{{ article.updated_at|date('d. m. y H:i') }}<br />
-                            <strong>{{ article.publish_at|date('d. m. y') }}</strong></td>
-                        <td>{% if article.status == 'development' %}
-                                Ve vývoji
+                        <td>{% if article.meta.autor_name is empty %}{{ article.user_data.details.fullname }}{% else %}Označení:<br />{{ article.meta.autor_name }}{% endif %}</td>
+                        <td>{{ article.updated_at|date('d. m. y H:i') }}</td>
+                        <td>{% if article.publish_at is not null and article.status == 'development' %}
+                                Naplánováno<br />{{ article.publish_at|date('d. m. y') }}
+                            {% elseif article.status == 'development' %}
+                                Ve vývoji  
                             {% elseif article.status == 'active' %}
-                                Aktivní
+                                Aktivní<br />{{ article.publish_at|date('d. m. y') }}
                             {% elseif article.status == 'suspend' %}
                                 Pozastaveno
-                            {% else %}
-                                Neznámý
                             {% endif %}
                         </td>
                     </tr>

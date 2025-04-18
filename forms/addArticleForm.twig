@@ -8,6 +8,7 @@
                 {% set isChecked = true %}
             {% endif %}
         {% endfor %}
+        {% if category.meta.listArticles != "true" %}
         <li class="ml-5">
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
             <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
@@ -15,6 +16,7 @@
                 {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
             {% endif %}
         </li>
+        {% endif %}
     {% endfor %}
     </ul>
 {% endmacro %}
@@ -202,6 +204,26 @@
                 <div class="mb-3">
                     <label for="metaKeywords" class="form-label">Meta Keywords</label>
                     <input type="text" class="form-control" id="metaKeywords" name="meta[keywords]" value="{{ pageData.article.meta.keywords|default('') }}">
+                </div>
+                <div class="row">
+                    <!-- Select autor -->
+                    <div class="col-md-6 mb-3">
+                        <label for="authorSelect" class="form-label">Autor</label>
+                        <select id="authorSelect" name="user_id" class="form-control">
+                            {% set selectedUserId = pageData.article.user_data.id ?? userData.uid %}
+                            {% for userId, user in pageData.usersInRole %}
+                                <option value="{{ user.user_id }}" {% if user.user_id == selectedUserId %}selected{% endif %}>
+                                    {{ user.user_name }} ({{ user.user_email }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Input označení autora -->
+                    <div class="col-md-6 mb-3">
+                        <label for="metaAutorName" class="form-label">Označení autora</label>
+                        <input type="text" class="form-control" id="metaAutorName" name="meta[autor_name]" value="{{ pageData.article.meta.autor_name|default('') }}">
+                    </div>
                 </div>
             </div>
 
