@@ -15,6 +15,7 @@
             <table id="datatable4" class="display" style="width:100%">
                 <thead>
                     <tr>
+                        <th>Avata</th>
                         <th>Jméno</th>
                         <th>E-mail</th>
                         <th>Aktivní</th>
@@ -26,8 +27,9 @@
                 <tbody>
                     {% for user in displayData %}
                         <tr>
-                            <td>{{ user.user_name }}</td>
-                            <td>{{ user.user_email }}</td>
+                            <td>{% if user.avatar_file.variants.usr_ico_small.public_url != empty %}<img src="{{ user.avatar_file.variants.usr_ico_small.public_url }}" />{% endif %}</td>
+                            <th>{{ user.user_name }}</th>
+                            <td>{{ user.user_email }}<br />{{ user.public_email }}</td>
                             <td>
                                 {% if user.user_active %}
                                     <span class="badge badge-success">Aktivní</span>
@@ -36,9 +38,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% for role in user.roles %}
-                                    <span class="badge badge-info">{{ role.role_name }}</span>{% if not loop.last %}, {% endif %}
-                                {% endfor %}
+                                    <span class="badge badge-info">{{ user.user_role }}</span>
                             </td>
                             <td>
                                 {% for role in user.roles %}

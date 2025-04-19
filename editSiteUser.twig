@@ -11,11 +11,34 @@
 {% block content %}
     <div class="row">
         <div class="col">
+            <style>
+            .upload-box {
+                border: 2px dashed #ccc;
+                border-radius: 6px;
+                padding: 10px;
+                text-align: center;
+                cursor: pointer;
+                min-height: 120px;
+                position: relative;
+                transition: background-color 0.2s ease-in-out;
+            }
+            .upload-box:hover {
+                background-color: #f9f9f9;
+            }
+            .upload-box .preview img {
+                max-width: 100%;
+                max-height: 100px;
+                display: block;
+                margin: auto;
+            }
+            </style>
             <div class="card">
                 <div class="card-body">
                     <form action="{{ domainData.SITE_WEB }}/admin/doUserEdit" method="post">
                         <input type="hidden" name="user_id" value="{{ pageData.userDetail.user_id }}" />
-                        
+                        <input type="hidden" name="cover_file_id" id="cover_file_id" value="{{ pageData.userDetail.cover_file.id }}">
+                        <input type="hidden" name="avatar_file_id" id="avatar_file_id" value="{{ pageData.userDetail.avatar_file.id }}">
+
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="fullname" class="form-label">Celé jméno</label>
@@ -23,7 +46,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">E-mail</label>
-                                <input type="email" class="form-control" id="email" name="email" value="{{ pageData.userDetail.user_email }}" readonly>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ pageData.userDetail.user_email }}" required>
                             </div>
                         </div>
 
@@ -39,22 +62,294 @@
                         </div>
 
                         <div class="row mt-3">
-                            <div class="col">
-                                <label for="active" class="form-label">Aktivní účet</label>
-                                <input type="checkbox" id="active" name="active" value="1" {% if pageData.userDetail.user_active %}checked{% endif %}>
+                            <div class="col-md-6">
+                                <label for="new_password" class="form-label">Nové heslo</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="new_password" name="new_password" autocomplete="new-password">
+                                    <button class="btn btn-outline-secondary" type="button" id="generatePasswordBtn">Generovat</button>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn" title="Zobrazit heslo">👁️</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="confirm_password" class="form-label">Potvrzení hesla</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" autocomplete="new-password">
+                            </div>
+                        </div>
+
+
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label for="city" class="form-label">Město</label>
+                                <input type="text" class="form-control" id="city" name="city" value="{{ pageData.userDetail.city }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="postal_code" class="form-label">PSČ</label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ pageData.userDetail.postal_code }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="country" class="form-label">Země</label>
+                                <input type="text" class="form-control" id="country" name="country" value="{{ pageData.userDetail.country }}">
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="job_title" class="form-label">Pozice / Titul</label>
+                                <input type="text" class="form-control" id="job_title" name="job_title" value="{{ pageData.userDetail.job_title }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="company_name" class="form-label">Společnost</label>
+                                <input type="text" class="form-control" id="company_name" name="company_name" value="{{ pageData.userDetail.company_name }}">
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="website" class="form-label">Web</label>
+                                <input type="text" class="form-control" id="website" name="website" value="{{ pageData.userDetail.website }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="public_email" class="form-label">Veřejný e-mail</label>
+                                <input type="text" class="form-control" id="public_email" name="public_email" value="{{ pageData.userDetail.public_email }}">
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="preferred_language" class="form-label">Preferovaný jazyk</label>
+                                <select class="form-control" id="preferred_language" name="preferred_language">
+                                    {% set languages = {'cz': 'Čeština', 'sk': 'Slovenčina', 'en': 'English', 'de': 'Deutsch', 'hu': 'Magyar', 'pl': 'Polski'} %}
+                                    {% for code, name in languages %}
+                                        <option value="{{ code }}" {% if pageData.userDetail.preferred_language == code %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" id="allow_public_profile" name="allow_public_profile" value="1" {% if pageData.userDetail.allow_public_profile %}checked{% endif %}>
+                                    <label class="form-check-label" for="allow_public_profile">Veřejný profil</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" id="display_signature" name="display_signature" value="1" {% if pageData.userDetail.display_signature %}checked{% endif %}>
+                                    <label class="form-check-label" for="display_signature">Zobrazit podpis</label>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row mt-3">
                             <div class="col">
+                                <label for="signature" class="form-label">Podpis pod článkem</label>
+                                <textarea class="form-control" id="signature" name="signature" rows="3">{{ pageData.userDetail.signature }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label for="bio_html" class="form-label">O sobě</label>
+                                <textarea class="form-control" id="bio_html" name="bio_html" rows="4">{{ pageData.userDetail.bio_html }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label class="form-label">Sociální sítě</label>
+                                <div id="socials-wrapper">
+                                    {% set socials = pageData.userDetail.socials ?? [] %}
+                                    {% set index = 0 %}
+                                    {% for item in socials %}
+                                        <div class="d-flex align-items-center mb-2 social-row">
+                                            <select name="socials[{{ index }}][network]" class="form-select me-2">
+                                                {% set options = ['Facebook', 'Instagram', 'Twitter', 'LinkedIn', 'YouTube', 'TikTok', 'Pinterest', 'Snapchat', 'Reddit', 'Tumblr', 'GitHub', 'Dribbble', 'Behance', 'Vimeo', 'Medium'] %}
+                                                {% for option in options %}
+                                                    <option value="{{ option }}" {% if option == item.network %}selected{% endif %}>{{ option }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="text" name="socials[{{ index }}][url]" class="form-control me-2" value="{{ item.url }}" placeholder="URL profilu">
+                                            <button type="button" class="btn btn-danger btn-sm remove-social">✖</button>
+                                        </div>
+                                        {% set index = index + 1 %}
+                                    {% endfor %}
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm mt-2" id="add-social">Přidat další síť</button>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label class="form-label">Webové odkazy</label>
+                                <div id="links-wrapper">
+                                    {% set links = pageData.userDetail.links ?? [] %}
+                                    {% for link in links %}
+                                        <div class="d-flex align-items-center mb-2 link-row">
+                                            <input type="text" name="links[]" class="form-control me-2" value="{{ link }}" placeholder="https://example.com">
+                                            <button type="button" class="btn btn-danger btn-sm remove-link">✖</button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm mt-2" id="add-link">Přidat další odkaz</button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label class="form-label">Doplňující informace {{ domainData.domain.usrDataConf }}</label>
+                                {% set extrasConfig = domainData.domain.usrDataConf %}
+                                {% set extrasValues = pageData.userDetail.extras ?? {} %}
+
+                                {% for item in extrasConfig %}
+                                    {% for field, label in item %}
+                                        <div class="mb-2">
+                                            <label for="extra_{{ field }}" class="form-label">{{ label }}</label>
+                                            <input type="text" class="form-control" id="extra_{{ field }}" name="extras[{{ field }}]" value="{{ extrasValues[field]|default('') }}">
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="is_contributor" name="is_contributor" value="1" {% if pageData.userDetail.is_contributor %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_contributor">Aktivní přispěvatel</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col">
                                 <button type="submit" class="btn btn-primary">Uložit změny</button>
                             </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const socialsWrapper = document.getElementById('socials-wrapper');
+        const addButton = document.getElementById('add-social');
+
+        const socialOptions = [
+            'Facebook', 'Instagram', 'Twitter', 'LinkedIn', 'YouTube',
+            'TikTok', 'Pinterest', 'Snapchat', 'Reddit', 'Tumblr',
+            'GitHub', 'Dribbble', 'Behance', 'Vimeo', 'Medium'
+        ];
+
+        let index = {{ socials|length }};
+
+        addButton.addEventListener('click', function () {
+            const row = document.createElement('div');
+            row.classList.add('d-flex', 'align-items-center', 'mb-2', 'social-row');
+
+            const select = document.createElement('select');
+            select.name = `socials[${index}][network]`;
+            select.classList.add('form-select', 'me-2');
+            socialOptions.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `socials[${index}][url]`;
+            input.placeholder = 'URL profilu';
+            input.classList.add('form-control', 'me-2');
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-social');
+            removeBtn.innerHTML = '✖';
+            removeBtn.onclick = function () {
+                row.remove();
+            };
+
+            row.appendChild(select);
+            row.appendChild(input);
+            row.appendChild(removeBtn);
+            socialsWrapper.appendChild(row);
+
+            index++;
+        });
+
+        // Odstraňování řádku
+        socialsWrapper.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-social')) {
+                e.target.closest('.social-row').remove();
+            }
+        });
+    });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const linksWrapper = document.getElementById('links-wrapper');
+    const addLinkBtn = document.getElementById('add-link');
+
+    addLinkBtn.addEventListener('click', function () {
+        const row = document.createElement('div');
+        row.classList.add('d-flex', 'align-items-center', 'mb-2', 'link-row');
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'links[]';
+        input.placeholder = 'https://example.com';
+        input.classList.add('form-control', 'me-2');
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-link');
+        removeBtn.innerHTML = '✖';
+        removeBtn.onclick = function () {
+            row.remove();
+        };
+
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        linksWrapper.appendChild(row);
+    });
+
+    linksWrapper.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-link')) {
+            e.target.closest('.link-row').remove();
+        }
+    });
+});
+</script>
+<script>
+document.getElementById('generatePasswordBtn').addEventListener('click', function () {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+
+    document.getElementById('new_password').value = password;
+    document.getElementById('confirm_password').value = password;
+
+    // automaticky zobrazí heslo po vygenerování
+    document.getElementById('new_password').type = 'text';
+    document.getElementById('confirm_password').type = 'text';
+});
+
+document.getElementById('togglePasswordBtn').addEventListener('click', function () {
+    const passInput = document.getElementById('new_password');
+    const confirmInput = document.getElementById('confirm_password');
+
+    const toggleType = passInput.type === 'password' ? 'text' : 'password';
+    passInput.type = toggleType;
+    confirmInput.type = toggleType;
+});
+</script>
+
 {% endblock %}
 
 {% block jsLinks %}

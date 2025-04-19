@@ -30,8 +30,9 @@
                     <input type="text" class="form-control" id="fullname" name="fullname" value="{{ pageData.userDetail.user_name }}" required>
                 </div>
                 <div class="col-md-6">
-                    <label for="email" class="form-label">E-mail</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ pageData.userDetail.user_email }}" required>
+                    <label for="email" class="form-label">E-mail</label><br />
+                    <input type="text" class="form-control" value="{{ pageData.userDetail.user_email }}" readonly="readonly">
+                    <input type="hidden" class="form-control" id="email" name="email" value="{{ pageData.userDetail.user_email }}" required>
                 </div>
             </div>
 
@@ -45,7 +46,7 @@
                     <input type="text" class="form-control" id="address" name="address" value="{{ pageData.userDetail.user_address }}">
                 </div>
             </div>
-            
+
             <div class="row mt-3">
                 <div class="col-md-6">
                     <label for="new_password" class="form-label">Nové heslo</label>
@@ -99,35 +100,35 @@
                 </div>
             </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <label class="form-label">Avatar</label>
-        <div class="upload-box" id="avatar-upload">
-            <div class="preview" id="avatar-preview">
-                {% if pageData.userDetail.avatar_file.variants.usr_ico_big %}
-                    <img src="{{ pageData.userDetail.avatar_file.variants.usr_ico_big.public_url }}" alt="Avatar" class="img-thumbnail">
-                {% else %}
-                    <span>Přetáhni nebo klikni pro výběr</span>
-                {% endif %}
-            </div>
-            <input type="hidden" name="avatar_file_id" id="avatar_file_id" value="{{ pageData.userDetail.avatar_file.id }}">
-        </div>
-    </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <label class="form-label">Avatar</label>
+                    <div class="upload-box" id="avatar-upload">
+                        <div class="preview" id="avatar-preview">
+                            {% if pageData.userDetail.avatar_file.variants.usr_ico_big %}
+                                <img src="{{ pageData.userDetail.avatar_file.variants.usr_ico_big.public_url }}" alt="Avatar" class="img-thumbnail">
+                            {% else %}
+                                <span>Přetáhni nebo klikni pro výběr</span>
+                            {% endif %}
+                        </div>
+                        <input type="hidden" name="avatar_file_id" id="avatar_file_id" value="{{ pageData.userDetail.avatar_file.id }}">
+                    </div>
+                </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Banner</label>
-        <div class="upload-box" id="cover-upload">
-            <div class="preview" id="cover-preview">
-                {% if pageData.userDetail.cover_file.variants.usr_ico_big %}
-                    <img src="{{ pageData.userDetail.cover_file.variants.usr_ico_big.public_url }}" alt="Banner" class="img-thumbnail">
-                {% else %}
-                    <span>Přetáhni nebo klikni pro výběr</span>
-                {% endif %}
+                <div class="col-md-6">
+                    <label class="form-label">Banner</label>
+                    <div class="upload-box" id="cover-upload">
+                        <div class="preview" id="cover-preview">
+                            {% if pageData.userDetail.cover_file.variants.usr_ico_big %}
+                                <img src="{{ pageData.userDetail.cover_file.variants.usr_ico_big.public_url }}" alt="Banner" class="img-thumbnail">
+                            {% else %}
+                                <span>Přetáhni nebo klikni pro výběr</span>
+                            {% endif %}
+                        </div>
+                        <input type="hidden" name="cover_file_id" id="cover_file_id" value="{{ pageData.userDetail.cover_file.id }}">
+                    </div>
+                </div>
             </div>
-            <input type="hidden" name="cover_file_id" id="cover_file_id" value="{{ pageData.userDetail.cover_file.id }}">
-        </div>
-    </div>
-</div>
 
             <div class="row mt-3">
                 <div class="col-md-6">
@@ -211,7 +212,7 @@
 
             <div class="row mt-3">
                 <div class="col">
-                    <label class="form-label">Doplňující informace {{ domainData.domain.usrDataConf }}</label>
+                    <label class="form-label">Doplňující informace</label>
                     {% set extrasConfig = domainData.domain.usrDataConf %}
                     {% set extrasValues = pageData.userDetail.extras ?? {} %}
 
@@ -233,16 +234,6 @@
                         <label class="form-check-label" for="is_contributor">Aktivní přispěvatel</label>
                     </div>
                 </div>
-<div class="col">
-    <div class="form-switch">
-        <input type="checkbox"
-               class="form-check-input toggle-user-active"
-               id="active"
-               data-user-id="{{ pageData.userDetail.user_id }}"
-               {% if pageData.userDetail.user_active %}checked{% endif %}>
-        <label class="form-check-label" for="active">Aktivní účet</label>
-    </div>
-</div>
             </div>
 
             <div class="row mt-4">
@@ -419,38 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.toggle-user-active').forEach(function (toggle) {
-        toggle.addEventListener('change', function () {
-            const userId = this.dataset.userId;
-            const isActive = this.checked ? 1 : 0;
-
-            fetch('/admin/toggleUserActive', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    user_id: userId,
-                    isactive: isActive
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.success) {
-                    alert('Chyba při změně stavu: ' + data.message);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Nastala chyba při změně aktivního stavu uživatele.');
-            });
-        });
-    });
-});
-
-</script>
-<script>
 document.getElementById('generatePasswordBtn').addEventListener('click', function () {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
     let password = '';
@@ -475,3 +434,4 @@ document.getElementById('togglePasswordBtn').addEventListener('click', function 
     confirmInput.type = toggleType;
 });
 </script>
+
