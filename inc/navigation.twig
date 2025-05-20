@@ -97,6 +97,12 @@
             {% if userData.prava.templatesAdmin == 1 %}<li>
                 <a href="{{ domainData.SITE_WEB }}/admin/templates/"><i class="material-icons">web</i>Správa šablon</a>
             </li>{% endif %}
+            {% if userData.prava.templatesAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/product-types/"><i class="material-icons">web</i>Typy produktů</a>
+            </li>{% endif %}
+            {% if userData.prava.templatesAdmin == 1 %}<li>
+                <a href="{{ domainData.SITE_WEB }}/admin/parameters/"><i class="material-icons">web</i>Správa parametrů</a>
+            </li>{% endif %}
             {% if userData.prava.variablesAdmin == 1 %}<li>
                 <a href="{{ domainData.SITE_WEB }}/admin/confDef"><i class="material-icons">tune</i>Konfigurace proměnných</a>
             </li>{% endif %}
