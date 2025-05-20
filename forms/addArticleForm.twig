@@ -1,24 +1,44 @@
-{% macro renderCategoryCheckboxes(categories, selectedCategories) %}
+{#
+    Vykreslení kategorií rozdělených podle navigace. V rámci každé navigace jsou
+    kategorie seřazeny dle "order_cat" a zachovává se jejich zanoření.
+#}
+{% macro renderCategoryList(categories, selectedCategories) %}
     {% import _self as self %}
     <ul class="list-disc ml-6 space-y-2">
-    {% for category in categories %}
-        {% set isChecked = false %}
-        {% for selectedCategory in selectedCategories %}
-            {% if selectedCategory.id == category.id %}
-                {% set isChecked = true %}
-            {% endif %}
-        {% endfor %}
-        {% if category.meta.listArticles != "true" %}
-        <li class="ml-5">
-            <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
-            <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
-            {% if category.children|length > 0 %}
-                {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
-            {% endif %}
-        </li>
+    {% for category in categories|sort(attribute='order_cat') %}
+        {% if category.meta.listArticles == "false" %}
+            {% set isChecked = false %}
+            {% for selectedCategory in selectedCategories %}
+                {% if selectedCategory.id == category.id %}
+                    {% set isChecked = true %}
+                {% endif %}
+            {% endfor %}
+            <li class="ml-5">
+                <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
+                <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
+                {% if category.children|length > 0 %}
+                    {{ self.renderCategoryList(category.children, selectedCategories) }}
+                {% endif %}
+            </li>
         {% endif %}
     {% endfor %}
     </ul>
+{% endmacro %}
+
+{% macro renderCategoryCheckboxes(categories, selectedCategories) %}
+    {% import _self as self %}
+    {# Seskupeni kategorii podle navigation_id #}
+    {% set navGroups = {} %}
+    {% for cat in categories %}
+        {% set navGroups = navGroups|merge({ (cat.navigation_id): (navGroups[cat.navigation_id]|default([]))|merge([cat]) }) %}
+    {% endfor %}
+
+    {% for navId, navCategories in navGroups %}
+        <div class="mb-2">
+            <h6>Navigace {{ navId }}</h6>
+            {{ self.renderCategoryList(navCategories, selectedCategories) }}
+        </div>
+    {% endfor %}
 {% endmacro %}
 
 <style>
