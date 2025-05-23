@@ -1,4 +1,4 @@
-{% macro renderCategoryCheckboxes(categories, selectedCategories) %}
+{% macro renderCategoryList(categories, selectedCategories) %}
     {% import _self as self %}
     <ul class="list-disc ml-6 space-y-2">
     {% for category in categories %}
@@ -8,17 +8,35 @@
                 {% set isChecked = true %}
             {% endif %}
         {% endfor %}
-        {% if category.meta.listArticles != "true" %}
+        {% if category.meta.listArticles == "false" %}
         <li class="ml-5">
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
             <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
             {% if category.children|length > 0 %}
-                {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
+                {{ self.renderCategoryList(category.children, selectedCategories) }}
             {% endif %}
         </li>
         {% endif %}
     {% endfor %}
     </ul>
+{% endmacro %}
+
+{% macro renderNavigationGroups(categories, selectedCategories) %}
+    {% import _self as self %}
+    {% set groups = {} %}
+    {% for cat in categories %}
+        {% set navId = cat.navigation_id %}
+        {% if groups[navId] is not defined %}
+            {% set groups = groups | merge({ (navId): [] }) %}
+        {% endif %}
+        {% set groups = groups | merge({ (navId): groups[navId]|default([])|merge([cat]) }) %}
+    {% endfor %}
+    {% for navId, navCats in groups %}
+        <div class="mb-2">
+            <h6>Navigace {{ navId }}</h6>
+            {{ self.renderCategoryList(navCats, selectedCategories) }}
+        </div>
+    {% endfor %}
 {% endmacro %}
 
 <style>
@@ -250,7 +268,7 @@
                 <div class="mb-3">
                     <h5>Vyberte kategorii</h5>
                     {% import _self as macros %}
-                    {{ macros.renderCategoryCheckboxes(pageData.allCats, pageData.article.categories) }}
+                    {{ macros.renderNavigationGroups(pageData.allCats, pageData.article.categories) }}
                     <p>Dvojkliknutím na název kategorie vytvoříte url článku s použitím url kategorie.</p>
                 </div>
                  {% include 'inc/imageModal1.twig' %} {# zde se přikládají tři modalní okna pro výběr obrázků #}
