@@ -18,7 +18,33 @@
         </li>
         {% endif %}
     {% endfor %}
-    </ul>
+
+    {% for navId, navCats in groups %}
+        <div class="mb-2">
+            <h6>Navigace {{ navId }}</h6>
+            {{ self.renderCategoryList(navCats|sort((a,b) => a.order_cat <=> b.order_cat), selectedCategories) }}
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+
+
+{% macro renderNavigationGroups(categories, selectedCategories) %}
+    {% import _self as self %}
+    {% set groups = {} %}
+    {% for cat in categories %}
+        {% set navId = cat.navigation_id %}
+        {% if groups[navId] is not defined %}
+            {% set groups = groups | merge({ (navId): [] }) %}
+        {% endif %}
+        {% set groups = groups | merge({ (navId): groups[navId] | merge([cat]) }) %}
+    {% endfor %}
+    {% for navId, navCats in groups %}
+        <div class="mb-2">
+            <h6>Navigace {{ navId }}</h6>
+            {{ self.renderCategoryList(navCats|sort((a,b) => a.order_cat <=> b.order_cat), selectedCategories) }}
+        </div>
+    {% endfor %}
 {% endmacro %}
 
 {% macro renderNavigationGroups(categories, selectedCategories) %}
