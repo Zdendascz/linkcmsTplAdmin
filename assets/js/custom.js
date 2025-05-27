@@ -47,7 +47,7 @@ function updateUrlParamsAndShowAlert(elementId) {
     }
 }
 
-/**** funkce označí formulářové prvky */
+/* *** funkce označí formulářové prvky */
 function validateFormFields(form) {
     Array.from(form.elements).forEach(function(element) {
         if (element.hasAttribute('required')) {
@@ -89,3 +89,43 @@ function stringToUrlSafe(str) {
 
     return str;
 }
+
+function addCharCounter(inputId, maxChars, optimalChars) {
+    const inputEl = document.getElementById(inputId);
+
+    if (!inputEl) {
+        console.error("Element s ID", inputId, "nebyl nalezen.");
+        return;
+    }
+
+    // Vytvoření elementu pro počítadlo
+    const counterEl = document.createElement('div');
+    counterEl.style.fontSize = '0.9rem';
+    counterEl.style.marginTop = '5px';
+    inputEl.parentNode.insertBefore(counterEl, inputEl.nextSibling);
+
+    function updateCounter() {
+        let currentLength = inputEl.value.length;
+
+        if (currentLength > maxChars) {
+            inputEl.value = inputEl.value.substring(0, maxChars);
+            currentLength = maxChars;
+        }
+
+        counterEl.textContent = `${currentLength}/${maxChars} znaků`;
+
+        if (currentLength > optimalChars) {
+            counterEl.style.color = 'red';
+        } else {
+            counterEl.style.color = 'green';
+        }
+    }
+
+    inputEl.addEventListener('input', updateCounter);
+
+    // Spustit ihned po načtení
+    updateCounter();
+}
+
+
+console.log("jedeme 2")

@@ -25,12 +25,19 @@
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/apexcharts/apexcharts.min.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
-    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js?v=1"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/lightbox.js"></script>
     <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/lightbox/fslightbox.js"></script>
 <script>
 updateUrlParamsAndShowAlert('articleForm');
+
+// Omezení počtu znaků na konkrétních elementech
+document.addEventListener('DOMContentLoaded', function () {
+    addCharCounter('metaTitle', 150, 55);
+    addCharCounter('metaDescription', 255, 155);
+});
+
 
 window.updateSelectedImage = function(inputId, value) {
     document.getElementById(inputId).value = value;

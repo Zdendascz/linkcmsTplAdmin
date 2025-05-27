@@ -24,7 +24,7 @@
 {% macro renderCategoryList(categories, selectedCategories) %}
     {% import _self as self %}
     <ul class="list-disc ml-6 space-y-2">
-    {% for category in categories|sort(attribute='order_cat') %}
+    {% for category in categories|sort((a, b) => a.order_cat <=> b.order_cat) %}
         {% if category.meta.listArticles == "false" %}
             {% set isChecked = false %}
             {% for selectedCategory in selectedCategories %}
@@ -48,11 +48,13 @@
     {% import _self as self %}
     {% set groups = {} %}
     {% for cat in categories %}
-        {% set navId = cat.navigation_id %}
-        {% if groups[navId] is not defined %}
-            {% set groups = groups | merge({ (navId): [] }) %}
+        {% if cat.navigation_id is not empty %}
+            {% set navId = cat.navigation_id %}
+            {% if groups[navId] is not defined %}
+                {% set groups = groups | merge({ (navId): [] }) %}
+            {% endif %}
+            {% set groups = groups | merge({ (navId): groups[navId] | merge([cat]) }) %}
         {% endif %}
-        {% set groups = groups | merge({ (navId): groups[navId] | merge([cat]) }) %}
     {% endfor %}
     {% for navId, navCats in groups %}
         <div class="mb-2">
@@ -61,3 +63,4 @@
         </div>
     {% endfor %}
 {% endmacro %}
+

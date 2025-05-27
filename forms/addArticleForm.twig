@@ -1,3 +1,21 @@
+{% macro renderCategoryCheckboxes(categories, selectedCategories) %}
+    {% import _self as self %}
+    {% set selectedCategories = selectedCategories|default([]) %}
+    <ul class="list-disc ml-6 space-y-2">
+    {% for category in categories %}
+        {% set isChecked = selectedCategories|filter(c => c.id == category.id)|length > 0 %}
+        {% if category.meta.listArticles != "true" and category.is_active != "suspend" %}
+        <li class="ml-5">
+            <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
+            <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
+            {% if category.children|length > 0 %}
+                {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
+            {% endif %}
+        </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+{% endmacro %}
 
 <style>
 .medium-editor-element h1{
@@ -227,8 +245,17 @@
 
                 <div class="mb-3">
                     <h5>Vyberte kategorii</h5>
-                    {% import 'forms/macros/categories.twig' as macros %}
-                    {{ macros.renderNavigationGroups(pageData.allCats, pageData.article.categories) }}
+                    {% import _self as macros %}
+
+                    {% for navId, navGroup in pageData.articleCats %}
+                        {% if navGroup.categories|length > 0 %}
+                            <div class="navigation-group mb-4" style="border-bottom: 1px #999 solid;">
+                                <h6>{{ navGroup.navigation.name }}</h6>
+                                {{ macros.renderCategoryCheckboxes(navGroup.categories, pageData.article.categories) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                     <p>Dvojkliknutím na název kategorie vytvoříte url článku s použitím url kategorie.</p>
                 </div>
                  {% include 'inc/imageModal1.twig' %} {# zde se přikládají tři modalní okna pro výběr obrázků #}
