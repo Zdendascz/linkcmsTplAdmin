@@ -23,6 +23,7 @@
     <div class="card-body">
         <form action="{{ domainData.SITE_WEB }}/admin/doUserEdit" method="post">
             <input type="hidden" name="user_id" value="{{ pageData.userDetail.user_id }}" />
+            <input type="hidden" name="site_id" value="{{ domainData.SITE_ID }}" />
 
             <div class="row">
                 <div class="col-md-6">
@@ -381,24 +382,44 @@ function initImageUpload(boxId, inputId, previewId, uploadUrl, type) {
         }
         formData.append('user_id', userIdInput.value);
 
+        const siteIdInput = document.querySelector('input[name="site_id"]');
+        if (!siteIdInput || !siteIdInput.value) {
+            alert("Chybí site_id");
+            return;
+        }
+        formData.append('site_id', siteIdInput.value);
+
         fetch(uploadUrl, {
             method: 'POST',
             body: formData,
         })
-        .then(res => res.json())
-        .then(data => {
+        .then(async res => {
+            const contentType = res.headers.get("content-type");
+            let data;
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                console.error("Odpověď není JSON:", text);
+                alert("Chyba: server vrátil nevalidní JSON.");
+                return;
+            }
+
+            console.log("DEBUG: Odpověď backendu", data);
+
             if (data.success && data.data && data.data.public_url && data.data.id) {
                 input.value = data.data.id;
                 preview.innerHTML = `<img src="${data.data.public_url}" class="img-thumbnail">`;
             } else {
-                console.error(data);
-                alert("Chyba při nahrávání souboru.");
+                alert("Chyba při nahrávání souboru: " + (data.message || "neznámá chyba."));
+                console.warn("Podrobná odpověď:", data);
             }
         })
         .catch(err => {
-            console.error(err);
+            console.error("Chyba při fetchu:", err);
             alert("Nepodařilo se nahrát soubor.");
         });
+
     }
 
 }
