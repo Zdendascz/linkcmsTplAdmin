@@ -1,6 +1,6 @@
 <ul class="accordion-menu">
     <li class="active-page">
-        <a href="{{ domainData.SITE_WEB }}/admin" class="active"><i class="material-icons-two-tone">dashboard</i>Nástěnka</a>
+        <a href="{{ domainData.SITE_WEB }}/admin/ class="active"><i class="material-icons-two-tone">dashboard</i>Nástěnka</a>
     </li>
 
     <li>
@@ -24,6 +24,17 @@
             <!--<li>
                 <a href="styles-icons.html">Koncepty stránek</a>
             </li>-->
+        </ul>
+    </li>{% endif %}
+    {% if userData.prava.navigationsAdmin == 1 %}<li>
+        <a href="#"><i class="material-icons">category</i>Produkty<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+        <ul class="sub-menu">
+            <li>
+                <a href="{{ domainData.SITE_WEB }}/admin/addProduct">Nový produkt</a>
+            </li>
+            <li>
+                <a href="{{ domainData.SITE_WEB }}/admin/allProducts">Seznam produktů</a>
+            </li>
         </ul>
     </li>{% endif %}
     {% if userData.prava.navigationsAdmin == 1 %}<li>

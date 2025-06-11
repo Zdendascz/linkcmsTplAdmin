@@ -4,7 +4,96 @@
 {% block podNadpis %}Administrace webu{% endblock %}
 
 {% block content %}
-{# <div class="row">
+{% if userData.prava.domainAdmin == 1 %}
+<div class="row">
+    {# Sloupec 1: Rozměry #}
+    <div class="col-xl-4">
+        <div class="card widget widget-list">
+            <div class="card-header">
+                <h5 class="card-title">Rozměry
+                    <span class="badge badge-success badge-style-light">{{ pageData.dimensions|length }} položek</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="widget-list-content list-unstyled">
+                    {% for name, dim in pageData.dimensions %}
+                        <li class="widget-list-item">
+                            <span class="widget-list-item-description">
+                                <span class="widget-list-item-description-title">{{ name }}</span>
+                                <span class="widget-list-item-description-subtitle">{{ dim.w }} x {{ dim.h }}</span>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {# Sloupec 2: domainData (bez SITE_DOMAIN) #}
+    <div class="col-xl-4">
+        <div class="card widget widget-list">
+            <div class="card-header">
+                <h5 class="card-title">DomainData (bez domény)
+                    <span class="badge badge-info badge-style-light">{{ domainData|length }} položek</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="widget-list-content list-unstyled">
+                    {% for key, value in domainData %}
+                        {% if key != 'SITE_DOMAIN' %}
+                            <li class="widget-list-item {% if value is empty %}widget-list-item-red{% endif %}">
+                                <span class="widget-list-item-description">
+                                    <span class="widget-list-item-description-title">{{ key }}</span>
+                                    <span class="widget-list-item-description-subtitle">
+                                        {% if value is empty %}
+                                            <span class="badge badge-danger">empty</span>
+                                        {% else %}
+                                            {{ value is iterable ? '[...]' : value }}
+                                        {% endif %}
+                                    </span>
+                                </span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {# Sloupec 3: domainData.domain #}
+    <div class="col-xl-4">
+        <div class="card widget widget-list">
+            <div class="card-header">
+                <h5 class="card-title">DomainData.domain
+                    <span class="badge badge-warning badge-style-light">{{ domainData.domain|length }} položek</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="widget-list-content list-unstyled">
+                    {% for key, value in domainData.domain %}
+                        <li class="widget-list-item {% if value is empty %}widget-list-item-red{% endif %}">
+                            <span class="widget-list-item-description">
+                                <span class="widget-list-item-description-title">{{ key }}</span>
+                                <span class="widget-list-item-description-subtitle">
+                                    {% if value is empty %}
+                                        <span class="badge badge-danger">empty</span>
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </span>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+<div class="row">
+</div>
+<div class="row">
     <div class="col-xl-4">
         <div class="card widget widget-stats">
             <div class="card-body">
@@ -409,7 +498,7 @@
             </div>
         </div>
     </div>
-</div> #}
+</div>
 {% endblock %}
 {% block jsLinks %}
     <!-- Javascripts -->

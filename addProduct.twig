@@ -1,0 +1,231 @@
+{% extends 'layout.twig' %}
+{% block headLinks %}
+<!-- CSS pro Medium Editor -->
+<link href="https://cdn.jsdelivr.net/npm/medium-editor/dist/css/medium-editor.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/medium-editor/dist/css/themes/default.min.css" rel="stylesheet">
+<!-- Skript pro Medium Editor -->
+<script src="https://cdn.jsdelivr.net/npm/medium-editor/dist/js/medium-editor.min.js"></script>
+
+{% endblock %}
+
+{% block titulek %}Editace {% endblock %}
+{% block nadpis %}Editor článku{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    {% include 'forms/addProductForm.twig' %}
+</div>
+{% endblock %}
+{% block jsLinks %}
+    <!-- Javascripts -->
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/jquery/jquery-3.5.1.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/pace/pace.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/apexcharts/apexcharts.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/main.min.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/custom.js?v=1"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/dashboard.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/js/pages/lightbox.js"></script>
+    <script src="{{ domainData.SITE_WEB }}/{{ templateDir}}assets/plugins/lightbox/fslightbox.js"></script>
+<script>
+updateUrlParamsAndShowAlert('productForm');
+
+document.addEventListener('DOMContentLoaded', function () {
+    addCharCounter('metaTitle', 150, 55);
+    addCharCounter('metaDescription', 255, 155);
+});
+
+window.updateSelectedImage = function(inputId, value) {
+    document.getElementById(inputId).value = value;
+    document.querySelectorAll('.img-thumbnail').forEach(function(el) {
+        el.classList.remove('selected-image');
+    });
+    document.querySelector('[data-image-id="'+value+'"]').classList.add('selected-image');
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const mainId = document.getElementById('id');
+    const urlInput = document.getElementById('url');
+
+    if(mainId.value !== ''){
+        urlInput.readOnly = true;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const productName = document.getElementById('title');
+    const productUrl = document.getElementById('url');
+    const mainCat = document.getElementById('mainCatid');
+    const mainCatValue = mainCat.value;
+
+    const labels = document.querySelectorAll('label[for^="category_"]');
+
+    labels.forEach(function(label) {
+        label.style.fontWeight = 'normal';
+        label.style.textDecoration = 'none';
+        label.addEventListener('dblclick', function(event) {
+            labels.forEach(function(lbl) {
+                lbl.style.fontWeight = 'normal';
+                lbl.style.textDecoration = 'none';
+            });
+
+            const url = label.getAttribute('data-url');
+            const catId = label.getAttribute('data-id');
+            const productFullUrl = url + stringToUrlSafe(productName.value);
+            if(!productUrl.readOnly)
+                productUrl.value = productFullUrl + '.html';
+            mainCat.value = catId;
+            label.style.fontWeight = 'bold';
+            label.style.textDecoration = 'underline';
+        });
+    });
+
+    if (mainCatValue) {
+        const mainCatSel = document.querySelector('label[for="category_' + mainCatValue + '"]');
+        
+        if (mainCatSel) {
+            mainCatSel.style.fontWeight = 'bold';
+            mainCatSel.style.textDecoration = 'underline';
+        }
+    }
+});
+
+function stringToUrlSafe(str) {
+    str = str.toLowerCase();
+    str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    str = str.replace(/[^a-z0-9]+/g, '-');
+    str = str.replace(/^-+|-+$/g, '');
+    if (str.length > 50) {
+        str = str.substring(0, 80);
+        str = str.replace(/-+$/g, '');
+    }
+    return str;
+}
+
+document.getElementById('productForm').addEventListener('submit', function(event) {
+    const editorContent = document.getElementById('editor').innerHTML;
+    document.getElementById('body').value = editorContent;
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const editor = new MediumEditor('#editor', {
+        toolbar: {
+            buttons: ['bold', 'italic', 'underline', 'anchor', 'h1', 'h2', 'h3', 'quote', 'unorderedlist', 'orderedlist']
+        },
+        paste: {
+            forcePlainText: false,
+            cleanPastedHTML: true,
+            cleanAttrs: ['class', 'style', 'dir'],
+            cleanTags: ['meta', 'script', 'iframe']
+        },
+        placeholder: {
+            text: 'Začněte psát svůj popis produktu zde...'
+        },
+        static: true,
+        sticky: true,
+        imageDragging: false
+    });
+
+    document.getElementById('editor').addEventListener('drop', function (event) {
+        event.preventDefault();
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            const firstImageFile = Array.from(files).find(file => file.type.startsWith('image/'));
+            if (firstImageFile) {
+                removeTemporaryEditorImage();
+                uploadImage(firstImageFile);
+            }
+        }
+    });
+
+    const contextMenu = document.getElementById('contextMenu');
+
+    document.getElementById('editor').addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+        contextMenu.style.display = 'block';
+        contextMenu.style.top = `${event.clientY + window.scrollY}px`;
+        contextMenu.style.left = `${event.clientX + window.scrollX}px`;
+    });
+
+    document.addEventListener('click', function (event) {
+        if (contextMenu.style.display === 'block') {
+            contextMenu.style.display = 'none';
+        }
+    });
+
+    window.openImageModal = function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const modalElement = document.getElementById('editorImageModal');
+        const modalInstance = new bootstrap.Modal(modalElement);
+        modalInstance.show();
+    };
+
+    window.insertSelectedImageIntoEditor = function () {
+        const selectedImage = document.querySelector('input[name="selectedEditorImage"]:checked');
+        if (selectedImage) {
+            const imageId = selectedImage.value;
+            const imageElement = document.querySelector(`[data-imageThumbnail-id="${imageId}"] img`);
+
+            if (imageElement) {
+                const imageURL = imageElement.dataset.articleimageurl;
+                const imageAlt = imageElement.getAttribute('alt') || '';
+                const imageTitle = imageElement.getAttribute('title') || '';
+                const imageHTML = `<img src="${imageURL}" alt="${imageAlt}" title="${imageTitle}" style="max-width: 100%;">`;
+
+                const editor = MediumEditor.getEditorFromElement(document.getElementById('editor'));
+                editor.pasteHTML(imageHTML);
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editorImageModal'));
+                modal.hide();
+            } else {
+                alert("Vyberte platný obrázek.");
+            }
+        } else {
+            alert("Vyberte obrázek, který chcete vložit do editoru.");
+        }
+    };
+});
+
+function uploadImage(file) {
+    document.getElementById("uploadIndicator").style.display = 'block';
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/admin/doEditorupload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.urls && data.urls.length > 0) {
+            const imageUrl = data.urls[0];
+            insertImageToEditor(imageUrl);
+            document.getElementById("uploadIndicator").style.display = 'none';
+        } else {
+            console.error('Error uploading image:', data.message || 'Unknown error');
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading image:', error);
+    });
+}
+
+function removeTemporaryEditorImage() {
+    const editor = document.getElementById('editor');
+    const tempImage = editor.querySelector('img[src^="data:image"]');
+    if (tempImage) {
+        tempImage.remove();
+    }
+}
+
+function insertImageToEditor(url) {
+    const imageHTML = `<img src="${url}" alt="Uploaded Image" style="max-width: 100%;">`;
+    const editorInstance = MediumEditor.getEditorFromElement(document.getElementById('editor'));
+    editorInstance.pasteHTML(imageHTML);
+}
+</script>
+
+{% endblock %}
