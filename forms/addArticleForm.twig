@@ -181,7 +181,7 @@
                 <!-- Krátký text -->
                 <div class="mb-3">
                     <label for="short_text" class="form-label">Krátký text</label>
-                    <input type="text" class="form-control" id="short_text" name="short_text" value="{{ pageData.article.short_text|default('') }}"  maxlength="255">
+                    <textarea class="form-control" id="short_text" name="short_text">{{ pageData.article.short_text|default('') }}</textarea>
                 </div>
 
                 <!-- Meta Title -->
@@ -220,6 +220,11 @@
                         <label for="metaAutorName" class="form-label">Označení autora</label>
                         <input type="text" class="form-control" id="metaAutorName" name="meta[autor_name]" value="{{ pageData.article.meta.autor_name|default('') }}">
                     </div>
+                </div>
+                 <!-- Meta Title -->
+                <div class="mb-3">
+                    <label for="metaTitle" class="form-label">Zdroj</label>
+                    <input type="text" class="form-control" id="metaZdroj" name="meta[zdroj]" value="{{ pageData.article.meta.zdroj|default('') }}">
                 </div>
             </div>
 

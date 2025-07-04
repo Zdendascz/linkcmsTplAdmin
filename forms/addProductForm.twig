@@ -7,7 +7,12 @@
         {% if category.meta.listArticles != "true" and category.is_active != "suspend" %}
         <li class="ml-5">
             <input type="checkbox" id="category_{{ category.id }}" name="categories[]" value="{{ category.id }}" {{ isChecked ? 'checked' : '' }}>
-            <label for="category_{{ category.id }}" data-url="{{ category.url }}" data-id="{{ category.id }}" style="cursor: pointer;" class="no-select">{{ category.title }}</label>
+            <label for="category_{{ category.id }}"
+                   data-url="{{ category.url }}"
+                   data-id="{{ category.id }}"
+                   class="no-select"
+                   style="cursor: pointer;"
+            >{{ category.title }}</label>
             {% if category.children|length > 0 %}
                 {{ self.renderCategoryCheckboxes(category.children, selectedCategories) }}
             {% endif %}
@@ -18,28 +23,21 @@
 {% endmacro %}
 
 <style>
-.medium-editor-element h1{
+.medium-editor-element h1 {
     text-decoration: line-through;
     font-size: 24px;
-    font-wight: bold;
-    line-height: 2; 
-    color: red;    
+    font-weight: bold;
+    line-height: 2;
+    color: red;
 }
-.medium-editor-element h2{
-    font-size: 20px;
-    font-wight: bold;
-    line-height: 2;   
+.medium-editor-element h2, .medium-editor-element h3, .medium-editor-element h4 {
+    font-weight: bold;
+    line-height: 2;
 }
-.medium-editor-element h3{
-    font-size: 17px;
-    font-wight: bold;
-    line-height: 2;   
-}
-.medium-editor-element h4{
-    font-size: 14px;
-    font-wight: bold;
-    line-height: 2;   
-}
+.medium-editor-element h2 { font-size: 20px; }
+.medium-editor-element h3 { font-size: 17px; }
+.medium-editor-element h4 { font-size: 14px; }
+
 .category-tag {
     display: inline-flex;
     align-items: center;
@@ -49,7 +47,6 @@
     border-radius: 5px;
     margin-top: 5px;
 }
-
 .category-tag button {
     margin-left: 5px;
     border: none;
@@ -80,7 +77,6 @@
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
-
 #contextMenu button {
     background: none;
     border: none;
@@ -89,72 +85,56 @@
     font-size: 14px;
     padding: 5px 10px;
 }
-
 #contextMenu button:hover {
     text-decoration: underline;
 }
 
-
-
 .selected-image {
-    border: 2px solid blue; // Příklad vizuálního označení
+    border: 2px solid blue;
 }
 
-
 .no-select {
-            user-select: none; /* Pro moderní prohlížeče */
-            -webkit-user-select: none; /* Pro Safari */
-            -moz-user-select: none; /* Pro Firefox */
-            -ms-user-select: none; /* Pro Internet Explorer/Edge */
-        }
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
 </style>
 
 <form id="productForm" method="post" action="{{ domainData.SITE_WEB }}/admin/doProduct">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">Obsah produktu</h5>
-        </div>
-        <div class="card-body">
-        
-            <!-- Skryté ID produktu -->
-            <input type="hidden" class="form-control" id="id" name="id" value="{{ pageData.product.id|default('') }}" />
-            <input type="hidden" class="form-control" id="product_type_id" name="product_type_id" value="{{ pageData.product.product_type_id|default('') }}" />
-            <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ pageData.product.user_id|default(userData.uid) }}" />
+    {# OBSERVATION #1: Hidden base fields #}
+    <input type="hidden" id="id" name="id" value="{{ pageData.product.id|default('') }}">
+    <input type="hidden" id="product_type_id" name="product_type_id" value="{{ pageData.product.product_type_id|default(get.product_type_id) }}">
+    <input type="hidden" id="user_id" name="user_id" value="{{ pageData.product.user_id|default(userData.uid) }}">
+    <input type="hidden" class="form-control" id="mainCatid" name="mainCatid" value="{{ pageData.product.meta.mainCatid|default('') }}" />
 
-            <!-- Název produktu a stav -->
+
+    {# OBSERVATION #2: CONTENT CARD #}
+    <div class="card mb-4">
+        <div class="card-header"><h5 class="card-title">Obsah produktu</h5></div>
+        <div class="card-body">
             <div class="row mb-3">
                 <div class="col-md-9">
                     <label for="title" class="form-label">Název produktu</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{ pageData.product.title|default('') }}" required maxlength="255">
+                    <input type="text"
+                           class="form-control"
+                           id="title"
+                           name="title"
+                           value="{{ pageData.product.title|default('') }}"
+                           required
+                           maxlength="255"
+                    >
                 </div>
                 <div class="col-md-3">
                     <label for="status" class="form-label">Stav</label>
                     <select class="form-select" id="status" name="status" required>
                         <option value="development" {% if pageData.product.status == 'development' %}selected{% endif %}>V přípravě</option>
-                        <option value="active" {% if pageData.product.status == 'active' %}selected{% endif %}>Aktivní</option>
-                        <option value="suspend" {% if pageData.product.status == 'suspend' %}selected{% endif %}>Zrušen</option>
+                        <option value="active"      {% if pageData.product.status == 'active'      %}selected{% endif %}>Aktivní</option>
+                        <option value="suspend"     {% if pageData.product.status == 'suspend'     %}selected{% endif %}>Zrušen</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Výběr typu produktu -->
-            <div class="mb-3">
-                <label for="product_type_id_select" class="form-label">Typ produktu</label>
-                <select class="form-select" id="product_type_id_select" name="product_type_id" required>
-                    <option value="">-- Vyber typ produktu --</option>
-                    {% for type in pageData.productTypes %}
-                        <option value="{{ type.id }}"
-                            {% if pageData.product.product_type_id is defined and type.id == pageData.product.product_type_id %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ type.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Popis produktu -->
             <div class="mb-3">
                 <div id="editor" class="editable">{{ pageData.product.body|default('')|raw }}</div>
                 <textarea name="body" id="body" style="display:none;"></textarea>
@@ -162,96 +142,223 @@
         </div>
     </div>
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Podrobnosti produktu</h5>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <!-- Levý sloupec pro ostatní položky -->
-            <div class="col-md-7">
-                <div class="mb-3">
-                    <label for="url" class="form-label">Adresa produktu</label>
-                    <input type="text" class="form-control" id="url" name="url" value="{{ pageData.product.url|default('') }}">
-                </div>
+    {# OBSERVATION #3: PRODUCT-TYPE FIELDS CARD #}
+    <div class="card mb-4">
+        <div class="card-header"><h5 class="card-title">Popis produktu</h5></div>
+        <div class="card-body">
+            {% set fields = (pageData.product.id ?? null) ? pageData.product.productTypeFields : pageData.productTypes %}
 
+            {% for field in fields %}
+                {% set value = pageData.product.productFieldValues[field.id]|default('') %}
                 <div class="mb-3">
-                    <label for="subtitle" class="form-label">Podnázev</label>
-                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ pageData.product.subtitle|default('') }}" maxlength="255">
-                </div>
+                    <label class="form-label">{{ field.name }} </label>
 
-                <div class="mb-3">
-                    <label for="short_description" class="form-label">Krátký popis</label>
-                    <input type="text" class="form-control" id="short_description" name="short_description" value="{{ pageData.product.short_description|default('') }}" maxlength="255">
-                </div>
-
-                <!-- Metadata -->
-                <div class="mb-3">
-                    <label for="metaTitle" class="form-label">Meta Title</label>
-                    <input type="text" class="form-control" id="metaTitle" name="meta[title]" value="{{ pageData.product.meta.title|default('') }}">
-                </div>
-                <div class="mb-3">
-                    <label for="metaDescription" class="form-label">Meta Description</label>
-                    <textarea class="form-control" id="metaDescription" name="meta[description]">{{ pageData.product.meta.description|default('') }}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="metaKeywords" class="form-label">Meta Keywords</label>
-                    <input type="text" class="form-control" id="metaKeywords" name="meta[keywords]" value="{{ pageData.product.meta.keywords|default('') }}">
-                </div>
-
-                <div class="row">
-                    <!-- Select autor -->
-                    <div class="col-md-6 mb-3">
-                        <label for="authorSelect" class="form-label">Autor</label>
-                        <select id="authorSelect" name="user_id" class="form-control">
-                            {% set selectedUserId = pageData.product.user_data.id ?? userData.uid %}
-                            {% for userId, user in pageData.usersInRole %}
-                                <option value="{{ user.user_id }}" {% if user.user_id == selectedUserId %}selected{% endif %}>
-                                    {{ user.user_name }} ({{ user.user_email }})
-                                </option>
+                    {% if field.data_type in ['string','url','youtube_url','map_url'] %}
+                        <input type="text"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               value="{{ value }}"
+                        >
+                    {% elseif field.data_type in ['integer','float'] %}
+                        <input type="number"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               value="{{ value }}"
+                        >
+                    {% elseif field.data_type == 'boolean' %}
+                        <div class="form-check">
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   name="product_fields[{{ field.id }}]"
+                                   value="1"
+                                   {% if value %}checked{% endif %}
+                            >
+                            <label class="form-check-label">Ano</label>
+                        </div>
+                    {% elseif field.data_type == 'date' %}
+                        <input type="date"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               value="{{ value }}"
+                        >
+                    {% elseif field.data_type == 'time' %}
+                        <input type="time"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               value="{{ value }}"
+                        >
+                    {% elseif field.data_type == 'datetime' %}
+                        <input type="datetime-local"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               value="{{ value|replace({' ': 'T'}) }}"
+                        >
+                    {% elseif field.data_type == 'text' %}
+                        <textarea class="form-control"
+                                  name="product_fields[{{ field.id }}]">{{ value }}</textarea>
+                    {% elseif field.data_type == 'html_text' %}
+                        <div id="editor_{{ field.id }}" class="editable">{{ value|raw }}</div>
+                        <textarea name="product_fields[{{ field.id }}]"
+                                  id="html_{{ field.id }}"
+                                  style="display:none;"
+                        ></textarea>
+                    {% elseif field.data_type == 'enum' %}
+                        {% set options = field.settings.options ?? [] %}
+                        <select class="form-select" name="product_fields[{{ field.id }}]">
+                            {% for opt in options %}
+                                <option value="{{ opt }}" {% if opt == value %}selected{% endif %}>{{ opt }}</option>
                             {% endfor %}
                         </select>
-                    </div>
-
-                    <!-- Input označení autora -->
-                    <div class="col-md-6 mb-3">
-                        <label for="metaAutorName" class="form-label">Označení autora</label>
-                        <input type="text" class="form-control" id="metaAutorName" name="meta[autor_name]" value="{{ pageData.product.meta.autor_name|default('') }}">
-                    </div>
+                    {% elseif field.data_type == 'file' %}
+                        <input type="number"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               placeholder="ID souboru"
+                               value="{{ value }}"
+                        >
+                    {% else %}
+                        <input type="text"
+                               class="form-control"
+                               name="product_fields[{{ field.id }}]"
+                               value="{{ value }}"
+                        >
+                    {% endif %}
                 </div>
+            {% endfor %}
+        </div>
+    </div>
 
-                <!-- Dynamická pole produktu -->
-                {% for field in pageData.productTypeFields %}
-                    <div class="mb-3">
-                        <label class="form-label">{{ field.name }}</label>
-                        <input type="text" class="form-control" name="product_fields[{{ field.id }}]" value="{{ pageData.productFieldValues[field.id]|default('') }}">
+    {# OBSERVATION #5: PARAMETERS CARD #}
+    <div class="card mb-4">
+        <div class="card-header"><h5 class="card-title">Parametry</h5></div>
+        <div class="card-body">
+            <div id="parameterFieldsContainer">
+                {% set params = (pageData.product.id ?? null) ? pageData.product.parameters : pageData.allParameters %}
+                {% for param in params %}
+                    {% set value = param.value|default('') %}
+                    {% set required = param.is_required ? 'required' : '' %}
+                    <div class="mb-3 parameter-field"
+                         data-parameter-id="{{ param.id }}"
+                         data-parameter-name="{{ param.name|lower }}"
+                    >
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    {{ param.name }}{% if param.is_required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                            </div>
+                            <div class="col-md-8">
+                                {% if param.data_type == 'string' %}
+                                    <input type="text" class="form-control" name="parameter_values[{{ param.id }}]" value="{{ value }}" {{ required }}>
+                                {% elseif param.data_type == 'integer' %}
+                                    <input type="number" class="form-control" name="parameter_values[{{ param.id }}]" value="{{ value }}" {{ required }}>
+                                {% elseif param.data_type == 'float' %}
+                                    <input type="number" step="0.01" class="form-control" name="parameter_values[{{ param.id }}]" value="{{ value }}" {{ required }}>
+                                {% elseif param.data_type == 'boolean' %}
+                                    <div class="form-check mt-1">
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               name="parameter_values[{{ param.id }}]"
+                                               value="1"
+                                               {% if value %}checked{% endif %}
+                                               {{ required }}
+                                        >
+                                        <label class="form-check-label">Ano</label>
+                                    </div>
+                                {% elseif param.data_type == 'date' %}
+                                    <input type="date" class="form-control" name="parameter_values[{{ param.id }}]" value="{{ value }}" {{ required }}>
+                                {% elseif param.data_type == 'enum' %}
+                                    {% set options = param.settings.options ?? [] %}
+                                    <select class="form-select" name="parameter_values[{{ param.id }}]" {{ required }}>
+                                        {% for opt in options %}
+                                            <option value="{{ opt }}" {% if opt == value %}selected{% endif %}>{{ opt }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="text" class="form-control" name="parameter_values[{{ param.id }}]" value="{{ value }}" {{ required }}>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1 text-muted small text-end">
+                                {% if param.is_filterable %}<div title="Lze filtrovat">F</div>{% endif %}
+                                {% if param.is_sortable   %}<div title="Lze řadit">Ř</div>{% endif %}
+                                {% if param.is_searchable %}<div title="Lze vyhledávat">H</div>{% endif %}
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
+        </div>
+    </div>
 
-            <!-- Pravý sloupec pro výběr kategorií -->
-            <div class="col-md-5">
-                <div class="mb-3">
+    {# OBSERVATION #4: CORE DETAILS CARD #}
+    <div class="card mb-4">
+        <div class="card-header"><h5 class="card-title">Podrobnosti produktu</h5></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="mb-3">
+                        <label for="url" class="form-label">Adresa produktu</label>
+                        <input type="text" class="form-control" id="url" name="url" value="{{ pageData.product.url|default('') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="subtitle" class="form-label">Podnázev</label>
+                        <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ pageData.product.subtitle|default('') }}" maxlength="255">
+                    </div>
+                    <div class="mb-3">
+                        <label for="short_description" class="form-label">Krátký popis</label>
+                        <input type="text" class="form-control" id="short_description" name="short_description" value="{{ pageData.product.short_description|default('') }}" maxlength="255">
+                    </div>
+
+                    {# META #}
+                    <div class="mb-3">
+                        <label for="metaTitle" class="form-label">Meta Title</label>
+                        <input type="text" class="form-control" id="metaTitle" name="meta[title]" value="{{ pageData.product.meta.title|default('') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="metaDescription" class="form-label">Meta Description</label>
+                        <textarea class="form-control" id="metaDescription" name="meta[description]">{{ pageData.product.meta.description|default('') }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="metaKeywords" class="form-label">Meta Keywords</label>
+                        <input type="text" class="form-control" id="metaKeywords" name="meta[keywords]" value="{{ pageData.product.meta.keywords|default('') }}">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="authorSelect" class="form-label">Autor</label>
+                            <select id="authorSelect" name="user_id" class="form-control">
+                                {% set selectedUserId = pageData.product.user_data.id ?? userData.uid %}
+                                {% for userId, user in pageData.usersInRole %}
+                                    <option value="{{ user.user_id }}" {% if user.user_id == selectedUserId %}selected{% endif %}>
+                                        {{ user.user_name }} ({{ user.user_email }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="metaAutorName" class="form-label">Označení autora</label>
+                            <input type="text" class="form-control" id="metaAutorName" name="meta[autor_name]" value="{{ pageData.product.meta.autor_name|default('') }}">
+                        </div>
+                        <button type="submit" class="btn btn-success">Uložit produkt</button>
+                    </div>
+
+                </div>
+
+                <div class="col-md-5">
                     <h5>Vyberte kategorii produktu</h5>
                     {% import _self as macros %}
-
                     {% for navId, navGroup in pageData.articleCats %}
                         {% if navGroup.categories|length > 0 %}
-                            <div class="navigation-group mb-4" style="border-bottom: 1px #999 solid;">
+                            <div class="navigation-group mb-4" style="border-bottom:1px #999 solid;">
                                 <h6>{{ navGroup.navigation.name }}</h6>
                                 {{ macros.renderCategoryCheckboxes(navGroup.categories, pageData.product.categories) }}
                             </div>
                         {% endif %}
                     {% endfor %}
-
-                    <p>Dvojkliknutím na název kategorie vytvoříte URL produktu s použitím URL kategorie.</p>
+                    <p>Dvojkliknutím na kategorii vytvoříte URL s URL kategorie.</p>
+                    {% include 'inc/imageModalProduct.twig' %}
                 </div>
-                {% include 'inc/imageModal1.twig' %}
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Uložit produkt</button>
     </div>
-</div>
-
 </form>

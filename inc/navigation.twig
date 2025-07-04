@@ -27,14 +27,16 @@
         </ul>
     </li>{% endif %}
     {% if userData.prava.navigationsAdmin == 1 %}<li>
-        <a href="#"><i class="material-icons">category</i>Produkty<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
+        <a href="#"><i class="material-icons">category</i>Katalog<i class="material-icons has-sub-menu">keyboard_arrow_right</i></a>
         <ul class="sub-menu">
+            {% for types in productTypes %}
             <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/addProduct">Nový produkt</a>
+                <a href="{{ domainData.SITE_WEB }}/admin/addProduct?product_type_id={{ types.id }}">Nová položka {{ types.name }}</a>
             </li>
             <li>
-                <a href="{{ domainData.SITE_WEB }}/admin/allProducts">Seznam produktů</a>
+                <a href="{{ domainData.SITE_WEB }}/admin/allProducts?product_type_id={{ types.id }}">Seznam položek {{ types.name }}</a>
             </li>
+            {% endfor %}
         </ul>
     </li>{% endif %}
     {% if userData.prava.navigationsAdmin == 1 %}<li>

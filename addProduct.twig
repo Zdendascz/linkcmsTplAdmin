@@ -8,8 +8,15 @@
 
 {% endblock %}
 
-{% block titulek %}Editace {% endblock %}
-{% block nadpis %}Editor článku{% endblock %}
+{% block titulek %}Práce s produkty {% endblock %}
+{% block nadpis %}
+{% set typeName = '' %}
+{% for types in productTypes %}
+    {% if types.id == get.product_type_id %}
+        {% set typeName = types.name %}
+    {% endif %}
+{% endfor %}
+Přidat katalogovou položku: {{ typeName }} {% endblock %}
 
 
 {% block content %}
@@ -32,65 +39,107 @@
 <script>
 updateUrlParamsAndShowAlert('productForm');
 
+// 🟩 Počet znaků v meta
 document.addEventListener('DOMContentLoaded', function () {
     addCharCounter('metaTitle', 150, 55);
     addCharCounter('metaDescription', 255, 155);
 });
 
+// 🟩 Výběr hlavního obrázku (modal 1)
 window.updateSelectedImage = function(inputId, value) {
     document.getElementById(inputId).value = value;
     document.querySelectorAll('.img-thumbnail').forEach(function(el) {
         el.classList.remove('selected-image');
     });
-    document.querySelector('[data-image-id="'+value+'"]').classList.add('selected-image');
+    const selected = document.querySelector('[data-image-id="'+value+'"]');
+    if (selected) selected.classList.add('selected-image');
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-    const mainId = document.getElementById('id');
-    const urlInput = document.getElementById('url');
-
-    if(mainId.value !== ''){
-        urlInput.readOnly = true;
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const productName = document.getElementById('title');
-    const productUrl = document.getElementById('url');
-    const mainCat = document.getElementById('mainCatid');
-    const mainCatValue = mainCat.value;
-
-    const labels = document.querySelectorAll('label[for^="category_"]');
-
-    labels.forEach(function(label) {
-        label.style.fontWeight = 'normal';
-        label.style.textDecoration = 'none';
-        label.addEventListener('dblclick', function(event) {
-            labels.forEach(function(lbl) {
-                lbl.style.fontWeight = 'normal';
-                lbl.style.textDecoration = 'none';
-            });
-
-            const url = label.getAttribute('data-url');
-            const catId = label.getAttribute('data-id');
-            const productFullUrl = url + stringToUrlSafe(productName.value);
-            if(!productUrl.readOnly)
-                productUrl.value = productFullUrl + '.html';
-            mainCat.value = catId;
-            label.style.fontWeight = 'bold';
-            label.style.textDecoration = 'underline';
-        });
+// 🟩 Výběr obrázku do přehledu (modal 2)
+window.updateSelectedImage2 = function(value) {
+    document.getElementById('selectedImageId2').value = value;
+    document.querySelectorAll('.img-thumbnail2').forEach(function(el) {
+        el.classList.remove('selected-image');
     });
+    const selected = document.querySelector('[data-image2-id="'+value+'"]');
+    if (selected) selected.classList.add('selected-image');
+};
 
-    if (mainCatValue) {
-        const mainCatSel = document.querySelector('label[for="category_' + mainCatValue + '"]');
-        
-        if (mainCatSel) {
-            mainCatSel.style.fontWeight = 'bold';
-            mainCatSel.style.textDecoration = 'underline';
-        }
-    }
+// 🟩 Výběr obrázků do galerie (modal 3)
+window.updateSelectedImages3 = function() {
+    let selectedIds = [];
+    document.querySelectorAll('[name="selectedImages3"]:checked').forEach(function(checkbox) {
+        selectedIds.push(checkbox.value);
+        checkbox.closest('label').classList.add('selected-image');
+    });
+    document.querySelectorAll('[name="selectedImages3"]:not(:checked)').forEach(function(checkbox) {
+        checkbox.closest('label').classList.remove('selected-image');
+    });
+    document.getElementById('selectedImageIds3').value = selectedIds.join(',');
+};
+
+// 🟩 Načtení výchozích vybraných obrázků
+
+// modal 1
+const selectedImageId1 = document.getElementById('selectedImageId1')?.value;
+if (selectedImageId1) {
+    const el = document.querySelector('[data-image-id="'+selectedImageId1+'"]');
+    if (el) el.classList.add('selected-image');
+}
+
+// modal 2
+const selectedImageId2 = document.getElementById('selectedImageId2')?.value;
+if (selectedImageId2) {
+    const el = document.querySelector('[data-image2-id="'+selectedImageId2+'"]');
+    if (el) el.classList.add('selected-image');
+}
+
+// modal 3
+const selectedImageIds3 = document.getElementById('selectedImageIds3')?.value.split(',') || [];
+selectedImageIds3.forEach(function(id) {
+    const els = document.querySelectorAll('[data-image-id="'+id+'"]');
+    els.forEach(el => el.classList.add('selected-image'));
 });
+
+// 🟩 Vygenerování URL z kategorie
+
+const mainId = document.getElementById('id');
+const urlInput = document.getElementById('url');
+if(mainId?.value !== '') urlInput.readOnly = true;
+
+const productName = document.getElementById('title');
+const productUrl = document.getElementById('url');
+const mainCat = document.getElementById('mainCatid');
+const mainCatValue = mainCat.value;
+
+const labels = document.querySelectorAll('label[for^="category_"]');
+labels.forEach(function(label) {
+    label.style.fontWeight = 'normal';
+    label.style.textDecoration = 'none';
+    label.addEventListener('dblclick', function(event) {
+        labels.forEach(function(lbl) {
+            lbl.style.fontWeight = 'normal';
+            lbl.style.textDecoration = 'none';
+        });
+
+        const url = label.getAttribute('data-url');
+        const catId = label.getAttribute('data-id');
+        const productFullUrl = url + stringToUrlSafe(productName.value);
+        if(!productUrl.readOnly)
+            productUrl.value = productFullUrl + '.html';
+        mainCat.value = catId;
+        label.style.fontWeight = 'bold';
+        label.style.textDecoration = 'underline';
+    });
+});
+
+if (mainCatValue) {
+    const mainCatSel = document.querySelector('label[for="category_' + mainCatValue + '"]');
+    if (mainCatSel) {
+        mainCatSel.style.fontWeight = 'bold';
+        mainCatSel.style.textDecoration = 'underline';
+    }
+}
 
 function stringToUrlSafe(str) {
     str = str.toLowerCase();
@@ -104,10 +153,28 @@ function stringToUrlSafe(str) {
     return str;
 }
 
+// 🟩 Přenos obsahu editoru před odesláním
+
 document.getElementById('productForm').addEventListener('submit', function(event) {
     const editorContent = document.getElementById('editor').innerHTML;
     document.getElementById('body').value = editorContent;
 });
+
+// 🟩 Přenos obsahu všech HTML fieldů
+
+document.getElementById('productForm').addEventListener('submit', function(event) {
+    {% for field in pageData.productTypeFields %}
+        {% if field.data_type == 'html_text' %}
+            const htmlField = document.getElementById('html_{{ field.id }}');
+            const editorDiv = document.getElementById('editor_{{ field.id }}');
+            if (htmlField && editorDiv) {
+                htmlField.value = editorDiv.innerHTML;
+            }
+        {% endif %}
+    {% endfor %}
+});
+
+// 🟩 Medium Editor setup
 
 document.addEventListener('DOMContentLoaded', function () {
     const editor = new MediumEditor('#editor', {
@@ -141,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const contextMenu = document.getElementById('contextMenu');
-
     document.getElementById('editor').addEventListener('contextmenu', function (event) {
         event.preventDefault();
         contextMenu.style.display = 'block';
@@ -168,16 +234,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedImage) {
             const imageId = selectedImage.value;
             const imageElement = document.querySelector(`[data-imageThumbnail-id="${imageId}"] img`);
-
             if (imageElement) {
                 const imageURL = imageElement.dataset.articleimageurl;
                 const imageAlt = imageElement.getAttribute('alt') || '';
                 const imageTitle = imageElement.getAttribute('title') || '';
                 const imageHTML = `<img src="${imageURL}" alt="${imageAlt}" title="${imageTitle}" style="max-width: 100%;">`;
-
                 const editor = MediumEditor.getEditorFromElement(document.getElementById('editor'));
                 editor.pasteHTML(imageHTML);
-
                 const modal = bootstrap.Modal.getInstance(document.getElementById('editorImageModal'));
                 modal.hide();
             } else {
@@ -193,7 +256,6 @@ function uploadImage(file) {
     document.getElementById("uploadIndicator").style.display = 'block';
     const formData = new FormData();
     formData.append('file', file);
-
     fetch('/admin/doEditorupload', {
         method: 'POST',
         body: formData
@@ -216,9 +278,7 @@ function uploadImage(file) {
 function removeTemporaryEditorImage() {
     const editor = document.getElementById('editor');
     const tempImage = editor.querySelector('img[src^="data:image"]');
-    if (tempImage) {
-        tempImage.remove();
-    }
+    if (tempImage) tempImage.remove();
 }
 
 function insertImageToEditor(url) {
@@ -226,6 +286,21 @@ function insertImageToEditor(url) {
     const editorInstance = MediumEditor.getEditorFromElement(document.getElementById('editor'));
     editorInstance.pasteHTML(imageHTML);
 }
+
+// 🟩 Filtrování parametrů
+
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('parameterSearchInput');
+    const container = document.getElementById('parameterFieldsContainer');
+    input?.addEventListener('input', function () {
+        const query = input.value.toLowerCase().trim();
+        const all = container.querySelectorAll('.parameter-field');
+        all.forEach(field => {
+            const name = field.dataset.parameterName;
+            field.style.display = name.includes(query) ? 'block' : 'none';
+        });
+    });
+});
 </script>
 
 {% endblock %}
